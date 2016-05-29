@@ -1,0 +1,270 @@
+.grid_disabled{
+    color: gray;
+}
+.grid_many_active .x-grid-cell{
+    color: #ffffff;
+    background-image: none !important;
+    background-color: #41A53D  !important;
+}
+
+.x-column-header-over {
+    color: rgb(0, 102, 255);
+}
+
+.x-grid-dirty-cell {
+ background: none !important;
+}
+/*
+.x-panel-header-default {
+background-color: #C74823 !important;
+}*/
+.icon-menu {
+    background-image: url(../images/16/1386474576_ui-menu-blue.png) !important;
+}
+.icon-cuenta {
+    background-image: url(../images/32/Women_1.gif) !important;
+}
+.icon-salir {
+    background-image: url(../images/32/salir.png) !important;
+}
+.icon-opciones {
+    background-image: url(../images/32/Tool.gif) !important;
+}
+.icon-compania {
+    background-image: url(../images/24/24-tag-manager.png) !important;
+}
+
+.icon-mail_generic {
+    background-image: url(../images/16/mail_generic.gif) !important;
+}
+.icon-datos {
+    background-image: url(../images/16/edittrash.gif) !important;
+}
+.icon-manual {
+    background-image: url(../images/16/help.gif) !important;
+}
+.icon-notic {
+    background-image: url(../images/16/launch.gif) !important;
+}
+.icon-param {
+    background-image: url(../images/16/list.gif) !important;
+}
+.icon-system {
+    background-image: url(../images/16/lock.gif) !important;
+}
+.icon-general {
+    background-image: url(../images/16/project_open.gif) !important;
+}
+.icon-wizard {
+    background-image: url(../images/16/wizard.gif) !important;
+}
+.icon-build {
+    background-image: url(../images/16/build.gif) !important;
+}
+.icon-fileprint {
+    background-image: url(../images/16/fileprint.gif) !important;
+}
+.icon-find {
+    background-image: url(../images/16/search.gif) !important;
+}
+.icon-history {
+    background-image: url(../images/16/history.gif) !important;
+}
+
+.icon-tab_remove {
+    background-image: url(../images/16/tab_remove.gif) !important;
+}
+.icon-tab_duplicate {
+    background-image: url(../images/16/tab_duplicate.gif) !important;
+}
+.icon-bookmark {
+    background-image: url(../images/16/bookmark.gif) !important;
+}
+
+.icon-edit {
+    background-image: url(../images/16/edit.gif) !important;
+}
+.icon-add {
+    background-image: url(../images/16/add.png) !important;
+}
+.icon-delete {
+    background-image: url(../images/16/delete.png) !important;
+}
+
+
+.icon-cancelar {
+    background-image: url(../images/24/24-em-cross.png) !important;
+}
+.icon-save {
+    background-image: url(../images/24/1386489039_save.png) !important;
+}
+
+.icon-casa {
+    background-image: url(../images/icons/application_home.png) !important;
+}
+
+
+.icon-cerrar {
+    background-image: url(../images/16/cancel.gif) !important;
+}
+
+
+.savew {
+    background-image: url(../images//24/1386489039_save.png) !important;
+}
+
+.cancelw {
+    background-image: url(../images//24/cancel.png) !important;
+}
+
+.addd {
+    background-image: url(../images//16/addd.png) !important;
+}
+
+.editt {
+    background-image: url(../images//16/editt.png) !important;
+}
+
+.micuenta {
+    background-image: url(../images//16/micuenta.png) !important;
+}
+.enabled {
+    background-image: url(../images//16/enabled.png) !important;
+}
+.disabled {
+    background-image: url(../images//16/disabled.png) !important;
+}
+
+
+
+.icon-filesave {
+    background-image: url(../images/16/filesave.gif) !important;
+}
+
+
+.icon-user {
+    background-image: url(../images/16/user.png) !important;
+}
+.icon-kcontrol {
+    background-image: url(../images/16/kcontrol.gif) !important;
+}
+
+.icon-reload {
+    background-image: url(../images/16/reload.gif) !important;
+}
+
+
+.icon-search {
+    background-image: url(../images/16/search.gif) !important;
+}
+
+.icon-lock {
+    background-image: url(../images/24/24-security-key.png) !important;
+}
+
+.icon-lock16 {
+    background-image: url(../images/16/unlock.gif) !important;
+}
+.icon-grafico {
+    background-image: url(../images/16/grafico.png) !important;
+}
+.icon-loader {
+    background-image: url(../images/16/attach.gif) !important;
+}
+.icon-imageup {
+    background-image: url(../images/16/fileopen.gif) !important;
+}
+
+.icon-user {
+    background-image: url(../images/user.png) !important;
+}
+
+.icon-exel {
+    background-image: url(../images/excel.png) !important;
+}
+.icon-pdf {
+    background-image: url(../images/icono-pdf3.png) !important;
+}
+
+.icon-user-add {
+    background-image: url(../images/user_add.gif) !important;
+}
+.icon-transporte {
+    background-image: url(../images/Cow_wagon_Icon_16.png) !important;
+}
+.icon-feria {
+    background-image: url(../images/logo.png) !important;
+}
+
+.icon-vaca {
+    background-image: url(../images/Cow_head_Icon_16.png) !important;
+}
+
+.icon-predios {
+    background-image: url(../images/world_go.png) !important;
+}
+
+
+.icon-save {
+    background-image: url(../images/save.gif) !important;
+}
+
+.icon-reset {
+    background-image: url(../images/stop.png) !important;
+}
+
+.icon-carro {
+    background-image: url(../images/icons/cart.png) !important;
+}
+
+.icon-proveedores  {
+    background-image: url(../images/proveedor.png) !important;
+}
+
+.icon-grid {
+    background-image: url(../images/grid.png) !important;
+}
+
+.icon-add {
+    background-image: url(../images/add.png) !important;
+}
+
+.icon-edit {
+    background-image: url(../images/edit.png) !important;
+}
+
+.icon-search {
+    background-image: url(../images/search.png) !important;
+}
+
+.icon-sheet {
+    background-image: url(../images/sheet.png) !important;
+}
+
+.icon-plus {
+    background-image: url(../images/plus.png) !important;
+}
+
+.icon-delete {
+    background-image: url(../images/delete.png) !important;
+}
+.icon-group {
+    background-image: url(../images/icons/group.png) !important;
+}
+.icon-money {
+    background-image: url(../images/icons/money.png) !important;
+}
+.icon-note {
+    background-image: url(../images/icons/note.png) !important;
+}
+.icon-export {
+    background-image: url(../images/export.png) !important;
+}
+
+.icon-email {
+    background-image: url(../images/email.png) !important;
+}
+
+.icon-email_send {
+    background-image: url(../images/mail_send.png) !important;
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Infosys_web - Erp Infosys</title>
+    <!--link rel="stylesheet" 
+    href="ext/packages/ext-theme-neptune/build/resources/ext-theme-neptune-all.css"-->
+    <link rel="stylesheet" href="resources/css/ext-theme-neptune-gris.css">
+    <link rel="stylesheet" href="resources/css/icons.css">
+    
+    <!-- <x-compile> -->
+        <!-- <x-bootstrap> -->
+            <script src="ext/ext-all.js"></script>
+            <script src="bootstrap.js"></script>
+        <!-- </x-bootstrap> -->
+        <script src="app.js"></script>
+ <script>
+    var response = Ext.Ajax.request({
+        async: false,
+        url: preurl + 'login/getDataSesion'
+    });
+    var data_sess = Ext.decode(response.responseText);
+
+    Ext.onReady(function () {
+       // _myAppGlobal.getController('Main').modules_security(data_sess.modules);
+    });
+    </script>
+    <!-- </x-compile> -->
+        <script src="ext/locale/ext-lang-es.js"></script>
+</head>
+<body></body>
+</html>
+
