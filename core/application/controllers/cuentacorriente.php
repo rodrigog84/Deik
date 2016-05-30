@@ -1721,9 +1721,9 @@ $header = '
 
 			$content = chunk_split(base64_encode($content));
 			$mailto = $email;
-			$from_name = 'Ferrital';
-			$from_mail = 'contacto@ferrital.cl';
-			$replyto = 'contacto@ferrital.cl';
+			$from_name = 'Deik';
+			$from_mail = 'contacto@deik.cl';
+			$replyto = 'contacto@deik.cl';
 			$uid = md5(uniqid(time())); 
 			$subject = 'Envio de Saldo de Documentos';
 			$message = $mensaje;

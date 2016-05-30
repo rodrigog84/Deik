@@ -614,13 +614,13 @@ $body_header = '<tr>
 		<body>
 		<table width="987px" height="602" border="0">
 		  <tr>
-		    <td width="197px"><img src="http://localhost/Ferrital_web/Ferrital_web/resources/images/Ferrital.jpg" width="150" height="136" /></td>
+		    <td width="197px"><img src="http://angus.agricultorestalca.cl/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
-		    <p>FERRETERIA INDUSTRIAL TALCA LIMITADA</p>
-		    <p>RUT:78.045.980-8</p>
-		    <p>1 Norte #2310 - Talca - Chile</p>
-		    <p>Fonos: (71)2534779-2534775 ; Fax: (71)2534801</p>
-		    <p>http://www.ferrital.cl</p>
+		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
+		    <p>RUT:76.019.353-4</p>
+		    <p>8 ORIENTE 1378 - Talca - Chile</p>
+		    <p>Fonos: (71)2 233369</p>
+		    <p>http://</p>
 		    </td>
 		    <td width="296px" style="font-size: 16px;text-align:left;vertical-align:text-top"	>
 		          <p>FECHA EMISION : '.date('d/m/Y').'</p>
@@ -790,13 +790,13 @@ $body_header = '<tr>
 		<body>
 		<table width="987px" height="602" border="0">
 		  <tr>
-		    <td width="197px"><img src="http://localhost/Ferrital_web/Ferrital_web/resources/images/Ferrital.jpg" width="150" height="136" /></td>
+		    <td width="197px"><img src="http://angus.agricultorestalca.cl/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
-		    <p>FERRETERIA INDUSTRIAL TALCA LIMITADA</p>
-		    <p>RUT:78.045.980-8</p>
-		    <p>1 Norte #2310 - Talca - Chile</p>
-		    <p>Fonos: (71)2534779-2534775 ; Fax: (71)2534801</p>
-		    <p>http://www.ferrital.cl</p>
+		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
+		    <p>RUT:76.019.353-4</p>
+		    <p>8 ORIENTE 1378 - Talca - Chile</p>
+		    <p>Fonos: (71)2 233369</p>
+		    <p>http://</p>
 		    </td>
 		    <td width="296px" style="font-size: 16px;text-align:left;vertical-align:text-top"	>
 		          <p>FECHA EMISION : '.date('d/m/Y').'</p>
