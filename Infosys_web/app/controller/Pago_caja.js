@@ -1110,7 +1110,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
          st.load();
          if (tipodoc == 2 & valida2 == "NO"){
 
-            Ext.Msg.alert('Alerta', 'Deve Cancelar Documento');
+            Ext.Msg.alert('Alerta', 'Debe Cancelar Documento');
                    return; 
             
 
