@@ -217,10 +217,42 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
             },
             'guiasprincipalpendientes button[action=generarguias]': {
                 click: this.generarfacturapdf
-            }
+            },
+            'facturaguias #tipoDescuentoId': {
+                change: this.changedctofinal
+            },
 
 
         });
+    },
+
+    changedctofinal: function(){
+        this.recalculardescuento();
+    },
+
+    recalculardescuento: function(){
+
+        var view = this.getFacturaguias();
+        var pretotal = view.down('#finalafectoId').getValue();
+        var total = view.down('#finaltotalpostId').getValue();
+        var iva = view.down('#finaltotalivaId').getValue();
+        var neto = view.down('#finaltotalnetoId').getValue();
+        var descuento = view.down('#tipoDescuentoId');
+        var stCombo = descuento.getStore();
+        var record = stCombo.findRecord('id', descuento.getValue()).data;
+        var dcto = (record.porcentaje);
+       
+        pretotalfinal = ((total * dcto)  / 100);
+        total = ((total) - (pretotalfinal));
+        afecto = ((total / 1.19));
+        iva = (total - afecto);
+
+        view.down('#finaltotalId').setValue(Ext.util.Format.number(total, '0,000'));
+        view.down('#finaltotalpostId').setValue(Ext.util.Format.number(total, '0'));
+        view.down('#finaltotalnetoId').setValue(Ext.util.Format.number(neto, '0'));
+        view.down('#finaltotalivaId').setValue(Ext.util.Format.number(iva, '0'));
+        view.down('#finalafectoId').setValue(Ext.util.Format.number(afecto, '0'));
+        view.down('#descuentovalorId').setValue(Ext.util.Format.number(pretotalfinal, '0'));
     },
 
     generarfacturapdf: function(){
@@ -1154,8 +1186,8 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
                 netofactura: viewIngresa.down('#finaltotalnetoId').getValue(),
                 ivafactura: viewIngresa.down('#finaltotalivaId').getValue(),
                 afectofactura: viewIngresa.down('#finalafectoId').getValue(),
-                totalfacturas: viewIngresa.down('#finaltotalpostId').getValue(),
-               
+                descuentofactuta : viewIngresa.down('#descuentovalorId').getValue(),
+                totalfacturas: viewIngresa.down('#finaltotalpostId').getValue()               
             },
              success: function(response){
                 var resp = Ext.JSON.decode(response.responseText);
@@ -1287,10 +1319,12 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
         var total = view.down('#totalId').getValue();
         var stItem = this.getGuiasdespachoItemsStore();
         var totalfin = view.down('#finaltotalpostId').getValue();
-        var netofin = view.down('#finalafectoId').getValue();
+        var netofin = view.down('#finaltotalnetoId').getValue();
+        var afectofin = view.down('#finalafectoId').getValue();
         var ivafin = view.down('#finaltotalivaId').getValue();
         var totalfin = totalfin + total;
         var netofin = netofin + neto;
+        var afectofin = netofin + neto;
         var ivafin= ivafin + iva;
         var espacios = "";
         var ceros = 0;        
@@ -1317,12 +1351,9 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
         view.down('#finaltotalId').setValue(Ext.util.Format.number(totalfin, '0,000'));
         view.down('#finaltotalpostId').setValue(Ext.util.Format.number(totalfin, '0'));
         view.down('#finaltotalnetoId').setValue(Ext.util.Format.number(netofin, '0'));
-        view.down('#finaltotalnetodId').setValue(Ext.util.Format.number(netofin, '0,000'));
         view.down('#finaltotalivaId').setValue(Ext.util.Format.number(ivafin, '0'));
-        view.down('#finaltotalivadId').setValue(Ext.util.Format.number(ivafin, '0,000'));
-        view.down('#finalafectoId').setValue(Ext.util.Format.number(netofin, '0'));
-        view.down('#finalafectodId').setValue(Ext.util.Format.number(netofin, '0,000'));
-
+        view.down('#finalafectoId').setValue(Ext.util.Format.number(afectofin, '0'));
+        
        Ext.Ajax.request({
                 url: preurl + 'guias/marcarguias',
                 params: {

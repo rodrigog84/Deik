@@ -447,71 +447,69 @@ Ext.define('Infosys_web.view.guiasdespacho.Facturaguias', {
                             itemId: 'finaltotalnetoId',
                             readOnly: true,
                             fieldLabel: '<b>VALOR NETO</b>',
+                            labelAlign: 'top'
+                        },
+                        {xtype: 'splitter'},
+                        {
+                            xtype: 'combo',
+                            width: 280,
+                            queryMode: 'local',
+                            itemId: 'tipoDescuentoId',
+                            fieldLabel: '<b>DESCUENTO</b>',
+                            store: 'Tabladescuento',
+                            emptyText : "Seleccione",
+                            valueField: 'id',
+                            //disabled : true,   
                             labelAlign: 'top',
-                            hidden: true
+                            displayField: 'nombre'
                         },{
-                            xtype: 'textfield',
+                            xtype: 'numberfield',
                             fieldCls: 'required',
                             width: 200,
-                            name : 'neto',
-                            itemId: 'finaltotalnetodId',
+                            name : 'descuento',
+                            itemId: 'finaldescuentoId',
+                            //disabled : true,  
                             readOnly: true,
-                            fieldLabel: '<b>VALOR NETO</b>',
-                            align: 'right',
-                            labelAlign: 'top'
+                            fieldLabel: '<b>descuento</b>',
+                            hidden: true
                         },
                         {xtype: 'splitter'},
                         {
                             xtype: 'numberfield',
                             fieldCls: 'required',
-                            width: 200,
+                            width: 150,
+                            name : 'descuentovalor',
+                            itemId: 'descuentovalorId',
+                            readOnly: true,
+                            fieldLabel: '<b>DESCUENTO $</b>',
+                            labelAlign: 'top'
+                        },{xtype: 'splitter'},{
+                            xtype: 'numberfield',
+                            fieldCls: 'required',
+                            width: 150,
                             name : 'afecto',
                             itemId: 'finalafectoId',
                             readOnly: true,
                             fieldLabel: '<b>AFECTO</b>',
-                            labelAlign: 'top',
-                            hidden: true
-                        },{
-                            xtype: 'textfield',
-                            fieldCls: 'required',
-                            width: 200,
-                            name : 'afecto',
-                            itemId: 'finalafectodId',
-                            readOnly: true,
-                            fieldLabel: '<b>AFECTO</b>',
-                            align: 'right',
                             labelAlign: 'top'
                         },{xtype: 'splitter'},
                         {
                             xtype: 'numberfield',
-                            width: 200,
+                            width: 150,
                             fieldCls: 'required',
                             name : 'iva',
                             itemId: 'finaltotalivaId',
                             readOnly: true,
                             fieldLabel: '<b>IVA</b>',
-                            labelAlign: 'top',
-                            hidden: true
-                            //renderer: function(valor){return Ext.util.Format.number(parseInt(iva),"0.000")} 
-                        },{
-                            xtype: 'textfield',
-                            width: 200,
-                            fieldCls: 'required',
-                            name : 'iva',
-                            itemId: 'finaltotalivadId',
-                            readOnly: true,
-                            fieldLabel: '<b>IVA</b>',
-                            align: 'right',
                             labelAlign: 'top'
                             //renderer: function(valor){return Ext.util.Format.number(parseInt(iva),"0.000")} 
                         },{xtype: 'splitter'},{
                             xtype: 'textfield',
                             fieldCls: 'required',
-                            width: 300,
+                            width: 230,
                             name : 'total',
                             itemId: 'finaltotalId',
                             readOnly: true,
-                            align: 'right',
                             fieldLabel: '<b>TOTAL DOCUMENTO</b>',
                             labelAlign: 'top'
                         },{

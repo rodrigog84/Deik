@@ -1,25 +1,22 @@
+
 Ext.define('Infosys_web.model.Cotizacion', {
     extend: 'Ext.data.Model',
     fields: [
     	{name: 'id'},
-        {name: 'id_cliente'},
-        {name: 'id_vendedor'},
-        {name: 'rut'},
+        {name: 'id_producto'},
+        {name: 'id_descuento'},
         {name: 'nombre'},
-        {name: 'num_cotiza'},
-        {name: 'nombre_giro'},
-        {name: 'direccion'},
-    	{name: 'nombre_contacto'},
-    	{name: 'telefono_contacto'},
-    	{name: 'email_contacto'},
-    	{name: 'empresa'},
-    	{name: 'iva'},
-        {name: 'afecto'},
-        {name: 'descuento'},
+    	{name: 'codigo'},
+    	{name: 'precio_base'},
+        {name: 'total'},
         {name: 'neto'},
-    	{name: 'total'},
-        {name: 'fecha', type:'date',dateFormat:"Y-m-d"},
-        {name: 'observaciones'},
-        
+        {name: 'totaliva'},
+        {name: 'iva'},
+        {name: 'dcto'},
+    	{name: 'descripcion'},
+    	{name: 'requisitos'},
+    	{name: 'cantidad'},
+        {name: 'descuentoprct'},
+        {name: 'img'}
     ]
 });

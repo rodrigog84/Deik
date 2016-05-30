@@ -479,8 +479,8 @@ class Guias extends CI_Controller {
 		$fiva = $this->input->post('ivafactura');
 		$fafecto = $this->input->post('afectofactura');
 		$ftotal = $this->input->post('totalfacturas');
+		$descuento = $this->input->post('descuentofactuta');
 		$tipodocumento = 1;
-
 
 		$data3 = array(
 	         'correlativo' => $numfactura
@@ -498,8 +498,8 @@ class Guias extends CI_Controller {
 	        'sub_total' => $neto,
 	        'observacion' => $observacion,
 	        'id_observa' => $idobserva,
-	        'descuento' => ($neto - $fafecto),
-	        'neto' => $neto,
+	        'descuento' => $descuento,
+	        'neto' => $fafecto,
 	        'iva' => $fiva,
 	        'totalfactura' => $ftotal,
 	        'fecha_factura' => $fechafactura,
@@ -541,9 +541,6 @@ class Guias extends CI_Controller {
 		    $this->db->update('detalle_factura_cliente', $data4);
 
 		}
-
-
-
 
 		/******* CUENTAS CORRIENTES ****/
 

@@ -1027,9 +1027,7 @@ class Facturas extends CI_Controller {
 		$fecha2 = $row->fecha_factura;
 		list($anio2, $mes2, $dia2) = explode("-",$fecha2);
 
-
-		if ($row->forma == 0){
-		 
+		if ($row->forma == 0){		 
 		//items
 		$items = $this->db->get_where('detalle_factura_cliente', array('id_factura' => $row->id));
 		//print_r($items->result());exit;
@@ -1059,6 +1057,8 @@ class Facturas extends CI_Controller {
 	    $ivaTotal = 0;
 		$totalFactura = 0;
 		foreach($cabecera->result() as $reg){
+			$montoAfecto = $reg->sub_total;
+			$montoDescuento = $reg->descuento;
 			$montoNeto = $reg->neto;
 			$ivaTotal = $reg->iva;
 			$totalFactura = $reg->totalfactura;
@@ -1230,15 +1230,17 @@ font-family: Arial, Helvetica, sans-serif;
 
 		      <tr>
 		      <td  colspan="3" >
-		      	<table width="987px" border="0">
+		      	<table width="987px" border="1">
 		      	<tr >
 		      		<td rowspan="3" width="100px" height="60px">' . $ticket_text .'</td>
 		      		<td rowspan="3" width="420px" height="60px">' . valorEnLetras($totalFactura) . '</td>
 		      		<td rowspan="3" width="348px" height="60px">&nbsp;</td>
 		      		<td width="119px" height="20px">' . number_format($montoNeto, 0, ',', '.') . '</td>
+		      		<td width="119px" height="20px">' . number_format($montoDescuento, 0, ',', '.') . '</td>
+		      		<td width="119px" height="20px">' . number_format($montoAfecto, 0, ',', '.') . '</td>
 		      	</tr>		      	
 		      	<tr>
-			      	<td width="119px" height="20px">' . number_format($ivaTotal, 0, ',', '.') . '</td>
+			      	<td width="119px" height="20px">' . number_format($montoDescuento, 0, ',', '.') . '</td>
 		      	</tr>
 		      	<tr>
 			      	<td width="119px" height="20px">' . number_format($totalFactura, 0, ',', '.') . '</td>
@@ -1249,7 +1251,7 @@ font-family: Arial, Helvetica, sans-serif;
 		      </tr>
 		      <tr>
 		      	<td  colspan="3" >
-		      		<table width="987px" border="0">
+		      		<table width="987px" border="1">
 		      			<tr>
 		      				<td width="698px" height="40px">&nbsp;</td>
 		      				<td width="289px" height="40px">'. $nom_obs .'</td>
@@ -1335,6 +1337,8 @@ font-family: Arial, Helvetica, sans-serif;
 	    $ivaTotal = 0;
 		$totalFactura = 0;
 		foreach($cabecera->result() as $reg){
+			$montoAfecto = $reg->sub_total;
+			$montoDescuento = $reg->descuento;
 			$montoNeto = $reg->neto;
 			$ivaTotal = $reg->iva;
 			$totalFactura = $reg->totalfactura;
@@ -1565,19 +1569,20 @@ font-family: Arial, Helvetica, sans-serif;
 		      </td>
 
 		      </tr>
-
-
 		      <tr>
+		     <tr>
 		      <td  colspan="3" >
-		      	<table width="987px" border="0">
+		      	<table width="987px" border="1">
 		      	<tr >
 		      		<td rowspan="3" width="100px" height="60px">' . $ticket_text .'</td>
 		      		<td rowspan="3" width="420px" height="60px">' . valorEnLetras($totalFactura) . '</td>
 		      		<td rowspan="3" width="348px" height="60px">&nbsp;</td>
 		      		<td width="119px" height="20px">' . number_format($montoNeto, 0, ',', '.') . '</td>
+		      		<td width="119px" height="20px">' . number_format($montoDescuento, 0, ',', '.') . '</td>
+		      		<td width="119px" height="20px">' . number_format($montoAfecto, 0, ',', '.') . '</td>
 		      	</tr>		      	
 		      	<tr>
-			      	<td width="119px" height="20px">' . number_format($ivaTotal, 0, ',', '.') . '</td>
+			      	<td width="119px" height="20px">' . number_format($montoDescuento, 0, ',', '.') . '</td>
 		      	</tr>
 		      	<tr>
 			      	<td width="119px" height="20px">' . number_format($totalFactura, 0, ',', '.') . '</td>
