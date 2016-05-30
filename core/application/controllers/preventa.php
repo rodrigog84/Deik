@@ -460,7 +460,7 @@ class Preventa extends CI_Controller {
 		//==============================================================
 		//==============================================================
 
-		include(dirname(__FILE__)."/../libraries/MPDF54/mpdf.php");
+		include(dirname(__FILE__)."/../libraries/mpdf60/mpdf.php");
 
 		$mpdf= new mPDF(
 			'',    // mode - default ''
