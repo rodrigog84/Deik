@@ -114,6 +114,19 @@ Ext.define('Infosys_web.view.Pago_caja.Facturas', {
 
 
                                         },{
+                                            xtype: 'textfield',
+                                            fieldCls: 'required',
+                                            maxHeight: 25,
+                                            width: 250,
+                                            labelWidth: 150,
+                                            allowBlank: false,
+                                            name: 'id_factura',
+                                            itemId: 'facturaId',
+                                            fieldLabel: '<b>id DOCUMENTO</b>',
+                                            hidden: true
+
+
+                                        },{
                                             xtype: 'displayfield',
                                             width: 45
                                            

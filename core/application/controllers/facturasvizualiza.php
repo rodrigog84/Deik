@@ -34,9 +34,7 @@ class Facturasvizualiza extends CI_Controller {
 		$idobserva = $this->db->insert_id();
 		$resp['success'] = true;
 		$resp['idobserva'] = $idobserva;
-		echo json_encode($resp); 
-
-
+		echo json_encode($resp);
 	}
 
 	public function validaRut(){

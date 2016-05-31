@@ -580,6 +580,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
             success: function(response){
                 var resp = Ext.JSON.decode(response.responseText);
                 var idfactura= resp.idfactura;
+                view.down('#facturaId').setValue(idfactura);       
                 viewIngresa.close();
                 stPreventa.load();
                 window.open(preurl + 'facturas/exportPDF/?idfactura='+idfactura);
@@ -687,7 +688,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                             contado: contado,
                             cheques: cheques,
                             otros: otros,
-                            idrecauda: recauda
+                            idrecauda: recauda,
                         },
 
                         success: function(response){
@@ -1549,7 +1550,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                                 if (resp.success == true) {
                                     var cliente = resp.cliente;
                                     var correlanue = cliente.correlativo;
-                                    correlanue = ((correlanue)+1);
+                                    correlanue = (parseInt(correlanue)+1);
                                     var correlanue = correlanue;
                                     view.down("#numfacturaId").setValue(correlanue);                    
                                     

@@ -414,10 +414,14 @@ class Recaudacion extends CI_Controller {
 				}
 
 
-			} // end foreach			
-
-
+			} // end foreach		
+			
 		}
+
+	}
+
+
+	
 		## HASTA
 
 		/*****************************************/
@@ -425,6 +429,8 @@ class Recaudacion extends CI_Controller {
 				
         $resp['success'] = true;
         $resp['idrecauda'] = $recauda;
+		$resp['documento'] = $tipodocumento;
+        
         
 		
         $this->Bitacora->logger("I", 'recaudacion', $numcomp);
