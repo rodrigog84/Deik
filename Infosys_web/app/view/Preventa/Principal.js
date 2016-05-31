@@ -138,23 +138,40 @@ Ext.define('Infosys_web.view.Preventa.Principal' ,{
                 action:'exportarexcelpreventa'
             },'->',{
                 xtype: 'combo',
+                align: 'center',
+                width: 260,
+                labelWidth: 85,
+                maxHeight: 25,
+                matchFieldWidth: false,
+                listConfig: {
+                    width: 175
+                },
+                itemId: 'tipoDocumentoId',
+                fieldLabel: '<b>DOCUMENTO</b>',
+                fieldCls: 'required',
+                store: 'Tipo_documento.Selector',
+                valueField: 'id',
+                displayField: 'nombre'
+            },{
+                xtype: 'combo',
                 itemId: 'tipoSeleccionId',
                 fieldLabel: '',
+                width: 100,
                 forceSelection : true,
                 editable : false,
                 valueField : 'id',
                 displayField : 'nombre',
                 emptyText : "Seleccione",
-                store : 'clientes.Selector'
+                store : 'facturas.Selector2'
             },{
-                width: 250,
+                width: 200,
                 xtype: 'textfield',
                 itemId: 'nombreId',
                 fieldLabel: ''
-            },{
+            },'-',{
                 xtype: 'button',
                 iconCls: 'icon-search',
-                action: '',
+                action: 'buscarpreventa',
                 text : 'Buscar'
             },{
                 xtype: 'button',

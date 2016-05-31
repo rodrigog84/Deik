@@ -864,49 +864,142 @@ class Preventa extends CI_Controller {
 	}
 
 	public function getAll(){
+		
 		$resp = array();
 
         $start = $this->input->post('start');
         $limit = $this->input->post('limit');
-
-
-        //filtro por nombre
-        $nombre = $this->input->get('nombre');
+        $opcion = $this->input->post('opcion');
+        $nombres = $this->input->post('nombre');
+        $tipo = $this->input->post('documento');
         $estado = "";
+
+        if (!$tipo){
+	        $tipo = 1;
+	    };
 
 		$countAll = $this->db->count_all_results("preventa");
 
-		if($nombre){
+		if($opcion == "Rut"){
 
-			$query = $this->db->query('SELECT acc.*, c.nombres as nom_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, v.id as id_vendedor, c.direccion as direccion,
-			c.id_pago as id_pago, suc.direccion as direccion_sucursal, ciu.nombre as ciudad, com.nombre as comuna, cor.nombre as nom_documento, cod.nombre as nom_giro FROM preventa acc
-			left join correlativos cor on (acc.id_tip_docu = cor.id)
+			$data = array();		
+			$query = $this->db->query('SELECT acc.*, c.nombres as nom_cliente, c.rut as rut_cliente, co.nombre as nom_documento, v.nombre as nom_vendedor, co.id as id_tip_docu	FROM preventa acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			left join clientes_sucursales suc on (acc.id_sucursal = suc.id)
-			left join comuna com on (suc.id_comuna = com.id)
-			left join ciudad ciu on (suc.id_ciudad = ciu.id)
-			left join cod_activ_econ cod on (c.id_giro = cod.id)
-			WHERE c.nombre like "%'.$nombre.'%"
-			limit '.$start.', '.$limit.'');
-		}else{
-			$query = $this->db->query('SELECT acc.*, c.nombres as nom_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, v.id as id_vendedor, c.direccion as direccion,
-			c.id_pago as id_pago, suc.direccion as direccion_sucursal, ciu.nombre as ciudad, com.nombre as comuna, cor.nombre as nom_documento, cod.nombre as nom_giro FROM preventa acc
-			left join correlativos cor on (acc.id_tip_docu = cor.id)
-			left join clientes c on (acc.id_cliente = c.id)
-			left join vendedores v on (acc.id_vendedor = v.id)
-			left join clientes_sucursales suc on (acc.id_sucursal = suc.id)
-			left join comuna com on (suc.id_comuna = com.id)
-			left join ciudad ciu on (suc.id_ciudad = ciu.id)
-			left join cod_activ_econ cod on (c.id_giro = cod.id)
-			WHERE acc.estado = "'.$estado.'"
-			order by acc.id desc			
-			limit '.$start.', '.$limit.' ' 
+			left join correlativos co on (acc.id_tip_docu = co.id)
+			WHERE acc.id_tip_docu in ('.$tipo.') and c.rut = "'.$nombres.'" and acc.estado = "'.$estado.'"
+			order by acc.id desc'		 
 
 		);
+
+		$total = 0;
+
+		  foreach ($query->result() as $row)
+			{
+				$total = $total +1;
+			
+			}
+
+			$countAll = $total;
+
+	    }else if($opcion == "Nombre"){
+
+	    	
+			$sql_nombre = "";
+	        $arrayNombre =  explode(" ",$nombres);
+
+	        foreach ($arrayNombre as $nombre) {
+	        	$sql_nombre .= "and c.nombres like '%".$nombre."%' ";
+	        }
+
+	        $data = array();	        	    	
+			$query = $this->db->query('SELECT acc.*, c.nombres as nom_cliente, c.rut as rut_cliente, co.nombre as nom_documento, v.nombre as nom_vendedor, co.id as id_tip_docu	FROM preventa acc
+			left join clientes c on (acc.id_cliente = c.id)
+			left join vendedores v on (acc.id_vendedor = v.id)
+			left join correlativos co on (acc.id_tip_docu = co.id)
+			WHERE acc.id_tip_docu in ( '.$tipo.') ' . $sql_nombre . ' and acc.estado = "'.$estado.'"
+			order by acc.id desc'
+						
+			);
+
+			$total = 0;
+
+		  foreach ($query->result() as $row)
+			{
+				$total = $total +1;
+			
+			}
+
+			$countAll = $total;
+	 
+		}else if($opcion == "Todos"){
+
+			
+			$data = array();
+			$query = $this->db->query('SELECT acc.*, c.nombres as nom_cliente, c.rut as rut_cliente, co.nombre as nom_documento, v.nombre as nom_vendedor, co.id as id_tip_docu	FROM preventa acc
+			left join clientes c on (acc.id_cliente = c.id)
+			left join vendedores v on (acc.id_vendedor = v.id)
+			left join correlativos co on (acc.id_tip_docu = co.id)
+			WHERE acc.id_tip_docu in ( '.$tipo.') and acc.estado = "'.$estado.'"
+			order by acc.id desc
+			limit '.$start.', '.$limit.''	
+			
+			);
+
+
+			$total = 0;
+
+		  foreach ($query->result() as $row)
+			{
+				$total = $total +1;
+			
+			}
+
+			$countAll = $total;
+	
+
+		}else if($opcion == "Numero"){
+
+			
+			$data = array();
+			$query = $this->db->query('SELECT acc.*, c.nombres as nom_cliente, c.rut as rut_cliente, co.nombre as nom_documento, v.nombre as nom_vendedor, co.id as id_tip_docu	FROM preventa acc
+			left join clientes c on (acc.id_cliente = c.id)
+			left join vendedores v on (acc.id_vendedor = v.id)
+			left join correlativos co on (acc.id_tip_docu = co.id)
+			WHERE acc.id_tip_docu in ('.$tipo.') and acc.num_ticket = "'.$nombres.'"
+			and acc.estado = "'.$estado.'"
+			order by acc.id desc'	
+			
+			);
+
+
+			$total = 0;
+
+		  foreach ($query->result() as $row)
+			{
+				$total = $total +1;
+			
+			}
+
+			$countAll = $total;
+	
+
+		}else{
+
+			
+		$data = array();
+		$query = $this->db->query('SELECT acc.*, c.nombres as nom_cliente, c.rut as rut_cliente, co.nombre as nom_documento, v.nombre as nom_vendedor, co.id as id_tip_docu	FROM preventa acc
+			left join clientes c on (acc.id_cliente = c.id)
+			left join vendedores v on (acc.id_vendedor = v.id)
+			left join correlativos co on (acc.id_tip_docu = co.id)
+			WHERE acc.id_tip_docu in ('.$tipo.') and acc.estado = "'.$estado.'" 
+			order by acc.id desc'	
+
+			);
+
+
 		}
 
-		$data = array();
 		foreach ($query->result() as $row)
 		{
 			$rutautoriza = $row->rut_cliente;

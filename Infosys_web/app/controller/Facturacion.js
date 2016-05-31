@@ -11,7 +11,8 @@ Ext.define('Infosys_web.controller.Facturacion', {
              'Tipo_documento',
              'Sucursales_clientes',
              'Tipo_documento.Selector',
-             'facturas.Selector'],
+             'facturas.Selector',
+             'facturas.Selector2'],
 
     models: ['Facturas.Item',
              'Factura',

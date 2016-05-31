@@ -180,7 +180,7 @@ Ext.define('Infosys_web.view.ventas.Principalfactura' ,{
                 valueField : 'id',
                 displayField : 'nombre',
                 emptyText : "Seleccione",
-                store : 'clientes.Selector'
+                store : 'facturas.Selector2'
             },{
                 width: 200,
                 xtype: 'textfield',

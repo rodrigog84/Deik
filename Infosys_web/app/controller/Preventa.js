@@ -14,7 +14,8 @@ Ext.define('Infosys_web.controller.Preventa', {
             'Sucursales_clientes',
             'Tabladescuento',
             'Tipo_documento.Selector',
-            'Preciosdescuentos'
+            'Preciosdescuentos',
+            'facturas.Selector2'
              ],
 
     models: ['Preventa',
@@ -109,11 +110,11 @@ Ext.define('Infosys_web.controller.Preventa', {
     	
         this.control({
 
-            'preventaprincipal button[action=buscarpreventa]': {
-                click: this.buscarpreventa
-            },
             'preventaprincipal button[action=exportarexcelpreventa]': {
                 click: this.exportarexcelpreventa
+            },
+            'preventaprincipal button[action=buscarpreventa]': {
+                click: this.buscarpreventa
             },
             'topmenus menuitem[action=mpreventa]': {
                 click: this.mpreventa
@@ -291,6 +292,19 @@ Ext.define('Infosys_web.controller.Preventa', {
                 click: this.validarutedita
             },
         });
+    },
+
+    buscarpreventa: function(){
+        
+        var view = this.getPreventaprincipal();
+        var st = this.getPreventaStore()
+        var tipo = view.down('#tipoDocumentoId').getValue();
+        var opcion = view.down('#tipoSeleccionId').getValue()
+        var nombre = view.down('#nombreId').getValue()
+        st.proxy.extraParams = {nombre : nombre,
+                                opcion : opcion,
+                                documento: tipo}
+        st.load();
     },
 
     validarutedita: function(){
@@ -2290,17 +2304,7 @@ Ext.define('Infosys_web.controller.Preventa', {
     },
 
 
-    buscarpreventa: function(){
-        
-        var view = this.getPreventaprincipal()
-        var st = this.getPreventaStore()
-        var nombre = view.down('#nombreId').getValue()
-        st.proxy.extraParams = {nombre : nombre}
-        st.load();
-
-
-    },
-
+    
     grabarpreventa: function(){
 
         var viewIngresa = this.getPreventaingresar();
