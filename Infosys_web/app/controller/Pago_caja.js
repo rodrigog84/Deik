@@ -337,7 +337,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                                 if (resp.success == true) {
                                     var cliente = resp.cliente;
                                     var correlanue = cliente.correlativo;
-                                    correlanue = ((correlanue)+1);
+                                    correlanue = (parseInt(correlanue)+1);
                                     var correlanue = correlanue;
                                     view.down("#numfacturaId").setValue(correlanue);                    
                                     
@@ -612,7 +612,11 @@ Ext.define('Infosys_web.controller.Pago_caja', {
         var fechatransac =  view.down("#fechafacturaId").getValue();
         var valida2 =  view.down("#valida2Id").getValue();
         var documento = view.down('#tipoDocumentoId');
-        var docum = view.down('#tipoDocumentoId').getValue;
+
+        var stCombo = documento.getStore();
+        var record = stCombo.findRecord('id', documento.getValue()).data;
+        var docum = (record.id);
+
         var numdoc = view.down('#numfacturaId').getValue();
         var idfactura = view.down('#facturaId').getValue();
         var comprobante = view.down('#comprobanteId').getValue();
@@ -676,7 +680,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                         params: {
                             num_comprobante : comprobante,
                             fecha : fechatransac,
-                            documento: documento,
+                            documento: docum,
                             num_documento : numdoc,
                             idfactura: idfactura,
                             id_cliente : idcliente,
@@ -1044,7 +1048,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
         var stCombo = tipo_caja.getStore();
         var record = stCombo.findRecord('id', tipo_caja.getValue()).data;
         correlanue = record.correlativo;
-        correlanue = ((correlanue)+1);
+        correlanue = (parseInt(correlanue)+1);
         view.down('#comprobanteId').setValue(correlanue);
         this.selectItemdocuemento();        
     },
@@ -1253,13 +1257,12 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                 if (resp.success == true) {
                     var cliente = resp.cliente;
                     var correlanue = cliente.correlativo;
-                    correlanue = ((correlanue)+1);
+                    correlanue = (parseInt(correlanue)+1);
                     var correlanue = correlanue;
                     view.down("#numchequeId").setValue(correlanue);
                     view.down('#valorvueltoId').setDisabled(true);
                     view.down("#valorcancelaId").setValue(totdocu);
-                    view.down("#numchequeId").focus();
-                    
+                    view.down("#numchequeId").focus();                   
                 }
 
             }            
@@ -1284,7 +1287,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                 if (resp.success == true) {
                     var cliente = resp.cliente;
                     var correlanue = cliente.correlativo;
-                    correlanue = ((correlanue)+1);
+                    correlanue = (parseInt(correlanue)+1);
                     var correlanue = correlanue;
                     view.down("#numchequeId").setValue(correlanue);
                     view.down('#valorvueltoId').setDisabled(true);
@@ -1352,7 +1355,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                 if (resp.success == true) {
                     var cliente = resp.cliente;
                     var correlanue = cliente.correlativo;
-                    correlanue = ((correlanue)+1);
+                    correlanue = (parseInt(correlanue)+1);
                     var correlanue = correlanue;
                     view.down('#numfacturaId').setValue(correlanue);
                     
@@ -1432,7 +1435,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
         var stCombo = caja.getStore();
         var idcaja = stCombo.findRecord('id', caja.getValue()).data;
         correlanue = idcaja.correlativo;
-        correlanue = ((correlanue)+1);
+        correlanue = (parseInt(correlanue)+1);
         var caj = idcaja.id;
         
        

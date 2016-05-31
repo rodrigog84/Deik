@@ -117,7 +117,7 @@ class Recaudacion extends CI_Controller {
 
 		$this->db->insert('recaudacion', $recaudacion); 
 		$recauda = $this->db->insert_id();
-
+        $ftotal = 0;
 		foreach($items as $v){			
 			$recaudacion_detalle = array(				
 		        'id_recaudacion' => $recauda,
@@ -133,6 +133,7 @@ class Recaudacion extends CI_Controller {
 			);
 			$numdoc = ($v->num_cheque);
 			$idforma = ($v->id_forma);
+			$ftotal = ($ftotal + $v->valor_pago);
 
 			$this->db->insert('recaudacion_detalle', $recaudacion_detalle);
 		}
@@ -279,20 +280,28 @@ class Recaudacion extends CI_Controller {
 			 $query = $this->db->query("SELECT cc.id as idcuentacontable FROM cuenta_contable cc WHERE cc.nombre = '$nombre_cuenta'");
 			 $row = $query->result();
 			 $row = $row[0];
-			 $idcuentacontable = $row->idcuentacontable;	
-
-			 if($tipodocumento == 2 && $formapago != 3 && $formapago != 5){ //NO ES CREDITO
-			 	 $idcliente = 1;
-				 $query = $this->db->query("SELECT id  FROM clientes
-				 							WHERE rut = '19' limit 1");		
-				 $datos_cliente	= $query->row();
-				 $idcliente = $datos_cliente->id;
-			 }
-
-				// VERIFICAR SI CLIENTE YA TIENE CUENTA CORRIENTE
-			$query = $this->db->query("SELECT co.idcliente, co.id as idcuentacorriente  FROM cuenta_corriente co
+			 $idcuentacontable = $row->idcuentacontable;
+			 
+			 $query = $this->db->query("SELECT co.idcliente, co.id as idcuentacorriente  FROM cuenta_corriente co
 			 							WHERE co.idcuentacontable = '$idcuentacontable' and co.idcliente = '" . $idcliente . "'");
-	    	$row = $query->result();
+	    	 $row = $query->result();	
+
+			// VERIFICAR SI CLIENTE YA TIENE CUENTA CORRIENTE
+			if ($query->num_rows()==0){	
+			$cuenta_corriente = array(
+		        'idcliente' => $idcliente,
+		        'idcuentacontable' => $idcuentacontable,
+		        'fechaactualiza' => $fechafactura
+			);
+			$this->db->insert('cuenta_corriente', $cuenta_corriente); 
+			$idcuentacorriente = $this->db->insert_id();
+
+
+			}else{
+				$row = $row[0];
+				$query = $this->db->query("UPDATE cuenta_corriente SET saldo = saldo + " . $ftotal . " where idcliente = " . $idcliente );
+				$idcuentacorriente =  $row->idcuentacorriente;
+			}
 
 			/*  (tabla cond_pago): 
 
@@ -323,8 +332,6 @@ class Recaudacion extends CI_Controller {
 				
 				if($formapago != 3 && $formapago != 5 ){ // SI ES CREDITO, NO SE GENERA CANCELACION
 					// OBTENEMOS CORRELATIVO CANCELACION
-
-
 					if(is_null($correlativo_cta_cte)){ // si son varias formas de pago, entonces sólo en la primera genera el movimiento
 						 $query = $this->db->query("SELECT correlativo FROM correlativos WHERE nombre = 'CANCELACIONES CTA CTE'");
 						 $row = $query->row();
@@ -355,7 +362,7 @@ class Recaudacion extends CI_Controller {
 					        'idctacte' => $idcuentacorriente,
 					        'idcuenta' => $idcuentacontable,
 					        'tipodocumento' => $tipodocumento,
-					        'numdocumento' => $numfactura,		
+					        'numdocumento' => $numdocum,		
 					        'glosa' => 'Cancelación de Documento por Caja',		        
 					        'fecvencimiento' => null,		        
 					        'debe' => 0,
@@ -396,8 +403,8 @@ class Recaudacion extends CI_Controller {
 				        'idcuenta' => $idcuentacontable,
 				        'idmovimiento' => $idMovimiento,
 				        'tipodocumento' => $tipodocumento,
-				        'numdocumento' => $numfactura,
-				        'fecvencimiento' => $fechafactura,
+				        'numdocumento' => $numdocum,
+				        'fecvencimiento' => $fechacomp,
 				        'glosa' => 'Cancelación de Documento por Caja',		        
 				        //'valor' => $ftotal_unformat,
 				        'valor' => $ri->valor_pago,
@@ -410,7 +417,7 @@ class Recaudacion extends CI_Controller {
 					// REBAJA SALDO
 					
 					$query = $this->db->query("UPDATE cuenta_corriente SET saldo = saldo - " . $ri->valor_pago . " where id = " .  $idcuentacorriente );
-					$query = $this->db->query("UPDATE detalle_cuenta_corriente SET saldo = saldo - " . $ri->valor_pago . " where id = " .  $idDetalleCtaCte );
+					$query = $this->db->query("UPDATE detalle_cuenta_corriente SET saldo = saldo - " . $ri->valor_pago . " where id = " .  $idMovimiento );
 				}
 
 
