@@ -11,13 +11,7 @@
     color: rgb(0, 102, 255);
 }
 
-.x-grid-dirty-cell {
- background: none !important;
-}
-/*
-.x-panel-header-default {
-background-color: #C74823 !important;
-}*/
+
 .icon-menu {
     background-image: url(../images/16/1386474576_ui-menu-blue.png) !important;
 }
@@ -267,4 +261,12 @@ background-color: #C74823 !important;
 
 .icon-email_send {
     background-image: url(../images/mail_send.png) !important;
+}
+
+.icon-upload {
+    background-image: url(../images/upload.png) !important;
+}
+
+.icon-download {
+    background-image: url(../images/download-icon.png) !important;
 }

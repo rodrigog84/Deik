@@ -62,14 +62,14 @@ class Dte extends \sasco\LibreDTE\PDF
     ]; ///< Glosas de las formas de pago
 
     private $detalle_cols = [
-        'QtyItem' => ['title'=>'Cant.', 'align'=>'right', 'width'=>15],    
-        'CdgItem' => ['title'=>'Código', 'align'=>'left', 'width'=>20],
-        'NmbItem' => ['title'=>'Descripcion', 'align'=>'left', 'width'=>0],
-        'UnmdItem' => ['title'=>'Unidad', 'align'=>'left', 'width'=>22],
-        'PrcItem' => ['title'=>'P. unit.', 'align'=>'right', 'width'=>22],
+        'QtyItem' => ['title'=>'CANT.', 'align'=>'right', 'width'=>15],    
+        'CdgItem' => ['title'=>'CODIGO', 'align'=>'left', 'width'=>20],
+        'NmbItem' => ['title'=>'DESCRIPCION', 'align'=>'left', 'width'=>0],
+        'UnmdItem' => ['title'=>'UNIDAD', 'align'=>'left', 'width'=>22],
+        'PrcItem' => ['title'=>'VALOR', 'align'=>'right', 'width'=>22],
         'DescuentoMonto' => ['title'=>'Descuento', 'align'=>'right', 'width'=>22],
         'RecargoMonto' => ['title'=>'Recargo', 'align'=>'right', 'width'=>22],
-        'MontoItem' => ['title'=>'Total', 'align'=>'right', 'width'=>22],
+        'MontoItem' => ['title'=>'TOTAL', 'align'=>'right', 'width'=>22],
     ]; ///< Nombres de columnas detalle, alineación y ancho
 
     private $traslados = [
