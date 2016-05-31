@@ -44,6 +44,7 @@ class Genera_pagos extends CI_Controller {
 				
 	}
 
+	
 	public function grabar(){
 
 		$resp = array();
