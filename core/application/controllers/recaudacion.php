@@ -291,7 +291,7 @@ class Recaudacion extends CI_Controller {
 			$cuenta_corriente = array(
 		        'idcliente' => $idcliente,
 		        'idcuentacontable' => $idcuentacontable,
-		        'fechaactualiza' => $fechafactura
+		        'fechaactualiza' => date("Y-m-d H:i:s")
 			);
 			$this->db->insert('cuenta_corriente', $cuenta_corriente); 
 			$idcuentacorriente = $this->db->insert_id();
@@ -335,9 +335,7 @@ class Recaudacion extends CI_Controller {
 					if(is_null($correlativo_cta_cte)){ // si son varias formas de pago, entonces sólo en la primera genera el movimiento
 						 $query = $this->db->query("SELECT correlativo FROM correlativos WHERE nombre = 'CANCELACIONES CTA CTE'");
 						 $row = $query->row();
-						 $correlativo_cta_cte = $row->correlativo;	
-
-
+						 $correlativo_cta_cte = $row->correlativo;
 						// guarda movimiento cuenta corriente (comprobante de ingreso ??? )
 						$data = array(
 					      	'numcomprobante' => $correlativo_cta_cte,
@@ -348,8 +346,7 @@ class Recaudacion extends CI_Controller {
 						);
 
 						$this->db->insert('movimiento_cuenta_corriente', $data); 
-						$idMovimiento = $this->db->insert_id();		
-					
+						$idMovimiento = $this->db->insert_id();
 
 						// actualiza correlativo
 						$query = $this->db->query("UPDATE correlativos SET correlativo = correlativo + 1 where nombre = 'CANCELACIONES CTA CTE'");
@@ -371,8 +368,6 @@ class Recaudacion extends CI_Controller {
 
 						$this->db->insert('detalle_mov_cuenta_corriente', $data); 								
 					}
-		
-
 					// DETALLE MOVIMIENTO CUADRATURA
 					$docpago = $formapago == 2 ? $ri->num_cheque : 0;
 					if(!in_array($cuenta_cuadratura, $array_cuentas)){ 
@@ -386,7 +381,6 @@ class Recaudacion extends CI_Controller {
 					        'numdocumento' => null,		
 					        'glosa' => 'Cancelación de Documento por Caja',		        
 					        'fecvencimiento' => null,		        
-					        //'debe' => $ftotal_unformat,
 					        'debe' => $ri->valor_pago,
 					        'haber' => 0
 						);			
@@ -406,7 +400,6 @@ class Recaudacion extends CI_Controller {
 				        'numdocumento' => $numdocum,
 				        'fecvencimiento' => $fechacomp,
 				        'glosa' => 'Cancelación de Documento por Caja',		        
-				        //'valor' => $ftotal_unformat,
 				        'valor' => $ri->valor_pago,
 				        'origen' => 'CTACTE',
 				        'fecha' => date("Y-m-d")
@@ -437,7 +430,7 @@ class Recaudacion extends CI_Controller {
         $resp['success'] = true;
         $resp['idrecauda'] = $recauda;
 		$resp['documento'] = $tipodocumento;
-        
+		$resp['ctacte'] = $idcuentacorriente;       
         
 		
         $this->Bitacora->logger("I", 'recaudacion', $numcomp);
