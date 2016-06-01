@@ -543,7 +543,14 @@ Ext.define('Infosys_web.controller.Facturacion', {
         var fecha2 = view.down('#fecha2Id').getSubmitValue();
         var opcion = view.down('#tipoId').getSubmitValue();
         var tipo = viewnew.down('#tipoDocumentoId').getValue();
-        console.log(tipo)
+        
+        if (!tipo) {        
+               Ext.Msg.alert('Alerta', 'Debe seleccionar Tipo de Documento');
+            return;          
+
+        };
+
+
         if (fecha > fecha2) {        
                Ext.Msg.alert('Alerta', 'Fechas Incorrectas');
             return;          
