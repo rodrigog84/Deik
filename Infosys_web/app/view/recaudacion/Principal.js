@@ -59,6 +59,12 @@ Ext.define('Infosys_web.view.recaudacion.Principal' ,{
         type: 'date',
         renderer:Ext.util.Format.dateRenderer('d/m/Y') 
     },{
+        header: "Id",
+        flex: 1,
+        align: 'right',
+        dataIndex: 'id_cliente',
+        hidden: true
+    },{
         header: "Rut",
         flex: 1,
         align: 'right',
@@ -102,7 +108,7 @@ Ext.define('Infosys_web.view.recaudacion.Principal' ,{
             items: [{
                 xtype: 'button',
                 iconCls: 'icon-add',
-                action: '',
+                action: 'Editapago',
                 text : 'Editar'
             },{
                 xtype: 'button',

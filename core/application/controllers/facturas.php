@@ -227,7 +227,28 @@ class Facturas extends CI_Controller {
 			$countAll = $total;
 	
 
-		}else{
+		}else 
+        if($opcion == "Numero"){
+		
+			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
+			left join clientes c on (acc.id_cliente = c.id)
+			left join vendedores v on (acc.id_vendedor = v.id)
+			WHERE acc.tipo_documento in ('.$tipo.') and acc.num_factura = "'.$nombres.'"
+			order by acc.id desc'		 
+
+		);
+
+		$total = 0;
+
+		  foreach ($query->result() as $row)
+			{
+				$total = $total +1;
+			
+			}
+
+			$countAll = $total;
+
+	    }else{
 
 			
 		$data = array();

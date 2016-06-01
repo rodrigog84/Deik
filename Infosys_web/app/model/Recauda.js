@@ -4,8 +4,9 @@ Ext.define('Infosys_web.model.Recauda', {
     fields: [
     	{name: 'id'},
     	{name: 'num_ticket'},
-        {name: 'id_ticket'},        
-    	{name: 'fecha', type:'date',dateFormat:"Y-m-d"},
+        {name: 'id_ticket'},
+        {name: 'id_factura'},
+        {name: 'fecha', type:'date',dateFormat:"Y-m-d"},
     	{name: 'id_cliente'},
         {name: 'id_caja'},
         {name: 'nom_caja'},

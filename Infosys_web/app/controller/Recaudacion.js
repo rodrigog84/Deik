@@ -10,7 +10,8 @@ Ext.define('Infosys_web.controller.Recaudacion', {
 
     views: ['recaudacion.Principal',
             'recaudacion.Exportar',
-            'recaudacion.ExportarPdf'],
+            'recaudacion.ExportarPdf',
+            'Pago_caja.Edita_pagos'],
 
     //referencias, es un alias interno para el controller
     //podemos dejar el alias de la vista en el ref y en el selector
@@ -30,7 +31,14 @@ Ext.define('Infosys_web.controller.Recaudacion', {
     },{
         ref: 'pdfexportarrecaudacion',
         selector: 'pdfexportarrecaudacion'
+    },{
+        ref: 'editapagos',
+        selector: 'editapagos'
     }
+
+
+
+
 
     ],
     //init es lo primero que se ejecuta en el controller
@@ -74,14 +82,140 @@ Ext.define('Infosys_web.controller.Recaudacion', {
             'pdfexportarrecaudacion button[action=exportarpdfrecaudacion]': {
                 click: this.exportarpdfrecaudacion
             },
-
-
-
-
-            
+            'recaudacionprincipal button[action=Editapago]': {
+                click: this.Editapago
+            }
            
         });
-    },    
+    },
+    
+    Editapago: function(){
+
+        var view = this.getRecaudacionprincipal();
+        var idcaja = view.down('#cajaId').getValue();
+        var nomcaja = view.down('#nomcajaId').getValue();
+        var comprobante = view.down('#comprobanteId').getValue();
+        var condventa = view.down('#comprobanteId').getValue();
+        var contado = view.down('#efectivonId').getValue();
+        var cheques = view.down('#totchequesnId').getValue();
+        var otros = view.down('#otrosmontosnId').getValue();
+        var idcajero = view.down('#cajeroId').getValue();
+        var nomcajero = view.down('#nomcajeroId').getValue();
+        var recauda = view.down('#recaudaId').getValue();
+       
+        if (view.getSelectionModel().hasSelection()) {
+            var row = view.getSelectionModel().getSelection()[0];
+            var ticket = (row.get('num_ticket'));
+            var idticket = (row.get('id'));
+            var preventa = (row.get('id_documento'));
+            var idcliente = (row.get('id_cliente'));
+            var idcaja = row.get('id_caja'));
+            var nomcaja = (row.get('nom_caja'));
+            var comprobante = (row.get('num_comp'));
+            var idcajero = (row.get('id_cajero'));
+            var nomcajero = (row.get('nom_cajero'));
+            var tipo_docu = (row.get('id_tip_docu'));
+            var id_vendedor = (row.get('id_vendedor'));
+            var id_pago = (row.get('id_pago'));
+            var nom_vendedor = (row.get('nom_vendedor'))
+            var neto = (row.get('neto'));
+            var desc = (row.get('desc'));
+            var total = (row.get('total'));
+            var afecto = (neto-desc);
+            var iva = (total-afecto);
+                        
+            Ext.Ajax.request({
+            url: preurl + 'clientes/getallc?idcliente='+idcliente,
+            params: {
+                id: 1,
+                idcliente: idcliente
+            },
+            success: function(response){
+                var resp = Ext.JSON.decode(response.responseText);
+                if (resp.success == true) {                     
+                    
+                    if(resp.cliente){
+
+                        var view = Ext.create('Infosys_web.view.Pago_caja.Edita_pagos').show();                   
+                        var nombre = tipo_docu;
+                        Ext.Ajax.request({
+
+                            url: preurl + 'correlativos/generafact?valida='+nombre,
+                            params: {
+                                id: 1
+                            },
+                            success: function(response){
+
+                                var resp = Ext.JSON.decode(response.responseText);
+
+                                if (resp.success == true) {
+                                    var cliente = resp.cliente;
+                                    var correlanue = cliente.correlativo;
+                                    correlanue = (parseInt(correlanue)+1);
+                                    var correlanue = correlanue;
+                                    view.down("#numfacturaId").setValue(correlanue);                    
+                                    
+                                }else{
+                                    Ext.Msg.alert('Correlativo YA Existe');
+                                    return;
+                                }
+
+                            }            
+                        });
+
+                        view.down("#ticketId").setValue(ticket);
+                        view.down("#idticketId").setValue(idticket);
+                        view.down("#idId").setValue(idticket);
+                        view.down("#netoId").setValue(neto);
+                        view.down("#descuentoId").setValue(desc);
+                        view.down("#tipoDocumentoId").setValue(tipo_docu);
+                        view.down("#docuementoId").setValue(preventa);                        
+                        view.down("#ivaId").setValue(iva);                       
+                        view.down("#afectoId").setValue(afecto);
+                        view.down("#totalId").setValue(total);
+                        view.down("#valorpagoId").setValue(total);
+                        view.down("#tipocondpagoId").setValue(id_pago);
+                        view.down("#recaudaId").setValue(recauda);
+                        view.down("#comprobanteId").setValue(comprobante);
+                        view.down("#netoaId").setValue(Ext.util.Format.number(neto, '0,000'));
+                        view.down("#descuentoaId").setValue(Ext.util.Format.number(desc, '0,000'));
+                        view.down("#ivaaId").setValue(Ext.util.Format.number(iva, '0,000'));
+                        view.down("#afectoaId").setValue(Ext.util.Format.number(afecto, '0,000'));
+                        view.down("#totalaId").setValue(Ext.util.Format.number(total, '0,000'));
+                        view.down("#finaltotalUnformat").setValue(total);                        
+                        view.down("#cajaId").setValue(idcaja);
+                        view.down("#nomcajaId").setValue(nomcaja);
+                        view.down("#cajeroId").setValue(idcajero);
+                        view.down("#nomcajeroId").setValue(nomcajero);
+                        view.down("#contadoId").setValue(contado);
+                        view.down("#chequesId").setValue(cheques);
+                        view.down("#otrosId").setValue(otros);
+
+                        var cliente = resp.cliente;
+                        view.down("#nombre_id").setValue(cliente.nombres);
+                        view.down("#id_cliente").setValue(cliente.id);
+                        view.down("#tipoCiudadId").setValue(cliente.nombre_ciudad);
+                        view.down("#tipoComunaId").setValue(cliente.nombre_comuna);
+                        view.down("#giroId").setValue(cliente.giro);
+                        view.down("#direccionId").setValue(cliente.direccion);
+                        view.down("#rutId").setValue(cliente.rut);
+                        view.down("#idVendedorId").setValue(id_vendedor);
+                        view.down("#VendedorId").setValue(nom_vendedor);
+                                                                   
+                    }
+                    
+                }
+            }
+
+        });       
+
+           
+                       
+        }else{
+            Ext.Msg.alert('Alerta', 'Selecciona un registro.');
+            return;
+        }
+    },  
 
     editarrecaudacion: function(){
 
