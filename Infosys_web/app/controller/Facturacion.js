@@ -177,6 +177,9 @@ Ext.define('Infosys_web.controller.Facturacion', {
             },
             'facturaseditar button[action=grabarfacturaeditar]': {
                 click: this.grabarfacturaeditar
+            },
+            'facturasingresar #codigoId': {
+                specialkey: this.buscarproductos
             }
 
         });
@@ -1168,10 +1171,51 @@ Ext.define('Infosys_web.controller.Facturacion', {
     },
 
     buscarproductos: function(){
+        
+        var viewIngresa = this.getFacturasingresar();
+        var codigo = viewIngresa.down('#codigoId').getValue()
+        if (!codigo){
+            var st = this.getProductosfStore();
+            Ext.create('Infosys_web.view.productos.BuscarProductos').show();
+            st.load();
+        }else{
 
-        var st = this.getProductosfStore();
-        Ext.create('Infosys_web.view.productos.BuscarProductos').show();
-        st.load();
+            Ext.Ajax.request({
+            url: preurl + 'productos/buscacodigo?codigo='+codigo,
+            params: {
+                id: 1
+            },
+            success: function(response){
+                var resp = Ext.JSON.decode(response.responseText);
+                var cero = "";
+                if (resp.success == true){                    
+                    if(resp.cliente){
+                        var cliente = resp.cliente;                        
+                        viewIngresa.down('#productoId').setValue(cliente.id);
+                        viewIngresa.down('#nombreproductoId').setValue(cliente.nombre);
+                        viewIngresa.down('#codigoId').setValue(cliente.codigo);
+                        viewIngresa.down('#precioId').setValue(cliente.p_venta);
+                        viewIngresa.down('#cantidadOriginalId').setValue(cliente.stock);
+                        viewIngresa.down("#precioId").focus();
+                                             
+                    }else{
+                        var viewedit = Ext.create('Infosys_web.view.ventas.IngresarClientes').show();                        
+                        viewedit.down("#rutId").setValue(rut); 
+                    }
+                    
+                }else{
+
+                      var view = Ext.create('Infosys_web.view.productos.Ingresar').show();
+                      view.down("#codigoId").setValue(codigo);
+                      
+                }
+
+              
+            }
+
+        });           
+
+        }
     },
 
     seleccionarproductos: function(){
@@ -1193,7 +1237,7 @@ Ext.define('Infosys_web.controller.Facturacion', {
         }
     },
 
-     buscarp: function(){
+    buscarp: function(){
         var view = this.getBuscarproductos();
         var st = this.getProductosfStore()
         var nombre = view.down('#nombreId').getValue()
