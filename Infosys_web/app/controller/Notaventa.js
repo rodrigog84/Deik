@@ -1074,7 +1074,7 @@ Ext.define('Infosys_web.controller.Notaventa', {
                     var view = Ext.create('Infosys_web.view.notaventa.notaventa').show();                   
                     var cliente = resp.cliente;
                     var correlanue = cliente.correlativo;
-                    correlanue = ((correlanue)+1);
+                    correlanue = (parseInt(correlanue)+1);
                     var correlanue = correlanue;
                     view.down("#ticketId").setValue(correlanue);
                 }else{

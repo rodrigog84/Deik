@@ -350,7 +350,7 @@ Ext.define('Infosys_web.controller.Precios', {
                     var view = Ext.create('Infosys_web.view.precios.Ingreso').show();                   
                     var cliente = resp.cliente;
                     var correlanue = cliente.correlativo;
-                    correlanue = ((correlanue)+1);
+                    correlanue = (parseInt(correlanue)+1);
                     var correlanue = correlanue;
                     view.down("#numeroId").setValue(correlanue);
                 }else{
@@ -383,7 +383,7 @@ Ext.define('Infosys_web.controller.Precios', {
                     var view = Ext.create('Infosys_web.view.precios.Subir').show();                   
                     var cliente = resp.cliente;
                     var correlanue = cliente.correlativo;
-                    correlanue = ((correlanue)+1);
+                    correlanue = (parseInt(correlanue)+1);
                     var correlanue = correlanue;
                     view.down("#numeroId").setValue(correlanue);
                 }else{

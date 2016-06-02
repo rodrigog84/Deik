@@ -550,7 +550,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
                     var correlanue = cliente.correlativo;
                     var descripcion = cliente.nombre;
                     var id = cliente.id;
-                    correlanue = ((correlanue)+1);
+                    correlanue = (parseInt(correlanue)+1);
                     var correlanue = correlanue;
                     var view = Ext.create('Infosys_web.view.notacredito.Notacreditoglosa').show();
                     view.down('#numfacturaId').setValue(correlanue);
@@ -1297,7 +1297,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
                     var correlanue = cliente.correlativo;
                     var descripcion = cliente.nombre;
                     var id = cliente.id;
-                    correlanue = ((correlanue)+1);
+                    correlanue = (parseInt(correlanue)+1);
                     var correlanue = correlanue;
                     var view = Ext.create('Infosys_web.view.notacredito.Notacredito').show();
                     view.down('#numfacturaId').setValue(correlanue);

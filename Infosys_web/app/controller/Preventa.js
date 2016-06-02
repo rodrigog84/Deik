@@ -2399,7 +2399,7 @@ Ext.define('Infosys_web.controller.Preventa', {
                     var view = Ext.create('Infosys_web.view.Preventa.Preventa').show();                   
                     var cliente = resp.cliente;
                     var correlanue = cliente.correlativo;
-                    correlanue = ((correlanue)+1);
+                    correlanue = (parseInt(correlanue)+1);
                     var correlanue = correlanue;
                     view.down("#ticketId").setValue(correlanue);
                     view.down("#tipoDocumento2Id").setValue(tipo);
