@@ -14,6 +14,12 @@ Ext.define('Infosys_web.view.recaudacion.Principal' ,{
 
     },
     columns: [{
+        header: "Id",
+        flex: 1,
+        align: 'right',
+        dataIndex: 'id',
+        hidden: true               
+    },{
         header: "Id_caja",
         flex: 1,
         align: 'right',

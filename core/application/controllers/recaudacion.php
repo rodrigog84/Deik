@@ -739,6 +739,58 @@ $body_header = '<tr>
         echo json_encode($resp);	
 	}
 
+	public function editarecauda(){
+
+		$resp = array();
+
+        $nombre = $this->input->get('ticketid');
+        
+		if($nombre){
+			$query = $this->db->query('SELECT acc.*, c.nombres as nom_cliente, c.rut as rut_cliente, c.rut as rut, v.nombre as nom_vendedor, v.id as id_vendedor, p.num_ticket as num_ticket, p.total as total, n.nombre as nom_caja, e.nombre as nom_cajero FROM recaudacion acc
+			left join preventa p on (acc.id_ticket = p.id)
+			left join clientes c on (acc.id_cliente = c.id)
+			left join cajas n on (acc.id_caja = n.id)
+			left join cajeros e on (acc.id_cajero = e.id)
+			WHERE id like "'.$nombre.'"');
+		}
+		
+		$data = array();
+		foreach ($query->result() as $row)
+		{
+			$rutautoriza = $row->rut_cliente;
+		   	if (strlen($rutautoriza) == 8){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 3);
+		      $ruta3 = substr($rutautoriza, -7, 3);
+		      $ruta4 = substr($rutautoriza, -8, 1);
+		      $row->rut_cliente = ($ruta4.".".$ruta3.".".$ruta2."-".$ruta1);
+		    };
+		    if (strlen($rutautoriza) == 9){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 3);
+		      $ruta3 = substr($rutautoriza, -7, 3);
+		      $ruta4 = substr($rutautoriza, -9, 2);
+		      $row->rut_cliente = ($ruta4.".".$ruta3.".".$ruta2."-".$ruta1);
+		   
+		    };
+
+		     if (strlen($rutautoriza) == 2){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 1);
+		      $row->rut_cliente = ($ruta2."-".$ruta1);
+		     
+		    };
+
+		    
+			$data[] = $row;
+		}
+        $resp['success'] = true;
+        $resp['total'] = $countAll;
+        $resp['cliente'] = $data;
+
+        echo json_encode($resp);	
+	}
+
 	public function exportarPdflibroRecauda()
          {
             

@@ -92,77 +92,20 @@ Ext.define('Infosys_web.controller.Recaudacion', {
     Editapago: function(){
 
         var view = this.getRecaudacionprincipal();
-        var idcaja = view.down('#cajaId').getValue();
-        var nomcaja = view.down('#nomcajaId').getValue();
-        var comprobante = view.down('#comprobanteId').getValue();
-        var condventa = view.down('#comprobanteId').getValue();
-        var contado = view.down('#efectivonId').getValue();
-        var cheques = view.down('#totchequesnId').getValue();
-        var otros = view.down('#otrosmontosnId').getValue();
-        var idcajero = view.down('#cajeroId').getValue();
-        var nomcajero = view.down('#nomcajeroId').getValue();
-        var recauda = view.down('#recaudaId').getValue();
-       
         if (view.getSelectionModel().hasSelection()) {
             var row = view.getSelectionModel().getSelection()[0];
-            var ticket = (row.get('num_ticket'));
-            var idticket = (row.get('id'));
-            var preventa = (row.get('id_documento'));
-            var idcliente = (row.get('id_cliente'));
-            var idcaja = row.get('id_caja'));
-            var nomcaja = (row.get('nom_caja'));
-            var comprobante = (row.get('num_comp'));
-            var idcajero = (row.get('id_cajero'));
-            var nomcajero = (row.get('nom_cajero'));
-            var tipo_docu = (row.get('id_tip_docu'));
-            var id_vendedor = (row.get('id_vendedor'));
-            var id_pago = (row.get('id_pago'));
-            var nom_vendedor = (row.get('nom_vendedor'))
-            var neto = (row.get('neto'));
-            var desc = (row.get('desc'));
-            var total = (row.get('total'));
-            var afecto = (neto-desc);
-            var iva = (total-afecto);
-                        
+            var idrecauda = (row.get('id'));                        
             Ext.Ajax.request({
-            url: preurl + 'clientes/getallc?idcliente='+idcliente,
+            url: preurl + 'recaudacion/editarecauda?idrecauda='+idrecauda,
             params: {
-                id: 1,
-                idcliente: idcliente
+                id: 1
             },
             success: function(response){
                 var resp = Ext.JSON.decode(response.responseText);
-                if (resp.success == true) {                     
-                    
+                if (resp.success == true) {
                     if(resp.cliente){
-
                         var view = Ext.create('Infosys_web.view.Pago_caja.Edita_pagos').show();                   
                         var nombre = tipo_docu;
-                        Ext.Ajax.request({
-
-                            url: preurl + 'correlativos/generafact?valida='+nombre,
-                            params: {
-                                id: 1
-                            },
-                            success: function(response){
-
-                                var resp = Ext.JSON.decode(response.responseText);
-
-                                if (resp.success == true) {
-                                    var cliente = resp.cliente;
-                                    var correlanue = cliente.correlativo;
-                                    correlanue = (parseInt(correlanue)+1);
-                                    var correlanue = correlanue;
-                                    view.down("#numfacturaId").setValue(correlanue);                    
-                                    
-                                }else{
-                                    Ext.Msg.alert('Correlativo YA Existe');
-                                    return;
-                                }
-
-                            }            
-                        });
-
                         view.down("#ticketId").setValue(ticket);
                         view.down("#idticketId").setValue(idticket);
                         view.down("#idId").setValue(idticket);
@@ -190,7 +133,6 @@ Ext.define('Infosys_web.controller.Recaudacion', {
                         view.down("#contadoId").setValue(contado);
                         view.down("#chequesId").setValue(cheques);
                         view.down("#otrosId").setValue(otros);
-
                         var cliente = resp.cliente;
                         view.down("#nombre_id").setValue(cliente.nombres);
                         view.down("#id_cliente").setValue(cliente.id);
@@ -230,8 +172,6 @@ Ext.define('Infosys_web.controller.Recaudacion', {
             var st = this.getExistencias2Store()
             st.proxy.extraParams = {nombre : nombre}
             st.load();
-           
-                   
         }else{
             Ext.Msg.alert('Alerta', 'Selecciona un registro.');
             return;
