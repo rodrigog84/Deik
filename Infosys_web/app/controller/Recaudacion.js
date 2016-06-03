@@ -109,7 +109,7 @@ Ext.define('Infosys_web.controller.Recaudacion', {
             var idticket = (row.get('id'));
             var preventa = (row.get('id_documento'));
             var idcliente = (row.get('id_cliente'));
-            var idcaja = row.get('id_caja'));
+            var idcaja = (row.get('id_caja'));
             var nomcaja = (row.get('nom_caja'));
             var comprobante = (row.get('num_comp'));
             var idcajero = (row.get('id_cajero'));
