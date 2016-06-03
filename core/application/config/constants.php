@@ -35,6 +35,9 @@ define('FOPEN_WRITE_CREATE',					'ab');
 define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
+define('SALT',  '#*1nf0-*%');
+define('PATH_APP',  'http://localhost/Ferrital_web/core/application/');
+define('NOMBRE_EMPRESA',		'DEIK');
 
 
 /* End of file constants.php */
