@@ -137,6 +137,145 @@ class Facturaglosa extends CI_Controller {
 
 		/*****************************************/
 
+		if($tipodocumento == 101 || $tipodocumento == 103){  // SI ES FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONICA
+
+			$tipo_caf = $tipodocumento == 101 ? 33 : 34;
+
+			header('Content-type: text/plain; charset=ISO-8859-1');
+			$this->load->model('facturaelectronica');
+			$config = $this->facturaelectronica->genera_config();
+			include $this->facturaelectronica->ruta_libredte();
+
+
+			$empresa = $this->facturaelectronica->get_empresa();
+			$datos_empresa_factura = $this->facturaelectronica->get_empresa_factura($idfactura);
+
+			$detalle_factura = $this->facturaelectronica->get_detalle_factura_glosa($idfactura);
+
+			$lista_detalle = array();
+			$i = 0;
+			foreach ($detalle_factura as $detalle) {
+				$lista_detalle[$i]['NmbItem'] = $detalle->glosa;
+				$lista_detalle[$i]['QtyItem'] = 1;
+				//$lista_detalle[$i]['PrcItem'] = $detalle->precio;
+				//$lista_detalle[$i]['PrcItem'] = round((($detalle->precio*$detalle->cantidad)/1.19)/$detalle->cantidad,0);
+				//$total = $detalle->precio*$detalle->cantidad;
+				//$neto = round($total/1.19,2);
+
+				//$lista_detalle[$i]['PrcItem'] = round($neto/$detalle->cantidad,2);
+				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 ? floor($detalle->neto) : floor($detalle->total);
+
+				/*if($detalle->descuento != 0){
+					$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
+					$lista_detalle[$i]['DescuentoPct'] = $porc_descto;		
+					//$lista_detalle[$i]['PrcItem'] =- $lista_detalle[$i]['PrcItem']*$porc_descto;
+
+				}*/
+
+				$i++;
+			}
+
+
+			// datos
+			$factura = [
+			    'Encabezado' => [
+			        'IdDoc' => [
+			            'TipoDTE' => $tipo_caf,
+			            'Folio' => $numdocuemnto,
+			        ],
+			        'Emisor' => [
+			            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
+			            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES,
+			            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
+			            'Acteco' => $empresa->cod_actividad,
+			            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
+			            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
+			        ],
+			        'Receptor' => [
+			            'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
+			            'RznSocRecep' => substr($datos_empresa_factura->nombre_cliente,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+			            'GiroRecep' => substr($datos_empresa_factura->giro,0,40),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+			            'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+			            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
+			        ],
+			    ],
+				'Detalle' => $lista_detalle
+			];
+
+			//FchResol y NroResol deben cambiar con los datos reales de producción
+			$caratula = [
+			    //'RutEnvia' => '11222333-4', // se obtiene de la firma
+			    'RutReceptor' => '60803000-K',
+			    'FchResol' => $empresa->fec_resolucion,
+			    'NroResol' => $empresa->nro_resolucion
+			];
+
+			
+
+
+			//exit;
+			// Objetos de Firma y Folios
+			$Firma = new sasco\LibreDTE\FirmaElectronica($config['firma']); //lectura de certificado digital		
+
+			$caf = $this->facturaelectronica->get_content_caf_folio($numdocuemnto,$tipo_caf);
+			$Folios = new sasco\LibreDTE\Sii\Folios($caf->caf_content);
+
+			$DTE = new \sasco\LibreDTE\Sii\Dte($factura);
+
+			$DTE->timbrar($Folios);
+			$DTE->firmar($Firma);		
+
+
+			// generar sobre con el envío del DTE y enviar al SII
+			$EnvioDTE = new \sasco\LibreDTE\Sii\EnvioDte();
+			$EnvioDTE->agregar($DTE);
+			$EnvioDTE->setFirma($Firma);
+			$EnvioDTE->setCaratula($caratula);
+			$xml_dte = $EnvioDTE->generar();
+
+			if ($EnvioDTE->schemaValidate()) { // REVISAR PORQUÉ SE CAE CON ESTA VALIDACION
+				
+				$track_id = 0;
+			    $xml_dte = $EnvioDTE->generar();
+			    //$track_id = $EnvioDTE->enviar();
+			    $tipo_envio = $this->facturaelectronica->busca_parametro_fe('envio_sii'); //ver si está configurado para envío manual o automático
+
+
+				$nombre_dte = $numdocuemnto."_". $tipo_caf ."_".$idfactura."_".date("His").".xml"; // nombre archivo
+				$path = date('Ym').'/'; // ruta guardado
+				if(!file_exists('./facturacion_electronica/dte/'.$path)){
+					mkdir('./facturacion_electronica/dte/'.$path,0777,true);
+				}				
+				$f_archivo = fopen('./facturacion_electronica/dte/'.$path.$nombre_dte,'w');
+				fwrite($f_archivo,$xml_dte);
+				fclose($f_archivo);
+
+			    if($tipo_envio == 'automatico'){
+				    $track_id = $EnvioDTE->enviar();
+			    }
+
+
+
+			    $this->db->where('f.folio', $numdocuemnto);
+			    $this->db->where('c.tipo_caf', $tipo_caf);
+				$this->db->update('folios_caf f inner join caf c on f.idcaf = c.id',array('dte' => $xml_dte,
+																						  'estado' => 'O',
+																						  'idfactura' => $idfactura,
+																						  'path_dte' => $path,
+																						  'archivo_dte' => $nombre_dte,
+																						  'trackid' => $track_id
+																						  )); 
+				if($track_id != 0 && $datos_empresa_factura->e_mail != ''){ //existe track id, se envía correo
+					$this->facturaelectronica->envio_mail_dte($idfactura);
+				}
+
+
+
+
+			}
+
+		}
+
 
         $resp['success'] = true;
 		$resp['idfactura'] = $idfactura;
@@ -285,6 +424,20 @@ class Facturaglosa extends CI_Controller {
 		$idfactura = $this->input->get('idfactura');
 		$numero = $this->input->get('numfactura');
 
+		$cabecera = $this->db->get_where('factura_clientes', array('id' => $idfactura));	
+		$tipodocumento = 1;
+		foreach($cabecera->result() as $v){  
+				$tipodocumento = $v->tipo_documento; 
+		}
+
+		if($tipodocumento ==  101 || $tipodocumento == 103){ // FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONCA
+				//$es_cedible = is_null($cedible) ? false : true;
+				$this->load->model('facturaelectronica');
+				$this->facturaelectronica->exportFePDF($idfactura,'id');		
+				exit;
+
+		}
+		
         if ($idfactura){
 		$query = $this->db->query('SELECT acc.*, c.direccion as direccion, e.nombre as giro, c.nombres as nombre_cliente, c.rut as rut_cliente, m.nombre as nombre_comuna, s.nombre as nombre_ciudad, v.nombre as nom_vendedor FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
