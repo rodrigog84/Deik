@@ -94,9 +94,7 @@ Ext.define('Infosys_web.controller.Recaudacion', {
         var view = this.getRecaudacionprincipal();
         if (view.getSelectionModel().hasSelection()) {
             var row = view.getSelectionModel().getSelection()[0];
-<<<<<<< HEAD
             var idrecauda = (row.get('id'));                        
-=======
             var ticket = (row.get('num_ticket'));
             var idticket = (row.get('id'));
             var preventa = (row.get('id_documento'));
@@ -116,7 +114,6 @@ Ext.define('Infosys_web.controller.Recaudacion', {
             var afecto = (neto-desc);
             var iva = (total-afecto);
                         
->>>>>>> origin/master
             Ext.Ajax.request({
             url: preurl + 'recaudacion/editarecauda?idrecauda='+idrecauda,
             params: {
