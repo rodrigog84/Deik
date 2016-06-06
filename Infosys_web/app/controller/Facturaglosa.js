@@ -171,6 +171,44 @@ Ext.define('Infosys_web.controller.Facturaglosa', {
         var cero1 = "";
         
         var nombre = (record.id);    
+        habilita = false;
+        if(nombre == 101 || nombre == 103){ // FACTURA ELECTRONICA
+
+            // se valida que exista certificado
+            response_certificado = Ext.Ajax.request({
+            async: false,
+            url: preurl + 'facturas/existe_certificado/'});
+
+            var obj_certificado = Ext.decode(response_certificado.responseText);
+
+            if(obj_certificado.existe == true){
+
+
+                //buscar folio factura electronica
+                // se buscan folios pendientes, o ocupados hace más de 4 horas
+
+                response_folio = Ext.Ajax.request({
+                async: false,
+                url: preurl + 'facturas/folio_documento_electronico/'+nombre});  
+                var obj_folio = Ext.decode(response_folio.responseText);
+                nuevo_folio = obj_folio.folio;
+                if(nuevo_folio != 0){
+                    view.down('#numfacturaId').setValue(nuevo_folio);  
+                    habilita = true;
+                }else{
+                    Ext.Msg.alert('Atención','No existen folios disponibles');
+                    view.down('#numfacturaId').setValue('');  
+
+                    //return
+                }
+
+            }else{
+                    Ext.Msg.alert('Atención','No se ha cargado certificado');
+                    view.down('#numfacturaId').setValue('');  
+            }
+
+
+        }else{        
          Ext.Ajax.request({
 
             url: preurl + 'correlativos/generafact?valida='+nombre,
@@ -194,6 +232,7 @@ Ext.define('Infosys_web.controller.Facturaglosa', {
 
             }            
         });
+        }
         var grid  = view.down('#itemsgridId');
         view.down('#finaltotalId').setValue(Ext.util.Format.number(cero, '0,000'));
         view.down('#finaltotalpostId').setValue(Ext.util.Format.number(cero1, '0'));
@@ -202,7 +241,8 @@ Ext.define('Infosys_web.controller.Facturaglosa', {
         view.down('#finalafectoId').setValue(Ext.util.Format.number(cero1, '0'));        
 
         
-        var bolDisabled = tipo_documento.getValue() == 2 ? true : false; // campos se habilitan sólo en factura
+        //var bolDisabled = tipo_documento.getValue() == 2 ? true : false; // campos se habilitan sólo en factura
+        var bolDisabled = tipo_documento.getValue() == 1 || tipo_documento.getValue() == 19 || ((tipo_documento.getValue() == 101 || tipo_documento.getValue() == 103) && habilita) ? false : true; // campos se habilitan sólo en factura o factura electronica
 
         if(bolDisabled == true){  // limpiar campos
            view.down('#rutId').setValue('19');
@@ -229,7 +269,7 @@ Ext.define('Infosys_web.controller.Facturaglosa', {
 
         var view = this.getFacturaglosaingresar();
         var tipo_documento = view.down('#tipoDocumentoId').getValue();
-        if (tipo_documento == 19 ){
+        if (tipo_documento == 19 || tipo_documento == 103 ){
             var iva = 0;
             var neto = view.down('#netoId').getValue();
             view.down('#totalId').setValue(neto);
@@ -311,7 +351,7 @@ Ext.define('Infosys_web.controller.Facturaglosa', {
             return false;
         };
         
-        if (tipo_documento == 19){
+        if (tipo_documento == 19  || tipo_documento == 103){
         
         if(neto==0 ){  // se validan los datos sólo si es factura
             Ext.Msg.alert('Alerta', 'Debe Ingresar Valores.');
@@ -703,7 +743,7 @@ Ext.define('Infosys_web.controller.Facturaglosa', {
 
     mfacturaglosa: function(){
 
-        var nombre = 1;    
+        /*var nombre = 1;    
         Ext.Ajax.request({
 
             url: preurl + 'correlativos/generancred?valida='+nombre,
@@ -720,7 +760,7 @@ Ext.define('Infosys_web.controller.Facturaglosa', {
                     var id = cliente.id;
                     correlanue = (parseInt(correlanue)+1);
                     var correlanue = correlanue;
-                    var view = Ext.create('Infosys_web.view.facturaglosa.Facturaglosa').show();
+                    var view = Ext.create('Ferrital_web.view.facturaglosa.Facturaglosa').show();
                     view.down('#numfacturaId').setValue(correlanue);
                     view.down('#tipoDocumentoId').setValue(id);
                                        
@@ -733,6 +773,8 @@ Ext.define('Infosys_web.controller.Facturaglosa', {
 
             }            
         });
+*/
+        var view = Ext.create('Infosys_web.view.facturaglosa.Facturaglosa').show();
     },
 
     buscarvendedor: function(){

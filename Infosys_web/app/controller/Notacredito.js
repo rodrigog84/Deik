@@ -13,7 +13,8 @@ Ext.define('Infosys_web.controller.Notacredito', {
              'Productos',
              'Tipo_documento',
              'Sucursales_clientes',
-             'Tipo_documento.Selector'],
+             'Tipo_documento.Selector',
+             'Tipo_documento.Selectornc'],
 
     models: ['Notacredito.Item',
              'Notacredito',
@@ -110,6 +111,15 @@ Ext.define('Infosys_web.controller.Notacredito', {
             'notacreditoingresar button[action=buscarsucursalnotacredito]': {
                 click: this.buscarsucursalnotacredito
             },
+            'notacreditoingresar #tipodocumentoId': {
+                select: this.selectItemdocuemento
+            },
+
+
+            'notacreditoglosa #tipodocumentoId': {
+                select: this.selectItemdocuementoglosa
+            },            
+
             'notacreditoingresar button[action=buscarvendedor]': {
                 click: this.buscarvendedor
             },
@@ -252,8 +262,14 @@ Ext.define('Infosys_web.controller.Notacredito', {
                 var idfactura= resp.idfactura;
                  viewIngresa.close();
                  stnotacredito.load();
+                 if(tipo_documento == 102){ // NOTA DE CREDITO ELECTRONICA
+                    window.open(preurl +'facturas/exportFePDF/' + idfactura);   
+                 }else{
+                    window.open(preurl + 'facturas/exportPDF/?idfactura='+idfactura);
+                    //window.open(preurl + 'notadebito/exportnotadebitoPDF/?idfactura='+idfactura);
+                 }                  
                  //window.open(preurl + 'notadebito/exportnotadebitoPDF/?idfactura='+idfactura);
-                 window.open(preurl + 'facturas/exportPDF/?idfactura='+idfactura);
+                 
             }
            
         });      
@@ -534,8 +550,8 @@ Ext.define('Infosys_web.controller.Notacredito', {
 
 
     mnotacreditoglosa: function(){
-
-        var nombre = 11;    
+        var view = Ext.create('Infosys_web.view.notacredito.Notacreditoglosa').show();
+        /*var nombre = 11;    
         Ext.Ajax.request({
 
             url: preurl + 'correlativos/generancred?valida='+nombre,
@@ -565,13 +581,187 @@ Ext.define('Infosys_web.controller.Notacredito', {
 
 
             }            
-        });
+        });*/
     },
 
     special: function(f,e){
         if (e.getKey() == e.ENTER) {
             this.buscarproductos()
         }
+    },
+
+
+    selectItemdocuemento: function() {
+        
+
+        var view =this.getNotacreditoingresar();
+        var tipo_documento = view.down('#tipodocumentoId');
+        var stCombo = tipo_documento.getStore();
+
+        var record = stCombo.findRecord('id', tipo_documento.getValue()).data;
+        //console.log(record);
+        var nombre = (record.id);    
+        if(nombre == 102){ // NOTA DE CREDITO ELECTRONICA
+
+            // se valida que exista certificado
+            response_certificado = Ext.Ajax.request({
+            async: false,
+            url: preurl + 'facturas/existe_certificado/'});
+
+            var obj_certificado = Ext.decode(response_certificado.responseText);
+
+            if(obj_certificado.existe == true){
+
+
+                //buscar folio factura electronica
+                // se buscan folios pendientes, o ocupados hace más de 4 horas
+
+                response_folio = Ext.Ajax.request({
+                async: false,
+                url: preurl + 'facturas/folio_documento_electronico/'+nombre});  
+                var obj_folio = Ext.decode(response_folio.responseText);
+                nuevo_folio = obj_folio.folio;
+                if(nuevo_folio != 0){
+                    view.down('#numfacturaId').setValue(nuevo_folio);  
+                    //habilita = true;
+                }else{
+                    Ext.Msg.alert('Atención','No existen folios disponibles');
+                    view.down('#numfacturaId').setValue('');  
+
+                    //return
+                }
+
+            }else{
+                    Ext.Msg.alert('Atención','No se ha cargado certificado');
+                    view.down('#numfacturaId').setValue('');  
+            }
+
+
+        }else{
+
+            Ext.Ajax.request({
+
+                url: preurl + 'correlativos/generancred?valida='+nombre,
+                params: {
+                    id: 1
+                },
+                success: function(response){
+                    var resp = Ext.JSON.decode(response.responseText);
+
+                    if (resp.success == true) {
+                        var cliente = resp.cliente;
+                        var correlanue = cliente.correlativo;
+                        //var descripcion = cliente.nombre;
+                        //var id = cliente.id;
+                        correlanue = (parseInt(correlanue)+1);
+                        var correlanue = correlanue;
+                        //var view = Ext.create('Infosys_web.view.notacredito.Notacredito').show();
+                        view.down('#numfacturaId').setValue(correlanue);
+                        //view.down('#nomdocumentoId').setValue(descripcion);
+                        //view.down('#tipodocumentoId').setValue(id);
+                        
+                    }else{
+                        Ext.Msg.alert('Correlativo YA Existe');
+                        return;
+                    }
+
+
+
+                }            
+            });            
+        }
+        var grid  = view.down('#itemsgridId');        
+        grid.getStore().removeAll();  
+        //var controller = this.getController('Productos');
+        this.recalcularFinal();
+
+    },
+
+
+    selectItemdocuementoglosa: function() {
+        
+
+        var view =this.getNotacreditoglosa();
+        var tipo_documento = view.down('#tipodocumentoId');
+        var stCombo = tipo_documento.getStore();
+
+        var record = stCombo.findRecord('id', tipo_documento.getValue()).data;
+        //console.log(record);
+        var nombre = (record.id);    
+        if(nombre == 102){ // NOTA DE CREDITO ELECTRONICA
+
+            // se valida que exista certificado
+            response_certificado = Ext.Ajax.request({
+            async: false,
+            url: preurl + 'facturas/existe_certificado/'});
+
+            var obj_certificado = Ext.decode(response_certificado.responseText);
+
+            if(obj_certificado.existe == true){
+
+
+                //buscar folio factura electronica
+                // se buscan folios pendientes, o ocupados hace más de 4 horas
+
+                response_folio = Ext.Ajax.request({
+                async: false,
+                url: preurl + 'facturas/folio_documento_electronico/'+nombre});  
+                var obj_folio = Ext.decode(response_folio.responseText);
+                nuevo_folio = obj_folio.folio;
+                if(nuevo_folio != 0){
+                    view.down('#numfacturaId').setValue(nuevo_folio);  
+                    //habilita = true;
+                }else{
+                    Ext.Msg.alert('Atención','No existen folios disponibles');
+                    view.down('#numfacturaId').setValue('');  
+
+                    //return
+                }
+
+            }else{
+                    Ext.Msg.alert('Atención','No se ha cargado certificado');
+                    view.down('#numfacturaId').setValue('');  
+            }
+
+
+        }else{
+
+            Ext.Ajax.request({
+
+                url: preurl + 'correlativos/generancred?valida='+nombre,
+                params: {
+                    id: 1
+                },
+                success: function(response){
+                    var resp = Ext.JSON.decode(response.responseText);
+
+                    if (resp.success == true) {
+                        var cliente = resp.cliente;
+                        var correlanue = cliente.correlativo;
+                        //var descripcion = cliente.nombre;
+                        //var id = cliente.id;
+                        correlanue = (parseInt(correlanue)+1);
+                        var correlanue = correlanue;
+                        //var view = Ext.create('Infosys_web.view.notacredito.Notacredito').show();
+                        view.down('#numfacturaId').setValue(correlanue);
+                        //view.down('#nomdocumentoId').setValue(descripcion);
+                        //view.down('#tipodocumentoId').setValue(id);
+                        
+                    }else{
+                        Ext.Msg.alert('Correlativo YA Existe');
+                        return;
+                    }
+
+
+
+                }            
+            });            
+        }
+        var grid  = view.down('#itemsgridId');        
+        grid.getStore().removeAll();  
+        //var controller = this.getController('Productos');
+        this.recalcularFinal2();
+
     },
 
     buscarnota: function(){
@@ -623,6 +813,29 @@ Ext.define('Infosys_web.controller.Notacredito', {
     },
 
 
+    recalcularFinal2: function(){
+        var view = this.getNotacreditoglosa();
+        var stItem = this.getProductosItemsStore();
+        var pretotal = 0;
+        var total = 0;
+        
+        stItem.each(function(r){
+            pretotal = (parseInt(pretotal) + parseInt(r.data.totaliva))
+          
+        });
+        total = pretotal;
+        neto = (total / 1.19);
+        afecto = neto;
+        iva = total - neto;
+        
+        //iva = (total - afecto);
+        view.down('#finaltotalId').setValue(Ext.util.Format.number(total, '0,000'));
+        view.down('#finaltotalpostId').setValue(Ext.util.Format.number(total, '0'));
+        view.down('#finaltotalnetoId').setValue(Ext.util.Format.number(neto, '0'));
+        view.down('#finaltotalivaId').setValue(Ext.util.Format.number(iva, '0'));
+        view.down('#finalafectoId').setValue(Ext.util.Format.number(afecto, '0'));
+          
+    },
 
 
     recalcularFinal: function(){
@@ -679,7 +892,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
         var netofin = view.down('#finalafectoId').getValue();
         var ivafin = view.down('#finaltotalivaId').getValue();
         
-        if(precio==0){
+        if(precio==0 || precio == '' || precio == null){
             Ext.Msg.alert('Alerta', 'Debe Ingresar Precio Producto');
             return false;
         };
@@ -692,7 +905,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
 
         };
 
-        if(cantidad==0){
+        if(cantidad==0 || cantidad == '' || cantidad == null){
             Ext.Msg.alert('Alerta', 'Debe Ingresar Cantidad.');
             return false;
         };
@@ -895,6 +1108,11 @@ Ext.define('Infosys_web.controller.Notacredito', {
             viewIngresa.down('#numfactId').setValue(row.data.num_factura);
             viewIngresa.down('#totfactId').setValue(row.data.totalfactura);
             viewIngresa.down('#factId').setValue(row.data.id);
+            var tipo_documento = viewIngresa.down('#tipodocumentoId').getValue();
+
+            if(tipo_documento == 102){
+                viewIngresa.down('#tipoNotaCredito').setDisabled(false);
+            }            
             view.close();
         }else{
             Ext.Msg.alert('Alerta', 'Selecciona un registro.');
@@ -1105,15 +1323,19 @@ Ext.define('Infosys_web.controller.Notacredito', {
         var view = this.getNotacreditoprincipal();
         if (view.getSelectionModel().hasSelection()) {
             var row = view.getSelectionModel().getSelection()[0];
-            if (row.data.forma==0){
-            window.open(preurl +'facturas/exportPDF/?idfactura=' + row.data.id)
-            };
-            if (row.data.forma==1){
-            window.open(preurl +'facturas/exportPDF/?idfactura=' + row.data.id)
-            };
-            if (row.data.forma==2){
-            window.open(preurl +'facturaganado/exportfacturaganadoPDF/?idfactura=' + row.data.id)
-            };
+             if(row.data.tipo_documento == 102){ // NOTA DE CREDITO ELECTRONICA
+                window.open(preurl +'facturas/exportFePDF/' + row.data.id);   
+             }else{
+                if (row.data.forma==0){
+                window.open(preurl +'facturas/exportPDF/?idfactura=' + row.data.id)
+                };
+                if (row.data.forma==1){
+                window.open(preurl +'facturas/exportPDF/?idfactura=' + row.data.id)
+                };
+                if (row.data.forma==2){
+                window.open(preurl +'facturaganado/exportfacturaganadoPDF/?idfactura=' + row.data.id)
+                };
+             }            
         }else{
             Ext.Msg.alert('Alerta', 'Selecciona un registro.');
             return;
@@ -1145,6 +1367,18 @@ Ext.define('Infosys_web.controller.Notacredito', {
             return;   
             }
 
+
+        var tipo_nota_credito = 0;
+        if(tipo_documento == 102){
+            var tipo_nota_credito = viewIngresa.down('#tipoNotaCredito').getValue();
+            if(tipo_nota_credito==0 || tipo_nota_credito == null || tipo_nota_credito == ''){
+                Ext.Msg.alert('Atención','Debe seleccionar tipo de nota de crédito');
+                return;   
+                }
+
+
+        }            
+
         var dataItems = new Array();
         stItem.each(function(r){
             dataItems.push(r.data)
@@ -1168,14 +1402,20 @@ Ext.define('Infosys_web.controller.Notacredito', {
                 netofactura: viewIngresa.down('#finaltotalnetoId').getValue(),
                 ivafactura: viewIngresa.down('#finaltotalivaId').getValue(),
                 afectofactura: viewIngresa.down('#finalafectoId').getValue(),
-                totalfacturas: viewIngresa.down('#finaltotalpostId').getValue()
+                totalfacturas: viewIngresa.down('#finaltotalpostId').getValue(),
+                tipo_nota_credito : tipo_nota_credito
             },
              success: function(response){
                 var resp = Ext.JSON.decode(response.responseText);
                 var idfactura= resp.idfactura;
                  viewIngresa.close();
                  stNotacredito.load();
-                 window.open(preurl + 'facturas/exportPDF/?idfactura='+idfactura);
+                 if(tipo_documento == 102){ // NOTA DE CREDITO ELECTRONICA
+                    window.open(preurl +'facturas/exportFePDF/' + idfactura);   
+                 }else{
+                    window.open(preurl + 'facturas/exportPDF/?idfactura='+idfactura);
+                 }                 
+                 
 
             }
            
@@ -1282,7 +1522,8 @@ Ext.define('Infosys_web.controller.Notacredito', {
     
     mnotacredito: function(){
 
-        var nombre = 11;    
+        Ext.create('Infosys_web.view.notacredito.Notacredito').show();
+        /*var nombre = 11;    
         Ext.Ajax.request({
 
             url: preurl + 'correlativos/generancred?valida='+nombre,
@@ -1312,7 +1553,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
 
 
             }            
-        });
+        });*/
     },
 
     buscarvendedor: function(){

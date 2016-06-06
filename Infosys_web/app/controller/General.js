@@ -1263,7 +1263,7 @@ Ext.define('Infosys_web.controller.General', {
         var me = this
 
         form.submit({
-            url: '/Deik/core/index.php/login/ingreso',
+            url: preurl+'login/ingreso',
             //url: '/Deik/core/index.php/login/ingreso',
             success: function(s, o) {
                 var objs = Ext.JSON.decode(o.response.responseText);
@@ -2516,7 +2516,7 @@ Ext.define('Infosys_web.controller.General', {
            //console.log("aqui");
            var viewport = this.getPanelprincipal();
            viewport.removeAll();
-           url: 'http://localhost/Infosys_web/Infosys_web/';
+           url: preurl_js;
     },
 
     cerrarciudades: function(){

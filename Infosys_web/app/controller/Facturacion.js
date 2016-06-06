@@ -12,12 +12,18 @@ Ext.define('Infosys_web.controller.Facturacion', {
              'Sucursales_clientes',
              'Tipo_documento.Selector',
              'facturas.Selector',
-             'facturas.Selector2'],
+             'facturas.Selector2',
+             'Cargadteproveedores',
+             'Contribuyentesautorizados',
+             'Loglibros'],
 
     models: ['Facturas.Item',
              'Factura',
              'Tipo_documento',
-             'Sucursales_clientes'],
+             'Sucursales_clientes',
+             'Cargadteproveedores',
+             'Contribuyentesautorizados',
+             'Loglibros'],
 
     views: ['ventas.Ventas', 'ventas.Ejemplo','ventas.Facturas',
              'clientes.BuscarClientes','productos.BuscarProductos',
@@ -25,7 +31,21 @@ Ext.define('Infosys_web.controller.Facturacion', {
              'ventas.BuscarSucursales',
              'ventas.Exportar',
              'ventas.Observaciones',
-             'ventas.Facturaseditar'],
+             'ventas.Facturaseditar',
+             'notacredito.Principal',
+             'facturaelectronica.CargaCertificadoDigital',
+             'facturaelectronica.CargaManualCaf',
+             'facturaelectronica.ParamGeneralesFe',
+             'facturaelectronica.RegistroEmpresa',
+             'facturaelectronica.verEstadoDte',
+             'facturaelectronica.verEstadoEnvio',
+             'facturaelectronica.DteProveedorPrincipal',
+             'facturaelectronica.CargaDteProveedor',
+             'facturaelectronica.LibroCompraVenta',
+             'facturaelectronica.ContribuyentesAutorizados',
+             'facturaelectronica.CargaListaContribuyentes',
+             'facturaelectronica.HistLibroCompraVenta',
+             'facturaelectronica.Emails'],
 
     //referencias, es un alias interno para el controller
     //podemos dejar el alias de la vista en el ref y en el selector
@@ -45,6 +65,12 @@ Ext.define('Infosys_web.controller.Facturacion', {
     },{
         ref: 'facturasprincipal',
         selector: 'facturasprincipal'
+    },{
+        ref: 'notacreditoprincipal',
+        selector: 'notacreditoprincipal'
+    },{
+        ref: 'notadebitoprincipal',
+        selector: 'notadebitoprincipal'
     },{
         ref: 'buscarclientes',
         selector: 'buscarclientes'
@@ -66,6 +92,27 @@ Ext.define('Infosys_web.controller.Facturacion', {
     },{
         ref: 'facturaseditar',
         selector: 'facturaseditar'
+    },{
+        ref: 'verestadodte',
+        selector: 'verestadodte'
+    },{
+        ref: 'dteproveeprincipal',
+        selector: 'dteproveeprincipal'
+    },{
+        ref: 'cargadteproveedor',
+        selector: 'cargadteproveedor'
+    },{
+        ref: 'contribuyentesautorizados',
+        selector: 'contribuyentesautorizados'
+    },{
+        ref: 'cargalistacontribuyentes',
+        selector: 'cargalistacontribuyentes'
+    },{
+        ref: 'histlibrocompraventa',
+        selector: 'histlibrocompraventa'
+    },{
+        ref: 'emails',
+        selector: 'emails'
     }
     
     ],
@@ -87,6 +134,42 @@ Ext.define('Infosys_web.controller.Facturacion', {
             'topmenus menuitem[action=mejemplo]': {
                 click: this.mejemplo
             },
+
+            'topmenus menuitem[action=mregempresa]': {
+                click: this.mregempresa
+            }, 
+
+            'topmenus menuitem[action=mcargacertdigital]': {
+                click: this.mcargacertdigital
+            },       
+
+            'topmenus menuitem[action=mcargamanualcaf]': {
+                click: this.mcargamanualcaf
+            },
+
+            'topmenus menuitem[action=mparamgenerales]': {
+                click: this.mparamgenerales
+            },
+
+            'topmenus menuitem[action=mcargadteprovee]': {
+                click: this.mcargadteprovee
+            },             
+
+            'topmenus menuitem[action=mlibrocompraventa]': {
+                click: this.mlibrocompraventa
+            },                                     
+
+            'topmenus menuitem[action=mcargacontribuyentes]': {
+                click: this.mcargacontribuyentes
+            },                                                 
+
+            'topmenus menuitem[action=mhistlibrocompraventa]': {
+                click: this.mhistlibrocompraventa
+            },                                                 
+
+            'topmenus menuitem[action=memail]': {
+                click: this.memail
+            },             
             'facturasingresar button[action=buscarclientes]': {
                 click: this.buscarclientes
             },
@@ -111,6 +194,56 @@ Ext.define('Infosys_web.controller.Facturacion', {
             'facturasprincipal button[action=generarfacturapdf]': {
                 click: this.generarfacturapdf
             },
+
+            'facturasprincipal button[action=generarfacturacediblepdf]': {
+                click: this.generarfacturacediblepdf
+            },
+            'dteproveeprincipal button[action=adddteprovee]': {
+                click: this.adddteprovee
+            },      
+
+            'contribuyentesautorizados button[action=addlistacontribuyentes]': {
+                click: this.addlistacontribuyentes
+            },      
+
+
+
+            'cargadteproveedor button[action=cargar_dte_provee]': {
+                click: this.cargar_dte_provee
+            },                    
+
+            'cargalistacontribuyentes button[action=cargar_listado_contribuyentes]': {
+                click: this.cargar_listado_contribuyentes
+            },                    
+
+
+           /* 'facturasprincipal': {
+                verDte: this.verDte
+            }, */
+
+            'facturasprincipal': {
+                verEstadoDte: this.verEstadoDte
+            }, 
+
+            'notacreditoprincipal': {
+                verEstadoDte: this.verEstadoDte
+            }, 
+
+
+            'notadebitoprincipal': {
+                verEstadoDte: this.verEstadoDte
+            }, 
+
+            'histlibrocompraventa': {
+                verEstadoDte: this.verEstadoDte
+            }, 
+
+
+            'dteproveeprincipal': {
+                verxmlprovee: this.verxmlprovee
+            },  
+
+
             'buscarclientes button[action=buscar]': {
                 click: this.buscar
             },
@@ -184,6 +317,178 @@ Ext.define('Infosys_web.controller.Facturacion', {
 
         });
     },
+
+
+    changedctofinal: function(){
+        this.recalculardescuento();
+    },
+
+cargar_dte_provee: function(){
+
+        var view = this.getCargadteproveedor();
+        var win = this.getDteproveeprincipal();
+        var form = view.down('form').getForm();
+    
+        if(form.isValid()){
+            form.submit({
+                url: preurl + 'facturas/cargadteprovee',
+                waitMsg: 'Cargando DTE...',
+                success: function(fp, o) {
+
+                    Ext.Msg.alert('Atencion', o.result.message);
+                    win.store.reload();      
+                    view.close();   
+
+                }
+            });
+        }   
+    },
+
+
+
+cargar_listado_contribuyentes: function(){
+
+        var view = this.getCargalistacontribuyentes();
+        var win = this.getContribuyentesautorizados();
+        var form = view.down('form').getForm();
+    
+        if(form.isValid()){
+            form.submit({
+                url: preurl + 'facturas/cargacontribuyentes',
+                waitMsg: 'Cargando Base...',
+                success: function(fp, o) {
+
+                    Ext.Msg.alert('Atencion', o.result.message);
+                    win.store.reload();      
+                    view.close();   
+
+                }
+            });
+        }   
+    },
+
+    mregempresa: function(){
+
+        var viewport = this.getPanelprincipal();
+        viewport.removeAll();
+        viewport.add({xtype: 'registroempresa'});
+        
+    },
+
+
+    memail: function(){
+
+        var viewport = this.getPanelprincipal();
+        viewport.removeAll();
+        viewport.add({xtype: 'emails'});
+        
+    },
+
+
+    mcargacertdigital: function(){
+
+        var viewport = this.getPanelprincipal();
+        viewport.removeAll();
+        viewport.add({xtype: 'cargacertificadodigital'});
+        
+    },
+
+
+    verDte: function(r){
+
+        response = Ext.Ajax.request({
+        async: false,
+        url: preurl + 'facturas/show_dte/'+r.data.id}); 
+        var obj = Ext.decode(response.responseText);
+        window.open(gbl_site + 'core/facturacion_electronica/dte/' + obj.path_dte + obj.archivo_dte,'_blank');
+ 
+    },
+
+    verEstadoDte: function(r,t){
+        if(t == 1){
+
+            Ext.create('Infosys_web.view.facturaelectronica.verEstadoDte', {idfactura: r.data.id});              
+        }else if(t == 2){
+            url = preurl + 'facturas/ver_dte/'+r.data.id,
+            window.open(url,'_blank');           
+        }else if(t == 3){
+            Ext.create('Infosys_web.view.facturaelectronica.verEstadoEnvio', {idfactura: r.data.id});                          
+        }else if(t == 4){
+            url = preurl + 'facturas/ver_libro/'+r.data.id,
+            window.open(url,'_blank');           
+        }        
+    },
+
+
+
+    verxmlprovee: function(r,t){
+
+        url = preurl + 'facturas/ver_dte_proveedor/'+t+'/'+r.data.id,
+        window.open(url,'_blank');           
+
+        /*if(t == 1){
+            window.open(gbl_site + 'core/facturacion_electronica/acuse_recibo/' + r.data.path_dte + r.data.arch_rec_dte,'_blank');           
+        }else if(t == 2){
+            window.open(gbl_site + 'core/facturacion_electronica/acuse_recibo/' + r.data.path_dte + r.data.arch_res_dte,'_blank');
+        }else if(t == 3){
+            window.open(gbl_site + 'core/facturacion_electronica/acuse_recibo/' + r.data.path_dte + r.data.arch_env_rec,'_blank');           
+        }*/
+    },
+
+  adddteprovee: function(){
+              Ext.create('Infosys_web.view.facturaelectronica.CargaDteProveedor').show();
+    },
+
+
+  addlistacontribuyentes: function(){
+              Ext.create('Infosys_web.view.facturaelectronica.CargaListaContribuyentes').show();
+    },    
+
+    mcargadteprovee: function(){
+        var viewport = this.getPanelprincipal();
+        viewport.removeAll();
+        viewport.add({xtype: 'dteproveeprincipal'});
+    },
+
+
+    mcargacontribuyentes: function(){
+        var viewport = this.getPanelprincipal();
+        viewport.removeAll();
+        viewport.add({xtype: 'contribuyentesautorizados'});
+    },
+
+    mhistlibrocompraventa: function(){
+        var viewport = this.getPanelprincipal();
+        viewport.removeAll();
+        viewport.add({xtype: 'histlibrocompraventa'});
+    },
+
+
+    mcargamanualcaf: function(){
+
+        var viewport = this.getPanelprincipal();
+        viewport.removeAll();
+        viewport.add({xtype: 'cargamanualcaf'});
+        
+    },    
+
+
+    mparamgenerales: function(){
+
+        var viewport = this.getPanelprincipal();
+        viewport.removeAll();
+        viewport.add({xtype: 'paramgeneralesfe'});
+        
+    },    
+
+
+    mlibrocompraventa: function(){
+//
+        var viewport = this.getPanelprincipal();
+        viewport.removeAll();
+        viewport.add({xtype: 'librocompraventa'});
+        
+    },          
 
     grabarfacturaeditar: function() {
 
@@ -335,9 +640,7 @@ Ext.define('Infosys_web.controller.Facturacion', {
         st.load();
     },
 
-    changedctofinal: function(){
-        this.recalculardescuento();
-    },
+
 
     recalculardescuento: function(){
 
@@ -908,7 +1211,23 @@ Ext.define('Infosys_web.controller.Facturacion', {
         }
     },
 
-    
+    generarfacturacediblepdf: function(){
+        var view = this.getFacturasprincipal();
+        if (view.getSelectionModel().hasSelection()) {
+            var row = view.getSelectionModel().getSelection()[0];
+            var tipo_documento = row.data.tipo_documento;
+
+            if (tipo_documento==101 || tipo_documento==103){
+                window.open(preurl +'facturas/exportFePDF/' + row.data.id+'/cedible')
+            }else{
+                Ext.Msg.alert('Alerta', 'Solo disponible para facturas electronicas');
+            }
+        }else{
+            Ext.Msg.alert('Alerta', 'Selecciona un registro.');
+            return;
+        }
+    },    
+
     grabarfactura: function() {
 
         var viewIngresa = this.getFacturasingresar();
@@ -1002,33 +1321,73 @@ Ext.define('Infosys_web.controller.Facturacion', {
         var record = stCombo.findRecord('id', tipo_documento.getValue()).data;
         
         var nombre = (record.id);    
-         Ext.Ajax.request({
+        habilita = false;
+        if(nombre == 101 || nombre == 103){ // FACTURA ELECTRONICA o FACTURA EXENTA
 
-            url: preurl + 'correlativos/generafact?valida='+nombre,
-            params: {
-                id: 1
-            },
-            success: function(response){
-                var resp = Ext.JSON.decode(response.responseText);
+            // se valida que exista certificado
+            response_certificado = Ext.Ajax.request({
+            async: false,
+            url: preurl + 'facturas/existe_certificado/'});
 
-                if (resp.success == true) {
-                    var cliente = resp.cliente;
-                    var correlanue = cliente.correlativo;
-                    correlanue = (parseInt(correlanue)+1);
-                    var correlanue = correlanue;
-                    view.down('#numfacturaId').setValue(correlanue);
-                    
+            var obj_certificado = Ext.decode(response_certificado.responseText);
+
+            if(obj_certificado.existe == true){
+
+                //buscar folio factura electronica
+                // se buscan folios pendientes, o ocupados hace más de 4 horas
+
+                response_folio = Ext.Ajax.request({
+                async: false,
+                url: preurl + 'facturas/folio_documento_electronico/'+nombre});  
+                var obj_folio = Ext.decode(response_folio.responseText);
+                //console.log(obj_folio); 
+                nuevo_folio = obj_folio.folio;
+                if(nuevo_folio != 0){
+                    view.down('#numfacturaId').setValue(nuevo_folio);  
+                    habilita = true;
                 }else{
-                    Ext.Msg.alert('Correlativo YA Existe');
-                    return;
+                    Ext.Msg.alert('Atención','No existen folios disponibles');
+                    view.down('#numfacturaId').setValue('');  
+
+                    //return
                 }
 
-            }            
-        });
+            }else{
+                    Ext.Msg.alert('Atención','No se ha cargado certificado');
+                    view.down('#numfacturaId').setValue('');  
+            }
+
+
+        }else{        
+             Ext.Ajax.request({
+
+                url: preurl + 'correlativos/generafact?valida='+nombre,
+                params: {
+                    id: 1
+                },
+                success: function(response){
+                    var resp = Ext.JSON.decode(response.responseText);
+
+                    if (resp.success == true) {
+                        var cliente = resp.cliente;
+                        var correlanue = cliente.correlativo;
+                        correlanue = (parseInt(correlanue)+1);
+                        var correlanue = correlanue;
+                        view.down('#numfacturaId').setValue(correlanue);
+                        
+                    }else{
+                        Ext.Msg.alert('Correlativo YA Existe');
+                        return;
+                    }
+
+                }            
+            });
+        }
         var grid  = view.down('#itemsgridId');        
 
         
-        var bolDisabled = tipo_documento.getValue() == 2 ? true : false; // campos se habilitan sólo en factura
+        //var bolDisabled = tipo_documento.getValue() == 2 ? true : false; // campos se habilitan sólo en factura
+        var bolDisabled = tipo_documento.getValue() == 1 || tipo_documento.getValue() == 19 || ((tipo_documento.getValue() == 101 || tipo_documento.getValue() == 103) && habilita) ? false : true; // campos se habilitan sólo en factura o factura electronica
 
         if(bolDisabled == true){  // limpiar campos
            view.down('#rutId').setValue('19');
