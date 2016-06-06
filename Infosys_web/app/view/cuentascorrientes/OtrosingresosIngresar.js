@@ -239,6 +239,13 @@ Ext.define('Infosys_web.view.cuentascorrientes.OtrosingresosIngresar', {
                                             }
 
                                         }else if(editor.field == 'debe' || editor.field == 'haber'){ 
+                                            var grid = me.down('grid')
+                                            stItem = grid.getStore();
+
+                                            var existe_nd = false;
+                                            stItem.each(function(r){
+                                                existe_nd = r.data.tipodocumento == 16 ? true : existe_nd;
+                                            });   
 
                                              var record = editor.record;
                                              if(record.get('cuenta') != 0 && record.get('cuenta') != null){
@@ -246,13 +253,16 @@ Ext.define('Infosys_web.view.cuentascorrientes.OtrosingresosIngresar', {
                                                     if(record.get('haber') > 0){
                                                         Ext.Msg.alert('Alerta', 'Ya existe un valor asociado al Haber.');
                                                         return false;  
-                                                    }else if(record.get('saldo') > 0 && record.get('tipodocumento') != 11){
+                                                    }else if(record.get('saldo') > 0 && record.get('tipodocumento') == 1 && !existe_nd){
                                                         Ext.Msg.alert('Alerta', 'Abonos para el documento se realizan en el haber.');
                                                         return false; 
+                                                    }else if(record.get('saldo') > 0 && record.get('tipodocumento') == 16){
+                                                        Ext.Msg.alert('Alerta', 'Abonos para el documento se realizan en el haber.');
+                                                        return false;                                                         
                                                     }else{
 
                                                         reccuenta = cuentascontablecancela.findRecord('id', record.get('cuenta'));                                                        
-                                                        if(reccuenta.get('cancelaabono') == 1  && record.get('tipodocumento') != 11 && record.get('cuenta') != 18){
+                                                        if(reccuenta.get('cancelaabono') == 1  && record.get('tipodocumento') == 1 && record.get('cuenta') != 18 && !existe_nd){
                                                              Ext.Msg.alert('Alerta', 'Abonos se realizan en el haber.');
                                                              return false;
 
@@ -264,7 +274,7 @@ Ext.define('Infosys_web.view.cuentascorrientes.OtrosingresosIngresar', {
                                                     if(record.get('debe') > 0){
                                                         Ext.Msg.alert('Alerta', 'Ya existe un valor asociado al Debe.');
                                                         return false; 
-                                                    }else if(record.get('saldo') > 0 && record.get('tipodocumento') == 11){
+                                                    }else if(record.get('saldo') > 0 && (record.get('tipodocumento') == 11 || record.get('tipodocumento') == 102)){
                                                         Ext.Msg.alert('Alerta', 'Abonos para el documento se realizan en el debe.');
                                                         return false; 
                                                     }else if(record.get('saldo') == 0){
@@ -273,10 +283,10 @@ Ext.define('Infosys_web.view.cuentascorrientes.OtrosingresosIngresar', {
                                                     }
                                                 }else{                                                                                                        
                                                     reccuenta = cuentascontablecancela.findRecord('id', record.get('cuenta'));
-                                                    if(editor.field == 'debe' && reccuenta.get('cancelaabono') == 1 && record.get('tipodocumento') != 11){
+                                                    if(editor.field == 'debe' && reccuenta.get('cancelaabono') == 1 && record.get('tipodocumento') == 1 && !existe_nd){
                                                         Ext.Msg.alert('Alerta', 'Abonos se realizan en el haber.');
                                                         return false;
-                                                    }else if(editor.field == 'haber' && reccuenta.get('cancelaabono') == 1 && record.get('tipodocumento') == 11){
+                                                    }else if(editor.field == 'haber' && reccuenta.get('cancelaabono') == 1 && (record.get('tipodocumento') == 11 || record.get('tipodocumento') == 102)){
                                                         Ext.Msg.alert('Alerta', 'Abonos se realizan en el debe.');
                                                         return false;                                                                                                                
                                                     }else if(editor.field == 'haber' && reccuenta.get('cancelacargo') == 1){
@@ -491,18 +501,44 @@ Ext.define('Infosys_web.view.cuentascorrientes.OtrosingresosIngresar', {
                                                        // REVISAR QUE EN CASO QUE NO EXISTA CUENTA, DESPLEGAR UN CERO
                                                       editor.record.set({saldo: obj.data[0].saldo});  
                                                       editor.record.set({tipodocumento: obj.data[0].tipodocumento});  
-                                                      if(obj.data[0].tipodocumento == 11){
+                                                      if(obj.data[0].tipodocumento == 11 || obj.data[0].tipodocumento == 102){
                                                         editor.record.set({debe: obj.data[0].saldo});
                                                         grid.plugins[0].startEditByPosition({
                                                             row: editor.rowIdx,
                                                             column: 8
-                                                        });                                                              
-                                                      }else{
-                                                        editor.record.set({haber: obj.data[0].saldo});  
+                                                        }); 
+
+                                                      }else if(obj.data[0].tipodocumento == 16){
+                                                        editor.record.set({haber: obj.data[0].saldo});
                                                         grid.plugins[0].startEditByPosition({
                                                             row: editor.rowIdx,
                                                             column: 9
-                                                        });                                                                  
+                                                        });                                                    
+
+                                                      }else{
+
+                                                        stItem = grid.getStore();
+
+                                                        var existe_nd = false;
+                                                        stItem.each(function(r){
+                                                            existe_nd = r.data.tipodocumento == 16 ? true : existe_nd;
+                                                        });   
+
+
+                                                        if(existe_nd){  // si tiene nota de debito, entonces la factura se va al debe                                                        
+                                                            editor.record.set({debe: obj.data[0].saldo});  
+                                                            grid.plugins[0].startEditByPosition({
+                                                                row: editor.rowIdx,
+                                                                column: 8
+                                                            });                                                                  
+                                                        }else{
+                                                            editor.record.set({haber: obj.data[0].saldo});  
+                                                            grid.plugins[0].startEditByPosition({
+                                                                row: editor.rowIdx,
+                                                                column: 9
+                                                            });                                                                  
+
+                                                        }
                                                       }      
                                                       
 
@@ -524,7 +560,7 @@ Ext.define('Infosys_web.view.cuentascorrientes.OtrosingresosIngresar', {
                                                         column: 8
                                                     });                                                    
                                             }else{
-                                                    if(record.get('tipodocumento') == 11 || record.get('cuenta') == 18){
+                                                    if((record.get('tipodocumento') == 11 || record.get('tipodocumento') == 102) || record.get('cuenta') == 18){
                                                         grid.plugins[0].startEditByPosition({
                                                             row: editor.rowIdx,
                                                             column: 8
@@ -629,7 +665,7 @@ Ext.define('Infosys_web.view.cuentascorrientes.OtrosingresosIngresar', {
                             text: 'Buscar',
                             align: 'center',
                             items: [{
-                                icon: gbl_site + 'Infosys_web/resources/images/search.png',
+                                icon: preurl_js + 'resources/images/search.png',
                                 // Use a URL in the icon config
                                 tooltip: 'Buscar',
                                 handler: function (grid, rowIndex, colIndex) {
@@ -740,7 +776,7 @@ Ext.define('Infosys_web.view.cuentascorrientes.OtrosingresosIngresar', {
                             text: 'Eliminar',
                             align: 'center',
                             items: [{
-                                icon: gbl_site + 'Infosys_web/resources/images/delete.png',
+                                icon: preurl_js + 'resources/images/delete.png',
                                 // Use a URL in the icon config
                                 tooltip: 'Eliminar',
                                 handler: function (grid, rowIndex, colIndex) {

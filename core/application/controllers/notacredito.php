@@ -31,7 +31,8 @@ class Notacredito extends CI_Controller {
         $relacionado = $this->input->post('docurelacionado');
 		$fafecto = $this->input->post('afectofactura');
 		$ftotal = $this->input->post('totalfacturas');
-		$tipodocumento = 11;
+		$tipodocumento = $this->input->post('tipodocumento');
+		//$tipodocumento = 11;
 
 		$data3 = array(
 	         'correlativo' => $numdocuemnto
@@ -95,29 +96,24 @@ class Notacredito extends CI_Controller {
 		 							WHERE co.idcuentacontable = '$idcuentacontable' and co.idcliente = '" . $idcliente . "' limit 1");
     	 $row = $query->row();
 		 $idcuentacorriente =  $row->idcuentacorriente;	
-		/*if ($query->num_rows()==0){	
-			$cuenta_corriente = array(
-		        'idcliente' => $idcliente,
-		        'idcuentacontable' => $idcuentacontable,
-		        'saldo' => $ftotal,
-		        'fechaactualiza' => date('Y-m-d H:i:s')
-			);
-			$this->db->insert('cuenta_corriente', $cuenta_corriente); 
-			$idcuentacorriente = $this->db->insert_id();
 
-
-		}else{
-			//$row = $row[0];
-			$query = $this->db->query("UPDATE cuenta_corriente SET saldo = saldo - " . $ftotal . " where id = " .  $row->idcuentacorriente );
-			$idcuentacorriente =  $row->idcuentacorriente;
-		}*/
 
 
 		if($query->num_rows() > 0){ //sólo se realiza el aumento de cuenta corriente, en caso que exista la cuenta corriente
-			$query = $this->db->query("UPDATE cuenta_corriente SET saldo = saldo + " . $ftotal . " where id = " .  $row->idcuentacorriente );
-			$idcuentacorriente =  $row->idcuentacorriente;
-		
-			$detalle_cuenta_corriente = array(
+
+			// se rebaja detalle
+			$query = $this->db->query("UPDATE detalle_cuenta_corriente SET saldo = saldo - " . $ftotal . " where idctacte = " .  $row->idcuentacorriente . " and numdocumento = " . $numfactura_asoc);			
+			//$idcuentacorriente =  $row->idcuentacorriente;
+			 $query_factura = $this->db->query("SELECT tipo_documento  FROM factura_clientes 
+			 							WHERE num_factura = " . $numfactura_asoc . " and id_cliente = " . $idcliente . " limit 1");
+			 $tipodocumento_asoc = $query_factura->row()->tipo_documento;
+
+
+            $query = $this->db->query("UPDATE cuenta_corriente SET saldo = saldo - " . $ftotal . " where id = " .  $row->idcuentacorriente );
+            $idcuentacorriente =  $row->idcuentacorriente;			 
+
+	
+			/*$detalle_cuenta_corriente = array(
 		        'idctacte' => $idcuentacorriente,
 		        'tipodocumento' => $tipodocumento,
 		        'numdocumento' => $numdocuemnto,
@@ -127,14 +123,14 @@ class Notacredito extends CI_Controller {
 		        'fecha' => date('Y-m-d H:i:s')
 			);
 
-			$this->db->insert('detalle_cuenta_corriente', $detalle_cuenta_corriente); 	
+			$this->db->insert('detalle_cuenta_corriente', $detalle_cuenta_corriente); 	*/
 
 			$cartola_cuenta_corriente = array(
 		        'idctacte' => $idcuentacorriente,
 		        'idcuenta' => $idcuentacontable,
 		        'tipodocumento' => $tipodocumento,
 		        'numdocumento' => $numdocuemnto,
-		        'tipodocumento_asoc' => 1,
+		        'tipodocumento_asoc' => $tipodocumento_asoc,
 		        'numdocumento_asoc' => $numfactura_asoc,
 		        'glosa' => 'Registro de Nota de Credito en Cuenta Corriente',
 		        'fecvencimiento' => $fechavenc,
@@ -146,7 +142,143 @@ class Notacredito extends CI_Controller {
 			$this->db->insert('cartola_cuenta_corriente', $cartola_cuenta_corriente); 
 		}			
 
-		/*****************************************/
+   /*****************************************/
+
+     if($tipodocumento == 102){  // SI ES NOTA DE CREDITO ELECTRONICA
+            header('Content-type: text/plain; charset=ISO-8859-1');
+            $this->load->model('facturaelectronica');
+            $config = $this->facturaelectronica->genera_config();
+            include $this->facturaelectronica->ruta_libredte();
+
+            $tipo_nota_credito = 2;
+            $glosa = 'Correccion factura '. $numfactura_asoc;
+
+            $empresa = $this->facturaelectronica->get_empresa();
+            $datos_empresa_factura = $this->facturaelectronica->get_empresa_factura($idfactura);
+
+            //$detalle_factura = $this->facturaelectronica->get_detalle_factura($idfactura);
+            $detalle_factura = $this->facturaelectronica->get_detalle_factura_glosa($idfactura);
+
+            $lista_detalle = array();
+            $i = 0;
+            foreach ($detalle_factura as $detalle) {
+
+				$lista_detalle[$i]['NmbItem'] = $detalle->glosa;
+				$lista_detalle[$i]['QtyItem'] = 1;
+                $lista_detalle[$i]['PrcItem'] = floor($detalle->neto);
+            
+                $i++;
+            }
+
+
+
+            // datos
+            $nota_credito = [
+                'Encabezado' => [
+                    'IdDoc' => [
+                        'TipoDTE' => 61,
+                        'Folio' => $numdocuemnto,
+                    ],
+                    'Emisor' => [
+                        'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
+                        'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+                        'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
+                        'Acteco' => $empresa->cod_actividad,
+                        'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
+                        'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
+                    ],
+                    'Receptor' => [
+                        'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
+                        'RznSocRecep' => substr($datos_empresa_factura->nombre_cliente,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+                        'GiroRecep' => substr($datos_empresa_factura->giro,0,40), //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+                        'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+                        'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
+                    ],
+                    'Totales' => [
+                        // estos valores serán calculados automáticamente
+                        'MntNeto' => 0,
+                        'TasaIVA' => \sasco\LibreDTE\Sii::getIVA(),
+                        'IVA' => 0,
+                        'MntTotal' => 0,
+                    ],                  
+                ],
+                'Detalle' => $lista_detalle,
+                'Referencia' => [
+                    'TpoDocRef' => 33,
+                    'FolioRef' => $numfactura,
+                    'CodRef' => $tipo_nota_credito,
+                    'RazonRef' => $glosa,
+                ]               
+            ];          
+
+
+            //FchResol y NroResol deben cambiar con los datos reales de producción
+            $caratula = [
+                //'RutEnvia' => '11222333-4', // se obtiene de la firma
+                'RutReceptor' => '60803000-K',
+                'FchResol' => $empresa->fec_resolucion,
+                'NroResol' => $empresa->nro_resolucion
+            ];
+
+            $Firma = new sasco\LibreDTE\FirmaElectronica($config['firma']); //lectura de certificado digital        
+            $caf = $this->facturaelectronica->get_content_caf_folio($numdocuemnto,61);
+            $Folios = new sasco\LibreDTE\Sii\Folios($caf->caf_content);
+
+            $DTE = new \sasco\LibreDTE\Sii\Dte($nota_credito);
+
+            $DTE->timbrar($Folios);
+            $DTE->firmar($Firma);       
+
+            // generar sobre con el envío del DTE y enviar al SII
+            $EnvioDTE = new \sasco\LibreDTE\Sii\EnvioDte();
+
+            $EnvioDTE->agregar($DTE);
+            $EnvioDTE->setFirma($Firma);
+            $EnvioDTE->setCaratula($caratula);
+            $EnvioDTE->generar();
+            if ($EnvioDTE->schemaValidate()) { // REVISAR PORQUÉ SE CAE CON ESTA VALIDACION
+                
+                $track_id = 0;
+                $xml_dte = $EnvioDTE->generar();
+
+                $tipo_envio = $this->facturaelectronica->busca_parametro_fe('envio_sii'); //ver si está configurado para envío manual o automático
+
+                if($tipo_envio == 'automatico'){
+                    $track_id = $EnvioDTE->enviar();
+                }               
+
+                //$track_id = 0;
+
+                $nombre_dte = $numdocuemnto."_61_".$idfactura."_".date("His").".xml"; // nombre archivo
+                $path = date('Ym').'/'; // ruta guardado
+                if(!file_exists('./facturacion_electronica/dte/'.$path)){
+                    mkdir('./facturacion_electronica/dte/'.$path,0777,true);
+                }               
+                $f_archivo = fopen('./facturacion_electronica/dte/'.$path.$nombre_dte,'w');
+                fwrite($f_archivo,$xml_dte);
+                fclose($f_archivo);
+
+
+                $this->db->where('f.folio', $numdocuemnto);
+                $this->db->where('c.tipo_caf', 61);
+                $this->db->update('folios_caf f inner join caf c on f.idcaf = c.id',array('dte' => $xml_dte,
+                                                                                          'estado' => 'O',
+                                                                                          'idfactura' => $idfactura,
+                                                                                          'path_dte' => $path,
+                                                                                          'archivo_dte' => $nombre_dte,
+                                                                                          'trackid' => $track_id
+                                                                                          )); 
+
+
+
+
+				if($track_id != 0 && $datos_empresa_factura->e_mail != ''){ //existe track id, se envía correo
+						$this->facturaelectronica->envio_mail_dte($idfactura);
+				}
+
+            }                   
+            
+        }
 
 
         $resp['success'] = true;
@@ -315,53 +447,181 @@ class Notacredito extends CI_Controller {
 			// VERIFICAR SI CLIENTE YA TIENE CUENTA CORRIENTE
 		 $query = $this->db->query("SELECT co.idcliente, co.id as idcuentacorriente  FROM cuenta_corriente co
 		 							WHERE co.idcuentacontable = '$idcuentacontable' and co.idcliente = '" . $idcliente . "'");
-    	 $row = $query->result();
-	
-		if ($query->num_rows()==0){	
-			$cuenta_corriente = array(
-		        'idcliente' => $idcliente,
-		        'idcuentacontable' => $idcuentacontable,
-		        'saldo' => $ftotal,
-		        'fechaactualiza' => $fechafactura
-			);
-			$this->db->insert('cuenta_corriente', $cuenta_corriente); 
-			$idcuentacorriente = $this->db->insert_id();
+    	 $row = $query->row();
+    	 $idcuentacorriente =  $row->idcuentacorriente;
 
-
-		}else{
-			$row = $row[0];
+		if($query->num_rows() > 0){ //
+			//se rebaja cuenta corriente 
 			$query = $this->db->query("UPDATE cuenta_corriente SET saldo = saldo - " . $ftotal . " where id = " .  $row->idcuentacorriente );
-			$idcuentacorriente =  $row->idcuentacorriente;
+			//$idcuentacorriente =  $row->idcuentacorriente;
+		
+			// se rebaja detalle
+			$query = $this->db->query("UPDATE detalle_cuenta_corriente SET saldo = saldo - " . $ftotal . " where idctacte = " .  $row->idcuentacorriente . " and numdocumento = " . $numfactura_asoc);
+			//$idcuentacorriente =  $row->idcuentacorriente;
+			 $query_factura = $this->db->query("SELECT tipo_documento  FROM factura_clientes 
+			 							WHERE num_factura = " . $numfactura_asoc . " and id_cliente = " . $idcliente . " limit 1");
+			 $tipodocumento_asoc = $query_factura->row()->tipo_documento;
+
+			$cartola_cuenta_corriente = array(
+		        'idctacte' => $idcuentacorriente,
+		        'idcuenta' => $idcuentacontable,
+		        'tipodocumento' => $tipodocumento,
+		        'numdocumento' => $numdocuemnto,
+		        'tipodocumento_asoc' => $tipodocumento_asoc,
+		        'numdocumento_asoc' => $numfactura_asoc,
+		        'glosa' => 'Registro de Nota de Crédito en Cuenta Corriente',
+		        'fecvencimiento' => $fechavenc,
+		        'valor' => $ftotal,
+		        'origen' => 'VENTA',
+		        'fecha' => date('Y-m-d H:i:s')
+			);
+
+			$this->db->insert('cartola_cuenta_corriente', $cartola_cuenta_corriente); 
+		}	    	 
+	
+	/*****************************************/
+
+
+		if($tipodocumento == 102){  // SI ES NOTA DE CREDITO ELECTRONICA
+			header('Content-type: text/plain; charset=ISO-8859-1');
+			$this->load->model('facturaelectronica');
+			$config = $this->facturaelectronica->genera_config();
+			include $this->facturaelectronica->ruta_libredte();
+
+			$tipo_nota_credito = $this->input->post('tipo_nota_credito');
+			$glosa = $tipo_nota_credito == 1 ? 'Anula factura '. $numfactura_asoc : 'Correccion factura '. $numfactura_asoc;
+
+			$empresa = $this->facturaelectronica->get_empresa();
+			$datos_empresa_factura = $this->facturaelectronica->get_empresa_factura($idfactura);
+
+			$detalle_factura = $this->facturaelectronica->get_detalle_factura($idfactura);
+
+			$lista_detalle = array();
+			$i = 0;
+			foreach ($detalle_factura as $detalle) {
+				$lista_detalle[$i]['NmbItem'] = $detalle->nombre;
+				$lista_detalle[$i]['QtyItem'] = $detalle->cantidad;
+				//$lista_detalle[$i]['PrcItem'] = floor($detalle->precio/1.19);
+				$lista_detalle[$i]['PrcItem'] = round($detalle->precio/1.19,0);
+
+				if($detalle->descuento != 0){
+					//$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
+					//$lista_detalle[$i]['DescuentoPct'] = $porc_descto;		
+					//$lista_detalle[$i]['PrcItem'] =- $lista_detalle[$i]['PrcItem']*$porc_descto;
+					$total_sin_iva = round($detalle->totalproducto/1.19,0);
+					$descuento = abs(($lista_detalle[$i]['PrcItem']*$detalle->cantidad) - $total_sin_iva);
+					$lista_detalle[$i]['DescuentoMonto'] = $descuento;
+				}				
+				//$lista_detalle[$i]['DescuentoMonto'] = $detalle->descuento;
+				$i++;
+			}
+
+
+
+			// datos
+			$nota_credito = [
+			    'Encabezado' => [
+			        'IdDoc' => [
+			            'TipoDTE' => 61,
+			            'Folio' => $numdocuemnto,
+			        ],
+			        'Emisor' => [
+			            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
+			            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+			            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
+			            'Acteco' => $empresa->cod_actividad,
+			            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
+			            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
+			        ],
+			        'Receptor' => [
+			            'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
+			            'RznSocRecep' => substr($datos_empresa_factura->nombre_cliente,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+			            'GiroRecep' => substr($datos_empresa_factura->giro,0,40), //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+			            'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+			            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
+			        ],
+		            'Totales' => [
+		                // estos valores serán calculados automáticamente
+		                'MntNeto' => 0,
+		                'TasaIVA' => \sasco\LibreDTE\Sii::getIVA(),
+		                'IVA' => 0,
+		                'MntTotal' => 0,
+		            ],			        
+			    ],
+				'Detalle' => $lista_detalle,
+		        'Referencia' => [
+		            'TpoDocRef' => 33,
+		            'FolioRef' => $numfactura,
+		            'CodRef' => $tipo_nota_credito,
+		            'RazonRef' => $glosa,
+		        ]				
+			];			
+
+
+			//FchResol y NroResol deben cambiar con los datos reales de producción
+			$caratula = [
+			    //'RutEnvia' => '11222333-4', // se obtiene de la firma
+			    'RutReceptor' => '60803000-K',
+			    'FchResol' => $empresa->fec_resolucion,
+			    'NroResol' => $empresa->nro_resolucion
+			];
+
+			$Firma = new sasco\LibreDTE\FirmaElectronica($config['firma']); //lectura de certificado digital		
+			$caf = $this->facturaelectronica->get_content_caf_folio($numdocuemnto,61);
+			$Folios = new sasco\LibreDTE\Sii\Folios($caf->caf_content);
+
+			$DTE = new \sasco\LibreDTE\Sii\Dte($nota_credito);
+
+			$DTE->timbrar($Folios);
+			$DTE->firmar($Firma);		
+
+			// generar sobre con el envío del DTE y enviar al SII
+			$EnvioDTE = new \sasco\LibreDTE\Sii\EnvioDte();
+
+			$EnvioDTE->agregar($DTE);
+			$EnvioDTE->setFirma($Firma);
+			$EnvioDTE->setCaratula($caratula);
+			$EnvioDTE->generar();
+			if ($EnvioDTE->schemaValidate()) { // REVISAR PORQUÉ SE CAE CON ESTA VALIDACION
+				
+				$track_id = 0;
+			    $xml_dte = $EnvioDTE->generar();
+
+			    $tipo_envio = $this->facturaelectronica->busca_parametro_fe('envio_sii'); //ver si está configurado para envío manual o automático
+
+			    if($tipo_envio == 'automatico'){
+				    $track_id = $EnvioDTE->enviar();
+			    }			    
+
+			    //$track_id = 0;
+
+				$nombre_dte = $numdocuemnto."_61_".$idfactura."_".date("His").".xml"; // nombre archivo
+				$path = date('Ym').'/'; // ruta guardado
+				if(!file_exists('./facturacion_electronica/dte/'.$path)){
+					mkdir('./facturacion_electronica/dte/'.$path,0777,true);
+				}				
+				$f_archivo = fopen('./facturacion_electronica/dte/'.$path.$nombre_dte,'w');
+				fwrite($f_archivo,$xml_dte);
+				fclose($f_archivo);
+
+
+			    $this->db->where('f.folio', $numdocuemnto);
+			    $this->db->where('c.tipo_caf', 61);
+				$this->db->update('folios_caf f inner join caf c on f.idcaf = c.id',array('dte' => $xml_dte,
+																						  'estado' => 'O',
+																						  'idfactura' => $idfactura,
+																						  'path_dte' => $path,
+																						  'archivo_dte' => $nombre_dte,
+																						  'trackid' => $track_id
+																						  )); 
+
+				if($track_id != 0 && $datos_empresa_factura->e_mail != ''){ //existe track id, se envía correo
+						$this->facturaelectronica->envio_mail_dte($idfactura);
+				}
+
+			}					
+			
 		}
-
-		$detalle_cuenta_corriente = array(
-	        'idctacte' => $idcuentacorriente,
-	        'tipodocumento' => $tipodocumento,
-	        'numdocumento' => $numdocuemnto,
-	        'saldoinicial' => $ftotal,
-	        'saldo' => $ftotal,
-	        'fechavencimiento' => $fechavenc,
-	        'fecha' => $fechafactura
-		);
-
-		$this->db->insert('detalle_cuenta_corriente', $detalle_cuenta_corriente); 	
-
-
-		$cartola_cuenta_corriente = array(
-	        'idctacte' => $idcuentacorriente,
-	        'idcuenta' => $idcuentacontable,
-	        'tipodocumento' => $tipodocumento,
-	        'numdocumento' => $numdocuemnto,
-	        'glosa' => 'Registro de Nota de Crédito en Cuenta Corriente',
-	        'fecvencimiento' => $fechavenc,
-	        'valor' => $ftotal,
-	        'origen' => 'VENTA',
-	        'fecha' => $fechafactura
-		);
-
-		$this->db->insert('cartola_cuenta_corriente', $cartola_cuenta_corriente); 			
-
-		/*****************************************/
       
 
         $resp['success'] = true;
@@ -385,6 +645,8 @@ class Notacredito extends CI_Controller {
         $opcion = $this->input->get('opcion');
         $nombres = $this->input->get('nombre');
         $tipo = "11";
+        $tipo2 = "102";
+
 
 		$countAll = $this->db->count_all_results("factura_clientes");
 		$data = array();
@@ -392,10 +654,11 @@ class Notacredito extends CI_Controller {
 
 		if($opcion == "Rut"){
 		
-			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
+			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.tipo_documento ='.$tipo.' and c.rut = '.$nombres.'
+			left join tipo_documento td on (acc.tipo_documento = td.id)
+			WHERE acc.tipo_documento in ('.$tipo.','.$tipo2.') and c.rut = '.$nombres.'
 			order by acc.id desc		
 			limit '.$start.', '.$limit.''		 
 
@@ -411,10 +674,11 @@ class Notacredito extends CI_Controller {
 	        	$sql_nombre .= "and c.nombres like '%".$nombre."%' ";
 	        }
 	        	    	
-			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
+			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.tipo_documento ='.$tipo.' ' . $sql_nombre . '
+			left join tipo_documento td on (acc.tipo_documento = td.id)
+			WHERE acc.tipo_documento in ('.$tipo.','.$tipo2.') ' . $sql_nombre . '
 			order by acc.id desc		
 			limit '.$start.', '.$limit.''	
 			
@@ -423,10 +687,11 @@ class Notacredito extends CI_Controller {
 		}else if($opcion == "Todos"){
 
 			
-			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
+			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.tipo_documento ='.$tipo.'
+			left join tipo_documento td on (acc.tipo_documento = td.id)
+			WHERE acc.tipo_documento in ('.$tipo.','.$tipo2.')
 			order by acc.id desc		
 			limit '.$start.', '.$limit.''	
 			
@@ -436,10 +701,11 @@ class Notacredito extends CI_Controller {
 		}else{
 
 			
-		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
+		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.tipo_documento ='.$tipo.'
+			left join tipo_documento td on (acc.tipo_documento = td.id)
+			WHERE acc.tipo_documento in ('.$tipo.','.$tipo2.')
 			order by acc.id desc		
 			limit '.$start.', '.$limit.''	
 

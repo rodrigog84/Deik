@@ -136,6 +136,8 @@ Ext.define('Infosys_web.view.cuentascorrientes.CancelacionesIngresar', {
                         selModel: {
                         selType: 'cellmodel'
                         },
+
+
                         plugins: [
                             Ext.create('Ext.grid.plugin.CellEditing', {
                                 clicksToEdit: 1,
@@ -174,6 +176,15 @@ Ext.define('Infosys_web.view.cuentascorrientes.CancelacionesIngresar', {
 
 
                                         }else if(editor.field == 'debe' || editor.field == 'haber'){ 
+
+                                            var grid = me.down('grid')
+                                            stItem = grid.getStore();
+
+                                            var existe_nd = false;
+                                            stItem.each(function(r){
+                                                existe_nd = r.data.tipodocumento == 16 ? true : existe_nd;
+                                            });   
+
                                              var record = editor.record;
                                              if(record.get('cuenta') != 0 && record.get('cuenta') != null){
                                                 if(editor.field == 'debe' && record.get('haber') > 0){
@@ -182,10 +193,13 @@ Ext.define('Infosys_web.view.cuentascorrientes.CancelacionesIngresar', {
                                                 }else if(editor.field == 'haber' && record.get('debe') > 0){
                                                     Ext.Msg.alert('Alerta', 'Ya existe un valor asociado al Debe.');
                                                     return false; 
-                                                }else if(editor.field == 'debe' && record.get('saldo') > 0 && record.get('tipodocumento') != 11){
+                                                }else if(editor.field == 'debe' && record.get('saldo') > 0 && record.get('tipodocumento') == 1 && !existe_nd){ // en caso de ser factura, pero sin que existe una nota de debito
                                                     Ext.Msg.alert('Alerta', 'Abonos para el documento se realizan en el haber.');
                                                     return false;       
-                                                }else if(editor.field == 'haber' && record.get('saldo') > 0 && record.get('tipodocumento') == 11){
+                                                }else if(editor.field == 'debe' && record.get('saldo') > 0 && record.get('tipodocumento') == 16){ // notas de debito se abonan al haber
+                                                    Ext.Msg.alert('Alerta', 'Abonos para el documento se realizan en el haber.');
+                                                    return false;                                                           
+                                                }else if(editor.field == 'haber' && record.get('saldo') > 0 && (record.get('tipodocumento') == 11  || record.get('tipodocumento') == 102)){
                                                     Ext.Msg.alert('Alerta', 'Abonos para el documento se realizan en el debe.');
                                                     return false;                                                           
                                                 }else if(editor.field == 'haber' && record.get('saldo') == 0){
@@ -193,10 +207,10 @@ Ext.define('Infosys_web.view.cuentascorrientes.CancelacionesIngresar', {
                                                     return false;
                                                 }else{        
                                                     reccuenta = cuentascontablecancela.findRecord('id', record.get('cuenta'));
-                                                    if(editor.field == 'debe' && reccuenta.get('cancelaabono') == 1 && record.get('tipodocumento') != 11){
+                                                    if(editor.field == 'debe' && reccuenta.get('cancelaabono') == 1 && record.get('tipodocumento') == 1 && !existe_nd){
                                                         Ext.Msg.alert('Alerta', 'Abonos se realizan en el haber.');
                                                         return false;
-                                                    }else if(editor.field == 'haber' && reccuenta.get('cancelaabono') == 1 && record.get('tipodocumento') == 11){
+                                                    }else if(editor.field == 'haber' && reccuenta.get('cancelaabono') == 1 && (record.get('tipodocumento') == 11 || record.get('tipodocumento') == 102)){
                                                         Ext.Msg.alert('Alerta', 'Abonos se realizan en el debe.');
                                                         return false;                                                        
                                                     }else if(editor.field == 'haber' && reccuenta.get('cancelacargo') == 1){
@@ -330,23 +344,51 @@ Ext.define('Infosys_web.view.cuentascorrientes.CancelacionesIngresar', {
                                                             idDocumento: editor.value
                                                         },                                                     
                                                    success: function(response, opts) {
+
+
+
                                                       var obj = Ext.decode(response.responseText);
                                                        // REVISAR QUE EN CASO QUE NO EXISTA CUENTA, DESPLEGAR UN CERO
                                                       editor.record.set({saldo: obj.data[0].saldo});  
                                                       editor.record.set({tipodocumento: obj.data[0].tipodocumento});  
-                                                      if(obj.data[0].tipodocumento == 11){
+                                                      if(obj.data[0].tipodocumento == 11 || obj.data[0].tipodocumento == 102){ //NOTA DE CREDITO O NOTA DE CRÉDITO ELECTRÓNICA
                                                         editor.record.set({debe: obj.data[0].saldo});  
                                                         grid.plugins[0].startEditByPosition({
                                                             row: editor.rowIdx,
                                                             column: 5
-                                                        });    
+                                                        }); 
 
-                                                      }else{
+                                                      }else if(obj.data[0].tipodocumento == 16){ //NOTA DE DEBITO   
                                                         editor.record.set({haber: obj.data[0].saldo});  
                                                         grid.plugins[0].startEditByPosition({
                                                             row: editor.rowIdx,
                                                             column: 6
-                                                        });    
+                                                        });   
+                                                      }else{
+
+                                                        stItem = grid.getStore();
+
+                                                        var existe_nd = false;
+                                                        stItem.each(function(r){
+                                                            existe_nd = r.data.tipodocumento == 16 ? true : existe_nd;
+                                                        });   
+
+                                                        if(existe_nd){  // si tiene nota de debito, entonces la factura se va al debe
+                                                            editor.record.set({debe: obj.data[0].saldo});  
+                                                            grid.plugins[0].startEditByPosition({
+                                                                row: editor.rowIdx,
+                                                                column: 5
+                                                            });    
+
+                                                        }else{
+                                                            editor.record.set({haber: obj.data[0].saldo});  
+                                                            grid.plugins[0].startEditByPosition({
+                                                                row: editor.rowIdx,
+                                                                column: 6
+                                                            });
+
+                                                        }
+
                                                       }
 
 
@@ -371,7 +413,7 @@ Ext.define('Infosys_web.view.cuentascorrientes.CancelacionesIngresar', {
                                                         column: 5
                                                     });                                                    
                                             }else{
-                                                    if(record.get('tipodocumento') == 11){
+                                                    if(record.get('tipodocumento') == 11 || record.get('tipodocumento') == 102){
                                                         grid.plugins[0].startEditByPosition({
                                                             row: editor.rowIdx,
                                                             column: 5
@@ -529,7 +571,7 @@ Ext.define('Infosys_web.view.cuentascorrientes.CancelacionesIngresar', {
                             text: 'Eliminar',
                             align: 'center',
                             items: [{
-                                icon: gbl_site + 'Infosys_web/resources/images/delete.png',
+                                icon: preurl_js + 'resources/images/delete.png',
                                 // Use a URL in the icon config
                                 tooltip: 'Eliminar',
                                 handler: function (grid, rowIndex, colIndex) {
