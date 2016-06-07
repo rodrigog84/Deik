@@ -26,6 +26,13 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
 
     initComponent: function() {
         var me = this;
+         var tipoNotaCredito = Ext.create('Ext.data.Store', {
+            fields: ['value', 'nombre'],
+            data : [
+                {"value":1, "nombre":"ANULACIÓN"},
+                {"value":3, "nombre":"CORRECCIÓN"}
+            ]
+        });                  
         var stItms = Ext.getStore('productos.Items');
         stItms.removeAll();
         Ext.applyIf(me, {
@@ -56,16 +63,25 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
                                         type: 'hbox',
                                         align: 'stretch'
                                     },
-                                    items: [  {
+                                    items: [   {                                    
+                                            xtype: 'combo',
+                                            align: 'center',
+                                            width: 450,
+                                            maxHeight: 25,
+                                            matchFieldWidth: false,
+                                            listConfig: {
+                                                width: 350
+                                            },
+                                            itemId: 'tipodocumentoId',
+                                            fieldLabel: '<b>DOCUMENTO</b>',
+                                            fieldCls: 'required',
+                                            store: 'Tipo_documento.Selectornc',
+                                            valueField: 'id',
+                                            displayField: 'nombre'
+                                        },/*{
                                             xtype: 'textfield',
                                             name: 'id_documento',
                                             itemId: 'tipodocumentoId',
-                                            hidden: true
-                                          
-                                        },{
-                                            xtype: 'textfield',
-                                            name: 'id_factura',
-                                            itemId: 'facturaId',
                                             hidden: true
                                           
                                         },{
@@ -77,9 +93,15 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
                                             value: 12,
                                             readOnly: true
                                           
-                                        },{
+                                        },*/{
                                             xtype: 'displayfield',
                                             width: 40                                          
+                                        },{
+                                            xtype: 'textfield',
+                                            name: 'id_factura',
+                                            itemId: 'facturaId',
+                                            hidden: true
+                                          
                                         },{
                                             xtype: 'textfield',
                                             fieldCls: 'required',
@@ -350,12 +372,101 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
                                         },{xtype: 'splitter'},{
                                             xtype: 'button',
                                             text: 'Facturas',
-                                            itemId: 'facturaId',
+                                            //itemId: 'facturaId',
                                             maxHeight: 25,
                                             width: 70,
                                             allowBlank: true,
                                             action: 'buscarfactura'
                                             //,disabled : true  
+                                        },{xtype: 'splitter'},{
+                                            xtype: 'combobox',
+                                            width: 400,
+                                            store : tipoNotaCredito,
+                                            fieldLabel: 'TIPO NOTA DE CR&Eacute;DITO',
+                                            labelStyle: ' font-weight:bold',
+                                            labelWidth: 200,
+                                            emptyText : 'Seleccionar',
+                                            editable: false,
+                                            itemId : 'tipoNotaCredito' ,
+                                            name : 'tipoNotaCredito' ,
+                                            displayField : 'nombre',
+                                            valueField : 'value',
+                                            disabled : true,
+                                            listeners: {
+                                                change : function(elem,newValue,oldValue,eOpts){
+                                                        var stItms = Ext.getStore('productos.Items');
+                                                        stItms.removeAll(); //limpia grilla antes de cargar
+
+                                                        if(newValue == 1){ // ANULACION
+                                                            me.down('#codigoId').setValue('');
+                                                            me.down('#precioId').setValue('');
+                                                            me.down('#cantidadOriginalId').setValue('');
+                                                            me.down('#cantidadId').setValue('');
+
+                                                            me.down('#codigoId').setDisabled(true);
+                                                            me.down('#buscarproc').setDisabled(true);
+                                                            me.down('#precioId').setDisabled(true);
+                                                            me.down('#cantidadOriginalId').setDisabled(true);
+                                                            me.down('#cantidadId').setDisabled(true);
+                                                            me.down('#agregarItem').setDisabled(true);
+                                                            me.down('#eliminaritem').setDisabled(true);
+
+                                                            var nombre = me.down('#facturaId').getValue()
+                                                            console.log(preurl + 'facturas/getAllnotap?nombre='+nombre);
+                                                            response = Ext.Ajax.request({
+                                                            async: false,
+                                                            url: preurl + 'facturas/getAllnotap?nombre='+nombre}); 
+                                                            var obj = Ext.decode(response.responseText);
+                                                            var cantidad = obj.total
+                                                            var detalle_factura = obj.data;
+                                                            var total = 0;
+                                                            for(i=0;i<cantidad;i++){
+                                                                stItms.add(new Infosys_web.model.Productos.Item({
+                                                                    id: detalle_factura[i].id_producto,
+                                                                    idproducto: detalle_factura[i].id_producto,
+                                                                    nombre: detalle_factura[i].nombre,
+                                                                    precio: detalle_factura[i].precio,
+                                                                    cantidad: detalle_factura[i].cantidad,
+                                                                    neto: (parseInt(detalle_factura[i].neto/ 1.19)),
+                                                                    dcto: detalle_factura[i].descuento,
+                                                                    totaliva: detalle_factura[i].neto,
+                                                                    iva: detalle_factura[i].iva          
+                                                                }));
+
+                                                                total += parseInt(detalle_factura[i].neto);
+
+                                                            }
+
+                                                            var neto = parseInt(total/1.19);
+                                                            var iva = total - neto;
+                                                            me.down('#finaltotalId').setValue(total);
+                                                            me.down('#finaltotalnetoId').setValue(neto);
+                                                            me.down('#finalafectoId').setValue(neto);
+                                                            me.down('#finaltotalivaId').setValue(iva);
+                                                            me.down('#finaltotalpostId').setValue(total);
+                                                            
+                                                        }else if(newValue == 3){ //CORRECCION
+                                                            me.down('#codigoId').setDisabled(false);
+                                                            me.down('#buscarproc').setDisabled(false);
+                                                            me.down('#precioId').setDisabled(false);
+                                                            me.down('#cantidadOriginalId').setDisabled(false);
+                                                            me.down('#cantidadId').setDisabled(false);
+                                                            me.down('#agregarItem').setDisabled(false);
+                                                            me.down('#eliminaritem').setDisabled(false);
+
+                                                            
+                                                            me.down('#finaltotalId').setValue(0);
+                                                            me.down('#finaltotalnetoId').setValue(0);
+                                                            me.down('#finalafectoId').setValue(0);
+                                                            me.down('#finaltotalivaId').setValue(0);
+                                                            me.down('#finaltotalpostId').setValue(0);
+
+
+                                                        }
+
+
+                                                    }
+                                                }                                            
                                         }
                                     ]
                                     },{
@@ -453,6 +564,7 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
                                 xtype: 'button',
                                 text: 'Agregar',
                                 iconCls: 'icon-plus',
+                                itemId: 'agregarItem',
                                 width: 105,
                                 allowBlank: true,
                                 action: 'agregarItem'
@@ -473,6 +585,7 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
                             store: 'productos.Items',
                             tbar: [{
                                 iconCls: 'icon-delete',
+                                itemId: 'eliminaritem',
                                 text: 'Eliminar',
                                 action: 'eliminaritem'
                             }
@@ -483,6 +596,7 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
                                     { text: 'IdProducto',  dataIndex: 'id_producto', width: 250,hidden: true },
                                     { text: 'Precio Unitario',  dataIndex: 'precio', flex:1, renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,000")} },
                                     { text: 'Cantidad',  dataIndex: 'cantidad', width: 100, renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,000")} },
+                                    { text: 'Descuento',  dataIndex: 'dcto', width: 100, renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,000")} },
                                     { text: 'Total',  dataIndex: 'totaliva', flex:1, renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,000")} }
                                 ]
                             },{

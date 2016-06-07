@@ -56,7 +56,22 @@ Ext.define('Infosys_web.view.notacredito.Notacreditoglosa', {
                                         type: 'hbox',
                                         align: 'stretch'
                                     },
-                                    items: [  {
+                                    items: [   {
+                                            xtype: 'combo',
+                                            align: 'center',
+                                            width: 450,
+                                            maxHeight: 25,
+                                            matchFieldWidth: false,
+                                            listConfig: {
+                                                width: 350
+                                            },
+                                            itemId: 'tipodocumentoId',
+                                            fieldLabel: '<b>DOCUMENTO</b>',
+                                            fieldCls: 'required',
+                                            store: 'Tipo_documento.Selectornc',
+                                            valueField: 'id',
+                                            displayField: 'nombre'
+                                        },/*{
                                             xtype: 'textfield',
                                             name: 'id_documento',
                                             itemId: 'tipodocumentoId',
@@ -77,11 +92,17 @@ Ext.define('Infosys_web.view.notacredito.Notacreditoglosa', {
                                             value: 12,
                                             readOnly: true
                                           
-                                        },{
+                                        },*/{
                                             xtype: 'displayfield',
                                             width: 40                                          
                                         },{
                                             xtype: 'textfield',
+                                            name: 'id_factura',
+                                            itemId: 'facturaId',
+                                            hidden: true
+                                                                                                                             
+                                        },{
+                                            xtype: 'textfield',                                            
                                             fieldCls: 'required',
                                             maxHeight: 25,
                                             width: 250,
