@@ -182,7 +182,7 @@ Ext.define('Infosys_web.view.cuentascorrientes.CancelacionesIngresar', {
 
                                             var existe_nd = false;
                                             stItem.each(function(r){
-                                                existe_nd = r.data.tipodocumento == 16 ? true : existe_nd;
+                                                existe_nd = r.data.tipodocumento == 16 || r.data.tipodocumento == 104 ? true : existe_nd; //NOTA DE DEBITO
                                             });   
 
                                              var record = editor.record;
@@ -193,10 +193,10 @@ Ext.define('Infosys_web.view.cuentascorrientes.CancelacionesIngresar', {
                                                 }else if(editor.field == 'haber' && record.get('debe') > 0){
                                                     Ext.Msg.alert('Alerta', 'Ya existe un valor asociado al Debe.');
                                                     return false; 
-                                                }else if(editor.field == 'debe' && record.get('saldo') > 0 && record.get('tipodocumento') == 1 && !existe_nd){ // en caso de ser factura, pero sin que existe una nota de debito
+                                                }else if(editor.field == 'debe' && record.get('saldo') > 0 && (record.get('tipodocumento') == 1 || record.get('tipodocumento') == 101  || record.get('tipodocumento') == 19  || record.get('tipodocumento') == 103) && !existe_nd){ // en caso de ser factura, pero sin que existe una nota de debito
                                                     Ext.Msg.alert('Alerta', 'Abonos para el documento se realizan en el haber.');
                                                     return false;       
-                                                }else if(editor.field == 'debe' && record.get('saldo') > 0 && record.get('tipodocumento') == 16){ // notas de debito se abonan al haber
+                                                }else if(editor.field == 'debe' && record.get('saldo') > 0 && (record.get('tipodocumento') == 16 || record.get('tipodocumento') == 104)){ // notas de debito se abonan al haber
                                                     Ext.Msg.alert('Alerta', 'Abonos para el documento se realizan en el haber.');
                                                     return false;                                                           
                                                 }else if(editor.field == 'haber' && record.get('saldo') > 0 && (record.get('tipodocumento') == 11  || record.get('tipodocumento') == 102)){
@@ -207,7 +207,7 @@ Ext.define('Infosys_web.view.cuentascorrientes.CancelacionesIngresar', {
                                                     return false;
                                                 }else{        
                                                     reccuenta = cuentascontablecancela.findRecord('id', record.get('cuenta'));
-                                                    if(editor.field == 'debe' && reccuenta.get('cancelaabono') == 1 && record.get('tipodocumento') == 1 && !existe_nd){
+                                                    if(editor.field == 'debe' && reccuenta.get('cancelaabono') == 1 && (record.get('tipodocumento') == 1 || record.get('tipodocumento') == 101 || record.get('tipodocumento') == 19 || record.get('tipodocumento') == 103) && !existe_nd){
                                                         Ext.Msg.alert('Alerta', 'Abonos se realizan en el haber.');
                                                         return false;
                                                     }else if(editor.field == 'haber' && reccuenta.get('cancelaabono') == 1 && (record.get('tipodocumento') == 11 || record.get('tipodocumento') == 102)){
@@ -358,7 +358,7 @@ Ext.define('Infosys_web.view.cuentascorrientes.CancelacionesIngresar', {
                                                             column: 5
                                                         }); 
 
-                                                      }else if(obj.data[0].tipodocumento == 16){ //NOTA DE DEBITO   
+                                                      }else if(obj.data[0].tipodocumento == 16 || obj.data[0].tipodocumento == 104){ //NOTA DE DEBITO   
                                                         editor.record.set({haber: obj.data[0].saldo});  
                                                         grid.plugins[0].startEditByPosition({
                                                             row: editor.rowIdx,
@@ -370,7 +370,7 @@ Ext.define('Infosys_web.view.cuentascorrientes.CancelacionesIngresar', {
 
                                                         var existe_nd = false;
                                                         stItem.each(function(r){
-                                                            existe_nd = r.data.tipodocumento == 16 ? true : existe_nd;
+                                                            existe_nd = r.data.tipodocumento == 16 || r.data.tipodocumento == 104 ? true : existe_nd;
                                                         });   
 
                                                         if(existe_nd){  // si tiene nota de debito, entonces la factura se va al debe

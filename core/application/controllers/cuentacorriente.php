@@ -437,7 +437,7 @@ class Cuentacorriente extends CI_Controller {
 							$query = $this->db->query("UPDATE detalle_cuenta_corriente SET saldo = saldo - " . $valor . " where id = " .  $arrayCuentasCorrientes[$i]['iddoctocta'] );
 						}
 
-					}else if($arrayCuentasCorrientes[$i]['tipodocumento'] == 16){ // SI ES NOTA DE DEBITO, SÓLO SE ABONA A LA FACTURA
+					}else if($arrayCuentasCorrientes[$i]['tipodocumento'] == 16 || $arrayCuentasCorrientes[$i]['tipodocumento'] == 104){ // SI ES NOTA DE DEBITO, SÓLO SE ABONA A LA FACTURA
 						// ESTO ES UN TRUCO, SOLO PARA QUE AL REBAJAR POR FACTURA, EL MOVIMIENTO QUEDE EN CERO
 						$query = $this->db->query("UPDATE cuenta_corriente SET saldo = saldo - " . $valor . " where id = " .  $arrayCuentasCorrientes[$i]['id'] );
 						$query = $this->db->query("UPDATE detalle_cuenta_corriente SET saldo = saldo - " . $valor . " where id = " .  $arrayCuentasCorrientes[$i]['iddoctocta'] );
@@ -607,7 +607,7 @@ class Cuentacorriente extends CI_Controller {
 							$query = $this->db->query("UPDATE detalle_cuenta_corriente SET saldo = saldo - " . $valor . " where id = " .  $arrayCuentasCorrientes[$i]['iddoctocta'] );
 						}
 
-					}else if($arrayCuentasCorrientes[$i]['tipodocumento'] == 16){ // SI ES NOTA DE DEBITO, SÓLO SE ABONA A LA FACTURA
+					}else if($arrayCuentasCorrientes[$i]['tipodocumento'] == 16 || $arrayCuentasCorrientes[$i]['tipodocumento'] == 104){ // SI ES NOTA DE DEBITO, SÓLO SE ABONA A LA FACTURA
 						// ESTO ES UN TRUCO, SOLO PARA QUE AL REBAJAR POR FACTURA, EL MOVIMIENTO QUEDE EN CERO
 						$query = $this->db->query("UPDATE cuenta_corriente SET saldo = saldo - " . $valor . " where id = " .  $arrayCuentasCorrientes[$i]['id'] );
 						$query = $this->db->query("UPDATE detalle_cuenta_corriente SET saldo = saldo - " . $valor . " where id = " .  $arrayCuentasCorrientes[$i]['iddoctocta'] );
