@@ -1418,6 +1418,8 @@ public function cargacontribuyentes(){
 			$tipo_caf = 34;
 		}else if($tipo_doc == 104){
 			$tipo_caf = 56;
+		}else if($tipo_doc == 105){
+			$tipo_caf = 52;
 		}
 
 		$nuevo_folio = 0;
@@ -2055,6 +2057,7 @@ public function cargacontribuyentes(){
         $limit = $this->input->get('limit');
         $nombre = $this->input->get('nombre');        
         $tipo = "1";
+        $tipo2 = "101";
 
 
 		$countAll = $this->db->count_all_results("factura_clientes");
@@ -2064,7 +2067,7 @@ public function cargacontribuyentes(){
 		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.id_cliente = '.$nombre.' AND acc.tipo_documento = '.$tipo.'
+			WHERE acc.id_cliente = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.')
 			limit '.$start.', '.$limit.' ');
 
 		
@@ -2126,6 +2129,7 @@ public function cargacontribuyentes(){
         $limit = $this->input->get('limit');
         $nombre = $this->input->get('nombre');        
         $tipo = "1";
+        $tipo2 = "101";
 
 
 		$countAll = $this->db->count_all_results("factura_clientes");
@@ -2386,7 +2390,7 @@ public function cargacontribuyentes(){
     	$this->db->update('productos', $datos);
     	
 	
-		if ($tipodocumento != 3){
+		if ($tipodocumento != 3 && $tipodocumento != 105){
 
 
 		/******* CUENTAS CORRIENTES ****/
@@ -2446,11 +2450,27 @@ public function cargacontribuyentes(){
 
 		$this->db->insert('cartola_cuenta_corriente', $cartola_cuenta_corriente); 			
 
+        $resp['success'] = true;
+		$resp['idfactura'] = $idfactura;
+
+		$this->Bitacora->logger("I", 'factura_clientes', $idfactura);
+		}		
+
 		/*****************************************/
 
-		if($tipodocumento == 101 || $tipodocumento == 103){  // SI ES FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONICA
+		if($tipodocumento == 101 || $tipodocumento == 103 || $tipodocumento == 105){  // SI ES FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONICA
 
-			$tipo_caf = $tipodocumento == 101 ? 33 : 34;
+
+			if($tipodocumento == 101){
+				$tipo_caf = 33;
+			}else if($tipodocumento == 103){
+				$tipo_caf = 34;
+			}else if($tipodocumento == 105){
+				$tipo_caf = 52;
+			}
+
+
+			//$tipo_caf = $tipodocumento == 101 ? 33 : 34;
 
 			header('Content-type: text/plain; charset=ISO-8859-1');
 			$this->load->model('facturaelectronica');
@@ -2587,12 +2607,6 @@ public function cargacontribuyentes(){
 		}
       
 
-		$this->Bitacora->logger("I", 'factura_clientes', $idfactura);
-
-		};
-		
-		$resp['success'] = true;
-		$resp['idfactura'] = $idfactura;
         echo json_encode($resp);
 	}
 
@@ -2610,7 +2624,7 @@ public function cargacontribuyentes(){
 		if($tipodocumento == 1){
 				$this->exportFacturaPDF($idfactura,$numero);
 
-		}else if($tipodocumento ==  101 || $tipodocumento == 103){ // FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONCA
+		}else if($tipodocumento ==  101 || $tipodocumento == 103 || $tipodocumento == 105){ // FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONCA O GUIA DE DESPACHO
 				//$es_cedible = is_null($cedible) ? false : true;
 				$this->load->model('facturaelectronica');
 				$this->facturaelectronica->exportFePDF($idfactura,'id');

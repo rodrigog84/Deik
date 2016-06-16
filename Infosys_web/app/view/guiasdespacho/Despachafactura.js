@@ -56,16 +56,25 @@ Ext.define('Infosys_web.view.guiasdespacho.Despachafactura', {
                                         type: 'hbox',
                                         align: 'stretch'
                                     },
-                                    items: [  {
+                                    items: [  {                                    
+                                            xtype: 'combo',
+                                            align: 'center',
+                                            width: 450,
+                                            maxHeight: 25,
+                                            matchFieldWidth: false,
+                                            listConfig: {
+                                                width: 350
+                                            },
+                                            itemId: 'tipodocumentoId',
+                                            fieldLabel: '<b>DOCUMENTO</b>',
+                                            fieldCls: 'required',
+                                            store: 'Tipo_documento.Selectorg',
+                                            valueField: 'id',
+                                            displayField: 'nombre'
+                                        },/*{
                                             xtype: 'textfield',
                                             name: 'id_documento',
                                             itemId: 'tipodocumentoId',
-                                            hidden: true
-                                          
-                                        },{
-                                            xtype: 'textfield',
-                                            name: 'id_factura',
-                                            itemId: 'facturaId',
                                             hidden: true
                                           
                                         },{
@@ -76,6 +85,12 @@ Ext.define('Infosys_web.view.guiasdespacho.Despachafactura', {
                                             itemId: 'nomdocumentoId',
                                             value: 12,
                                             readOnly: true
+                                          
+                                        },*/{
+                                            xtype: 'textfield',
+                                            name: 'id_factura',
+                                            itemId: 'facturaId',
+                                            hidden: true
                                           
                                         },{
                                             xtype: 'displayfield',

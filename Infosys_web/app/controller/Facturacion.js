@@ -1217,7 +1217,7 @@ cargar_listado_contribuyentes: function(){
             var row = view.getSelectionModel().getSelection()[0];
             var tipo_documento = row.data.tipo_documento;
 
-            if (tipo_documento==101 || tipo_documento==103){
+            if (tipo_documento==101 || tipo_documento==103 || tipo_documento==105){
                 window.open(preurl +'facturas/exportFePDF/' + row.data.id+'/cedible')
             }else{
                 Ext.Msg.alert('Alerta', 'Solo disponible para facturas electronicas');
@@ -1322,7 +1322,7 @@ cargar_listado_contribuyentes: function(){
         
         var nombre = (record.id);    
         habilita = false;
-        if(nombre == 101 || nombre == 103){ // FACTURA ELECTRONICA o FACTURA EXENTA
+        if(nombre == 101 || nombre == 103 || nombre == 105){ // FACTURA ELECTRONICA o FACTURA EXENTA
 
             // se valida que exista certificado
             response_certificado = Ext.Ajax.request({
@@ -1387,7 +1387,7 @@ cargar_listado_contribuyentes: function(){
 
         
         //var bolDisabled = tipo_documento.getValue() == 2 ? true : false; // campos se habilitan sólo en factura
-        var bolDisabled = tipo_documento.getValue() == 1 || tipo_documento.getValue() == 19 || ((tipo_documento.getValue() == 101 || tipo_documento.getValue() == 103) && habilita) ? false : true; // campos se habilitan sólo en factura o factura electronica
+        var bolDisabled = tipo_documento.getValue() == 1 || tipo_documento.getValue() == 19 || ((tipo_documento.getValue() == 101 || tipo_documento.getValue() == 103 || tipo_documento.getValue() == 105) && habilita) ? false : true; // campos se habilitan sólo en factura o factura electronica
 
         if(bolDisabled == true){  // limpiar campos
            view.down('#rutId').setValue('19');

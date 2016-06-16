@@ -132,7 +132,7 @@ Ext.define('Infosys_web.view.ventas.Principalfactura' ,{
                 },
                 isDisabled: function(view, rowIndex, colIndex, item, record) {
                     // Returns true if 'editable' is false (, null, or undefined)
-                    if(record.get('tipo_documento') == 101 || record.get('tipo_documento') == 103){
+                    if(record.get('tipo_documento') == 101 || record.get('tipo_documento') == 103 || record.get('tipo_documento') == 105){
                         return false;
                     }else{
                         return true;
@@ -155,7 +155,7 @@ Ext.define('Infosys_web.view.ventas.Principalfactura' ,{
                 },
                 isDisabled: function(view, rowIndex, colIndex, item, record) {
                     // Returns true if 'editable' is false (, null, or undefined)
-                    if(record.get('tipo_documento') == 101 || record.get('tipo_documento') == 103){
+                    if(record.get('tipo_documento') == 101 || record.get('tipo_documento') == 103 || record.get('tipo_documento') == 105){
                         return false;
                     }else{
                         return true;
@@ -178,7 +178,7 @@ Ext.define('Infosys_web.view.ventas.Principalfactura' ,{
                 },
                 isDisabled: function(view, rowIndex, colIndex, item, record) {
                     // Returns true if 'editable' is false (, null, or undefined)
-                    if(record.get('tipo_documento') == 101 || record.get('tipo_documento') == 103){
+                    if(record.get('tipo_documento') == 101 || record.get('tipo_documento') == 103 || record.get('tipo_documento') == 105){
                         return false;
                     }else{
                         return true;

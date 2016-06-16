@@ -8,5 +8,6 @@ Ext.define('Infosys_web.store.Tipo_documento.Selector', {
         {"id":"103", "nombre":"FACTURA EXENTA ELECTRONICA"},          
         {"id":"2", "nombre":"BOLETA"},
      	{"id":"3", "nombre":"GUIA DESPACHO"},
+        {"id":"105", "nombre":"GUIA DE DESPACHO ELECTRONICA"},  
     ]
 });

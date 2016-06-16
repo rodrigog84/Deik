@@ -12,7 +12,8 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
              'Sucursales_clientes',
              'Factura4',
              'Despachafactura',
-             'guiasdespacho.Selector'],
+             'guiasdespacho.Selector',
+             'Tipo_documento.Selectorg'],
 
     models: ['Guiasdespacho',
              'Guiasdespacho.Item'],
@@ -221,7 +222,9 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
             'facturaguias #tipoDescuentoId': {
                 change: this.changedctofinal
             },
-
+            'despachofactura #tipodocumentoId': {
+                select: this.selectItemdocuemento
+            },  
 
         });
     },
@@ -867,6 +870,94 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
             this.validarut3()
         }
     },
+
+
+    selectItemdocuemento: function() {
+
+
+
+        var view =this.getDespachofactura();
+        var tipo_documento = view.down('#tipodocumentoId');
+        var stCombo = tipo_documento.getStore();
+
+        var record = stCombo.findRecord('id', tipo_documento.getValue()).data;
+        //console.log(record);
+        var nombre = (record.id);    
+        if(nombre == 105){ // GUIA DE DESPACHO ELECTRONICA
+
+            // se valida que exista certificado
+            response_certificado = Ext.Ajax.request({
+            async: false,
+            url: preurl + 'facturas/existe_certificado/'});
+
+            var obj_certificado = Ext.decode(response_certificado.responseText);
+
+            if(obj_certificado.existe == true){
+
+
+                //buscar folio factura electronica
+                // se buscan folios pendientes, o ocupados hace más de 4 horas
+
+                response_folio = Ext.Ajax.request({
+                async: false,
+                url: preurl + 'facturas/folio_documento_electronico/'+nombre});  
+                var obj_folio = Ext.decode(response_folio.responseText);
+                nuevo_folio = obj_folio.folio;
+                if(nuevo_folio != 0){
+                    view.down('#numfacturaId').setValue(nuevo_folio);  
+                    //habilita = true;
+                }else{
+                    Ext.Msg.alert('Atención','No existen folios disponibles');
+                    view.down('#numfacturaId').setValue('');  
+
+                    //return
+                }
+
+            }else{
+                    Ext.Msg.alert('Atención','No se ha cargado certificado');
+                    view.down('#numfacturaId').setValue('');  
+            }
+
+
+        }else{
+
+            Ext.Ajax.request({
+
+                url: preurl + 'correlativos/generancred?valida='+nombre,
+                params: {
+                    id: 1
+                },
+                success: function(response){
+                    var resp = Ext.JSON.decode(response.responseText);
+
+                    if (resp.success == true) {
+                        var cliente = resp.cliente;
+                        var correlanue = cliente.correlativo;
+                        //var descripcion = cliente.nombre;
+                        //var id = cliente.id;
+                        correlanue = (parseInt(correlanue)+1);
+                        var correlanue = correlanue;
+                        //var view = Ext.create('Infosys_web.view.notacredito.Notacredito').show();
+                        view.down('#numfacturaId').setValue(correlanue);
+                        //view.down('#nomdocumentoId').setValue(descripcion);
+                        //view.down('#tipodocumentoId').setValue(id);
+                        
+                    }else{
+                        Ext.Msg.alert('Correlativo YA Existe');
+                        return;
+                    }
+
+
+
+                }            
+            });            
+        }
+        var grid  = view.down('#itemsgridId');        
+        grid.getStore().removeAll();  
+        //var controller = this.getController('Productos');
+        //this.recalcularFinal();
+
+    },    
 
     validarut3: function(){
 
@@ -1685,8 +1776,8 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
     },
 
     despachofactura: function(){
-
-        var nombre = 3;    
+        var view = Ext.create('Infosys_web.view.guiasdespacho.Despachafactura').show();
+        /*var nombre = 3;    
         Ext.Ajax.request({
 
             url: preurl + 'correlativos/generancred?valida='+nombre,
@@ -1716,7 +1807,7 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
 
 
             }            
-        });
+        });*/
     },
    
     fguias: function(){
