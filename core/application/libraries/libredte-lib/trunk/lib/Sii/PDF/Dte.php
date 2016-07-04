@@ -180,9 +180,20 @@ class Dte extends \sasco\LibreDTE\PDF
             $dte['Encabezado']['IdDoc']['Folio'],
             $dte['Encabezado']['Emisor']['CmnaOrigen']
         );
+
+
+
+        $this->Image('./facturacion_electronica/images/Bticino.png', 10, $dte['Encabezado']['IdDoc']['TipoDTE'] == 34 || $dte['Encabezado']['IdDoc']['TipoDTE'] == 61  || $dte['Encabezado']['IdDoc']['TipoDTE'] == 52 ? 40 : 35, 20, 15, 'PNG', '', 'T');
+        $this->Image('./facturacion_electronica/images/Schneider.png', 35, $dte['Encabezado']['IdDoc']['TipoDTE'] == 34 || $dte['Encabezado']['IdDoc']['TipoDTE'] == 61  || $dte['Encabezado']['IdDoc']['TipoDTE'] == 52 ? 40 : 35, 25, 15, 'PNG', '', 'T');
+        $this->Image('./facturacion_electronica/images/Westinghouse.png', 70, $dte['Encabezado']['IdDoc']['TipoDTE'] == 34 || $dte['Encabezado']['IdDoc']['TipoDTE'] == 61  || $dte['Encabezado']['IdDoc']['TipoDTE'] == 52 ? 43 : 38, 25, 8, 'PNG', '', 'T');
+
+
         // datos del documento
         $this->setY(max($y));
         $this->Ln();
+
+        
+
         $this->agregarFechaEmision($dte['Encabezado']['IdDoc']['FchEmis']);
         $this->agregarCondicionVenta($dte['Encabezado']['IdDoc']);
         $this->agregarReceptor($dte['Encabezado']['Receptor']);
