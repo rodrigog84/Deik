@@ -530,6 +530,20 @@ Ext.define('Infosys_web.controller.Pago_caja', {
             var tipodocumento = 3;
         }
       
+        if (tipo_documento.getValue()== "FACTURA ELECTRONICA"){
+            
+            var tipodocumento = 101;
+        }
+
+        if (tipo_documento.getValue()== "FACTURA EXENTA ELECTRONICA"){
+            
+            var tipodocumento = 103;
+        }
+
+        if (tipo_documento.getValue()== "GUIA DE DESPACHO ELECTRONICA"){
+            
+            var tipodocumento = 105;
+        }
 
         if(vendedor==0  && tipo_documento.getValue() == 1){
             Ext.Msg.alert('Ingrese Datos del Vendedor');
@@ -1540,6 +1554,45 @@ Ext.define('Infosys_web.controller.Pago_caja', {
 
                         var view = Ext.create('Infosys_web.view.Pago_caja.Genera_pago').show();                   
                         var nombre = tipo_docu;
+
+                    if(nombre == 101 || nombre == 103 || nombre == 105){ // FACTURA ELECTRONICA o FACTURA EXENTA
+
+                        // se valida que exista certificado
+                        response_certificado = Ext.Ajax.request({
+                        async: false,
+                        url: preurl + 'facturas/existe_certificado/'});
+
+                        var obj_certificado = Ext.decode(response_certificado.responseText);
+
+                        if(obj_certificado.existe == true){
+
+                            //buscar folio factura electronica
+                            // se buscan folios pendientes, o ocupados hace más de 4 horas
+
+                            response_folio = Ext.Ajax.request({
+                            async: false,
+                            url: preurl + 'facturas/folio_documento_electronico/'+nombre});  
+                            var obj_folio = Ext.decode(response_folio.responseText);
+                            //console.log(obj_folio); 
+                            nuevo_folio = obj_folio.folio;
+                            if(nuevo_folio != 0){
+                                view.down('#numfacturaId').setValue(nuevo_folio);  
+                                habilita = true;
+                            }else{
+                                Ext.Msg.alert('Atención','No existen folios disponibles');
+                                view.down('#numfacturaId').setValue('');  
+
+                                //return
+                            }
+
+                        }else{
+                                Ext.Msg.alert('Atención','No se ha cargado certificado');
+                                view.down('#numfacturaId').setValue('');  
+                        }
+
+
+                    }else{        
+
                         Ext.Ajax.request({
 
                             url: preurl + 'correlativos/generafact?valida='+nombre,
@@ -1564,7 +1617,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
 
                             }            
                         });
-
+                    }
                         view.down("#ticketId").setValue(ticket);
                         view.down("#idticketId").setValue(idticket);
                         view.down("#idId").setValue(idticket);

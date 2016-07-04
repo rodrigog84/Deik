@@ -169,6 +169,7 @@ class Dte extends \sasco\LibreDTE\PDF
      */
     private function agregarNormal(array $dte, $timbre)
     {
+            
         // agregar página para la factura
         $this->AddPage();
         // agregar cabecera del documento
@@ -189,12 +190,27 @@ class Dte extends \sasco\LibreDTE\PDF
             !empty($dte['Encabezado']['IdDoc']['IndTraslado']) ? $dte['Encabezado']['IdDoc']['IndTraslado'] : null,
             !empty($dte['Encabezado']['Transporte']) ? $dte['Encabezado']['Transporte'] : null
         );
-        if (!empty($dte['Referencia']))
+        //if (!empty($dte['Referencia']))
             $this->agregarReferencia($dte['Referencia']);
+
+        //AGREGAR RECUADRO PARA DATOS DEL DESTINATARIO
+        $y = 50;
+        $y = $dte['Encabezado']['IdDoc']['TipoDTE'] == 34 || $dte['Encabezado']['IdDoc']['TipoDTE'] == 61  || $dte['Encabezado']['IdDoc']['TipoDTE'] == 52 ? $y + 5 : $y;
+        $this->Rect(10, $y, 190, 22, 'D', ['all' => ['width' => 0.1, 'color' => [0, 0, 0]]]);
+
+
         $this->agregarDetalle($dte['Detalle']);
         if (!empty($dte['DscRcgGlobal']))
             $this->agregarDescuentosRecargos($dte['DscRcgGlobal']);
         $this->agregarTotales($dte['Encabezado']['Totales']);
+
+        //AGREGAR RECUADRO PARA DATOS DEL DESTINATARIO
+
+        $y = 195;
+        //$y = $dte['Encabezado']['IdDoc']['TipoDTE'] == 34 ? $y + 5 : $y;
+        $this->Rect(155, $y, 45, 13, 'D', ['all' => ['width' => 0.1, 'color' => [0, 0, 0]]]);
+
+
         // agregar timbre
         $this->agregarTimbre($timbre);
         // agregar acuse de recibo y leyenda cedible
@@ -294,13 +310,13 @@ class Dte extends \sasco\LibreDTE\PDF
             $w += 40;
         }
         // agregar datos del emisor
-        $this->setFont('', 'B', $font_size ? $font_size : 14);
+        $this->setFont('', 'B', $font_size ? $font_size : 10);
         $this->SetTextColorArray([32, 92, 144]);
         $this->MultiTexto(isset($emisor['RznSoc']) ? $emisor['RznSoc'] : $emisor['RznSocEmisor'], $x, $this->y+2, 'L', $w);
         $this->setFont('', 'B', $font_size ? $font_size : 9);
         $this->SetTextColorArray([0,0,0]);
-        $this->MultiTexto(isset($emisor['GiroEmis']) ? $emisor['GiroEmis'] : $emisor['GiroEmisor'], $x, $this->y, 'L', $w);
-        $this->MultiTexto($emisor['DirOrigen'].', '.$emisor['CmnaOrigen'], $x, $this->y, 'L', $w);
+        $this->MultiTexto(isset($emisor['GiroEmis']) ? "Giro: " . $emisor['GiroEmis'] : $emisor['GiroEmisor'], $x, $this->y, 'L', $w);
+        $this->MultiTexto('Dirección : ' .$emisor['DirOrigen'].', '.$emisor['CmnaOrigen'], $x, $this->y, 'L', $w);
         $contacto = [];
         if (!empty($emisor['Telefono'])) {
             if (!is_array($emisor['Telefono']))
@@ -540,10 +556,12 @@ class Dte extends \sasco\LibreDTE\PDF
      */
     private function agregarReferencia($referencias, $x = 10, $offset = 22)
     {
+
+        $vacio = empty($referencias);
         if (!isset($referencias[0]))
             $referencias = [$referencias];
         foreach($referencias as $r) {
-            $texto = $r['NroLinRef'].' - '.$this->getTipo($r['TpoDocRef']).' N° '.$r['FolioRef'].' del '.$r['FchRef'];
+            $texto = $vacio ? "" : $r['NroLinRef'].' - '.$this->getTipo($r['TpoDocRef']).' N° '.$r['FolioRef'].' del '.$r['FchRef'];
             if (isset($r['RazonRef']) and $r['RazonRef']!==false)
                 $texto = $texto.': '.$r['RazonRef'];
             $this->setFont('', 'B', 8);
@@ -674,7 +692,7 @@ class Dte extends \sasco\LibreDTE\PDF
      * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
      * @version 2016-03-10
      */
-    private function agregarTotales(array $totales, $y = 200, $x = 145, $offset = 25)
+    private function agregarTotales(array $totales, $y = 195, $x = 145, $offset = 25)
     {
         // normalizar totales
         $totales = array_merge([
@@ -711,12 +729,16 @@ class Dte extends \sasco\LibreDTE\PDF
             if ($total!==false and isset($glosas[$key])) {
                 $y = $this->GetY();
                 if (!$this->cedible or $this->papelContinuo) {
+                    $this->setFont('', 'B');
                     $this->Texto($glosas[$key].' :', $x, null, 'R', 30);
+                    $this->setFont('', 'C');
                     $this->Texto($this->num($total), $x+$offset, $y, 'R', 30);
                     $this->Ln();
                 } else {
+                    $this->setFont('', 'B');
                     $this->MultiTexto($glosas[$key].' :', $x, null, 'R', 30);
                     $y_new = $this->GetY();
+                    $this->setFont('', 'C');
                     $this->Texto($this->num($total), $x+$offset, $y, 'R', 30);
                     $this->SetY($y_new);
                 }
@@ -735,7 +757,7 @@ class Dte extends \sasco\LibreDTE\PDF
      * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
      * @version 2016-03-10
      */
-    private function agregarTimbre($timbre, $x_timbre = 20, $x = 20, $y = 200, $w = 70, $font_size = 8)
+    private function agregarTimbre($timbre, $x_timbre = 20, $x = 20, $y = 195, $w = 70, $font_size = 8)
     {
         $style = [
             'border' => false,
@@ -765,7 +787,7 @@ class Dte extends \sasco\LibreDTE\PDF
      * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
      * @version 2015-09-08
      */
-    private function agregarAcuseRecibo($x = 93, $y = 200, $w = 55, $h = 40)
+    private function agregarAcuseRecibo($x = 93, $y = 195, $w = 55, $h = 40)
     {
         $this->SetTextColorArray([0,0,0]);
         $this->Rect($x, $y, $w, $h, 'D', ['all' => ['width' => 0.1, 'color' => [0, 0, 0]]]);
