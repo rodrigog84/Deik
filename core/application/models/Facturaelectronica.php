@@ -324,13 +324,19 @@ class Facturaelectronica extends CI_Model
 			    $pdf->setFooterText();
 			    $pdf->setLogo('./facturacion_electronica/images/logo_empresa.png'); // debe ser PNG!
 			    $pdf->setResolucion(['FchResol'=>$Caratula['FchResol'], 'NroResol'=>$Caratula['NroResol']]);
-			    if(!is_null($cedible)){
+			    /*if(!is_null($cedible)){
 			    	$pdf->setCedible(true);
-			    }
+			    }*/
 			    $pdf->agregar($DTE->getDatos(), $DTE->getTED());
+			    if($factura->tipo_caf == 33 || $factura->tipo_caf == 34 || $factura->tipo_caf == 52){
+				    $pdf->setCedible(true);
+				    $pdf->agregar($DTE->getDatos(), $DTE->getTED());			    	
+			    }
+
+
 			    //$pdf->Output('facturacion_electronica/pdf/'.$factura->path_dte.'dte_'.$Caratula['RutEmisor'].'_'.$DTE->getID().'.pdf', 'FI');
 			    $archivo = 'dte_'.$Caratula['RutEmisor'].'_'.$DTE->getID();
-			    $nombre_archivo = is_null($cedible) ? $archivo.".pdf" : $archivo."_CED.pdf";
+			    $nombre_archivo = $archivo.".pdf";
 			    //$tipo_generacion = is_null($cedible) ? 'FI' : 'F';
 			    $tipo_generacion = 'FI';
 			    $pdf->Output($path_pdf.$nombre_archivo, $tipo_generacion);
@@ -339,16 +345,10 @@ class Facturaelectronica extends CI_Model
 			    $this->db->where('idfactura', $idfactura);
 				$this->db->update('folios_caf',array($nombre_campo => $nombre_archivo)); 		    
 
-			}
+			}		
 
 		}else{
 
-			/*$base_path = __DIR__;
-			$base_path = str_replace("\\", "/", $base_path);
-			
-			$file = $base_path . "/../../facturacion_electronica/pdf/".$factura->path_dte.$nombre_pdf;				*/
-			//echo $file; exit;
-			//$file = '.facturacion_electronica/pdf/'.$factura->path_dte.$factura->pdf;
 			$filename = $nombre_pdf; /* Note: Always use .pdf at the end. */
 
 			header('Content-type: application/pdf');

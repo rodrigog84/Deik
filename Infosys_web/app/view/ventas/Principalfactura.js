@@ -218,13 +218,8 @@ Ext.define('Infosys_web.view.ventas.Principalfactura' ,{
             },{
                 xtype: 'button',
                 iconCls : 'icon-pdf',
-                text: 'Impr. PDF',
+                text: 'Imprimir PDF',
                 action:'generarfacturapdf'
-            },{
-                xtype: 'button',
-                iconCls : 'icon-pdf',
-                text: 'Copia Cedible',
-                action:'generarfacturacediblepdf'
             },{
                 xtype: 'button',
                 iconCls : 'icon-exel',
