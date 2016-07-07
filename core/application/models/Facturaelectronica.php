@@ -196,7 +196,7 @@ class Facturaelectronica extends CI_Model
 
 
 	public function get_detalle_factura($id_factura){
-		$this->db->select('p.nombre, f.precio, f.cantidad, f.descuento , f.totalproducto')
+		$this->db->select('p.nombre, f.precio, f.cantidad, f.descuento , f.iva, f.totalproducto')
 		  ->from('detalle_factura_cliente f')
 		  ->join('productos p','f.id_producto = p.id')
 		  ->where('f.id_factura',$id_factura);
