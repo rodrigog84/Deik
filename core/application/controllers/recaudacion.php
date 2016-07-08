@@ -430,7 +430,7 @@ class Recaudacion extends CI_Controller {
         $resp['success'] = true;
         $resp['idrecauda'] = $recauda;
 		$resp['documento'] = $tipodocumento;
-		$resp['ctacte'] = $idcuentacorriente;       
+		//$resp['ctacte'] = $idcuentacorriente;       
         
 		
         $this->Bitacora->logger("I", 'recaudacion', $numcomp);

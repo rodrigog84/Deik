@@ -68,6 +68,7 @@ Ext.define('Infosys_web.view.ventas.Facturas', {
                                             itemId: 'tipoDocumentoId',
                                             fieldLabel: '<b>DOCUMENTO</b>',
                                             fieldCls: 'required',
+                                            editable: false,
                                             store: 'Tipo_documento.Selector',
                                             valueField: 'id',
                                             displayField: 'nombre'
@@ -437,6 +438,7 @@ Ext.define('Infosys_web.view.ventas.Facturas', {
                             fieldLabel: 'Descto %',
                             store: 'Tabladescuento',
                             emptyText : "Seleccione",
+                            editable: false,
                             valueField: 'id',
                             disabled : true,
                             displayField: 'nombre'
@@ -517,6 +519,7 @@ Ext.define('Infosys_web.view.ventas.Facturas', {
                             fieldLabel: '<b>DESCUENTO</b>',
                             store: 'Tabladescuento',
                             emptyText : "Seleccione",
+                            editable: false,
                             valueField: 'id',
                             disabled : true,   
                             labelAlign: 'top',

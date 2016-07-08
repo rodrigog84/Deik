@@ -70,6 +70,7 @@ Ext.define('Infosys_web.view.ventas.Facturaseditar', {
                                             fieldCls: 'required',
                                             store: 'Tipo_documento.Selector',
                                             valueField: 'id',
+                                            editable: false,
                                             displayField: 'nombre',
                                             readOnly: true
                                         },{
