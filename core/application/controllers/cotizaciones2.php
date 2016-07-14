@@ -480,8 +480,8 @@ class Cotizaciones extends CI_Controller {
 			$html .= '<tr>
 			<td style="text-align:right">'.number_format($v->cantidad,0,'.',',').'&nbsp;&nbsp;</td>			
 			<td style="text-align:left">'.$producto->nombre.'</td>			
-			<td align="right">$ '.number_format($v->neto, 0, '.', ',').'</td>
-			<td align="right">$ '.number_format($v->neto - ($v->descuento/$v->cantidad), 0, '.', ',').'</td>
+			<td align="right">$ '.number_format($v->subtotal, 0, '.', ',').'</td>
+			<td align="right">$ '.number_format($v->subtotal - ($v->descuento/$v->cantidad), 0, '.', ',').'</td>
 
 			<td align="right">$ '.number_format($v->total, 0, '.', ',').'</td>
 			</tr>';
