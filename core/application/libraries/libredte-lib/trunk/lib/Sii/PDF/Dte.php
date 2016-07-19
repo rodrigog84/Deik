@@ -167,7 +167,7 @@ class Dte extends \sasco\LibreDTE\PDF
      * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
      * @version 2016-02-16
      */
-    private function agregarNormal(array $dte, $timbre)
+    /*private function agregarNormal(array $dte, $timbre)
     {
             
         // agregar página para la factura
@@ -231,7 +231,62 @@ class Dte extends \sasco\LibreDTE\PDF
             }
             $this->agregarLeyendaDestino($dte['Encabezado']['IdDoc']['TipoDTE']);
         }
-    }
+    }*/
+
+private function agregarNormal(array $dte, $timbre)
+    {
+            
+        // agregar página para la factura
+        $this->AddPage();
+        // agregar cabecera del documento
+        $y[] = $this->agregarEmisor($dte['Encabezado']['Emisor']);
+        $y[] = $this->agregarFolio(
+            $dte['Encabezado']['Emisor']['RUTEmisor'],
+            $dte['Encabezado']['IdDoc']['TipoDTE'],
+            $dte['Encabezado']['IdDoc']['Folio'],
+            $dte['Encabezado']['Emisor']['CmnaOrigen']
+        );
+        // datos del documento
+        $this->setY(max($y));
+        $this->Ln();
+        $this->agregarFechaEmision($dte['Encabezado']['IdDoc']['FchEmis']);
+        $this->agregarCondicionVenta($dte['Encabezado']['IdDoc']);
+        $this->agregarReceptor($dte['Encabezado']['Receptor']);
+        $this->agregarTraslado(
+            !empty($dte['Encabezado']['IdDoc']['IndTraslado']) ? $dte['Encabezado']['IdDoc']['IndTraslado'] : null,
+            !empty($dte['Encabezado']['Transporte']) ? $dte['Encabezado']['Transporte'] : null
+        );
+        //if (!empty($dte['Referencia']))
+            $this->agregarReferencia($dte['Referencia']);
+
+        //AGREGAR RECUADRO PARA DATOS DEL DESTINATARIO
+        $y = 50;
+        $y = $dte['Encabezado']['IdDoc']['TipoDTE'] == 34 || $dte['Encabezado']['IdDoc']['TipoDTE'] == 61  || $dte['Encabezado']['IdDoc']['TipoDTE'] == 52 ? $y + 5 : $y;
+        $this->Rect(10, $y, 190, 22, 'D', ['all' => ['width' => 0.1, 'color' => [0, 0, 0]]]);
+
+
+        $this->agregarDetalle($dte['Detalle']);
+        if (!empty($dte['DscRcgGlobal']))
+            $this->agregarDescuentosRecargos($dte['DscRcgGlobal']);
+        $this->agregarTotales($dte['Encabezado']['Totales']);
+
+        //AGREGAR RECUADRO PARA DATOS DEL DESTINATARIO
+
+        $y = 195;
+        //$y = $dte['Encabezado']['IdDoc']['TipoDTE'] == 34 ? $y + 5 : $y;
+        $this->Rect(155, $y, 45, 13, 'D', ['all' => ['width' => 0.1, 'color' => [0, 0, 0]]]);
+
+
+        // agregar timbre
+        $this->agregarTimbre($timbre);
+        // agregar acuse de recibo y leyenda cedible
+        if ($this->cedible) {
+            if (!in_array($dte['Encabezado']['IdDoc']['TipoDTE'], $this->sinAcuseRecibo)) {
+                $this->agregarAcuseRecibo();
+            }
+            $this->agregarLeyendaDestino($dte['Encabezado']['IdDoc']['TipoDTE']);
+        }
+    }    
 
     /**
      * Método que agrega una página con el documento tributario en papel
