@@ -227,10 +227,14 @@ class Facturaelectronica extends CI_Model
 
 	public function datos_dte($idfactura){
 
-		$this->db->select('f.id, f.folio, f.path_dte, f.archivo_dte, f.dte, f.pdf, f.pdf_cedible, f.trackid, c.tipo_caf, tc.nombre as tipo_doc ')
+		$this->db->select('f.id, f.folio, f.path_dte, f.archivo_dte, f.dte, f.pdf, f.pdf_cedible, f.trackid, c.tipo_caf, tc.nombre as tipo_doc, cae.nombre as giro ')
 		  ->from('folios_caf f')
 		  ->join('caf c','f.idcaf = c.id')
 		  ->join('tipo_caf tc','c.tipo_caf = tc.id')
+		  ->join('factura_clientes fc','f.idfactura = fc.id','left')
+		  ->join('clientes cl','fc.id_cliente = cl.id','left')
+		  ->join('cod_activ_econ cae','cl.id_giro = cae.id','left')
+
 		  ->where('f.idfactura',$idfactura)
 		  ->limit(1);
 		$query = $this->db->get();
@@ -317,12 +321,16 @@ class Facturaelectronica extends CI_Model
 			$base_path = str_replace("\\", "/", $base_path);
 			$path_pdf = $base_path . "/../../facturacion_electronica/pdf/".$factura->path_dte;				
 
+
+			$empresa = $this->get_empresa();
 			foreach ($Documentos as $DTE) {
 			    if (!$DTE->getDatos())
 			        die('No se pudieron obtener los datos del DTE');
 			    $pdf = new \sasco\LibreDTE\Sii\PDF\Dte(false); // =false hoja carta, =true papel contínuo (false por defecto si no se pasa)
 			    $pdf->setFooterText();
 			    $pdf->setLogo('./facturacion_electronica/images/logo_empresa.png'); // debe ser PNG!
+			    $pdf->setGiroCliente($factura->giro); 
+			    $pdf->setGiroEmisor($empresa->giro); 
 			    $pdf->setResolucion(['FchResol'=>$Caratula['FchResol'], 'NroResol'=>$Caratula['NroResol']]);
 			    /*if(!is_null($cedible)){
 			    	$pdf->setCedible(true);

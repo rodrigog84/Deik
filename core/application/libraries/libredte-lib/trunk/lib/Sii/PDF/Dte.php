@@ -33,6 +33,9 @@ class Dte extends \sasco\LibreDTE\PDF
 {
 
     private $logo; ///< Ubicación del logo del emisor que se incluirá en el pdf
+    private $giroCliente; //Giro de cliente completo
+    private $giroEmisor; //Giro de emisor completo
+
     private $resolucion; ///< Arreglo con los datos de la resolución (índices: NroResol y FchResol)
     private $cedible = false; ///< Por defecto DTEs no son cedibles
     protected $papelContinuo = false; ///< Indica si se usa papel continuo o no
@@ -115,6 +118,20 @@ class Dte extends \sasco\LibreDTE\PDF
      * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
      * @version 2015-09-08
      */
+
+    public function setGiroCliente($giro)
+    {
+        $this->giroCliente = $giro;
+    }
+
+
+    public function setGiroEmisor($giro)
+    {
+        $this->giroEmisor = $giro;
+    }
+
+
+
     public function setResolucion(array $resolucion)
     {
         $this->resolucion = $resolucion;
@@ -246,6 +263,7 @@ private function agregarNormal(array $dte, $timbre)
             $dte['Encabezado']['IdDoc']['Folio'],
             $dte['Encabezado']['Emisor']['CmnaOrigen']
         );
+
         // datos del documento
         $this->setY(max($y));
         $this->Ln();
@@ -376,12 +394,15 @@ private function agregarNormal(array $dte, $timbre)
             $w += 40;
         }
         // agregar datos del emisor
-        $this->setFont('', 'B', $font_size ? $font_size : 10);
+        $this->setFont('', 'B', $font_size ? $font_size : 9);
         $this->SetTextColorArray([32, 92, 144]);
         $this->MultiTexto(isset($emisor['RznSoc']) ? $emisor['RznSoc'] : $emisor['RznSocEmisor'], $x, $this->y+2, 'L', $w);
-        $this->setFont('', 'B', $font_size ? $font_size : 9);
+        $this->setFont('', 'B', $font_size ? $font_size : 8);
         $this->SetTextColorArray([0,0,0]);
-        $this->MultiTexto(isset($emisor['GiroEmis']) ? "Giro: " . $emisor['GiroEmis'] : $emisor['GiroEmisor'], $x, $this->y, 'L', $w);
+        //$this->MultiTexto(isset($emisor['GiroEmis']) ? "Giro: " . $emisor['GiroEmis'] : $emisor['GiroEmisor'], $x, $this->y, 'L', $w);
+        $this->MultiTexto("Giro: " . $this->giroEmisor, $x, $this->y, 'L', $w);
+
+        
         $this->MultiTexto('Dirección : ' .$emisor['DirOrigen'].', '.$emisor['CmnaOrigen'], $x, $this->y, 'L', $w);
         $contacto = [];
         if (!empty($emisor['Telefono'])) {
@@ -548,7 +569,10 @@ private function agregarNormal(array $dte, $timbre)
             $this->Texto('Giro', $x);
             $this->Texto(':', $x+$offset);
             $this->setFont('', 'C', 8);
-            $this->MultiTexto($receptor['GiroRecep'], $x+$offset+2);
+            //$this->MultiTexto($receptor['GiroRecep'], $x+$offset+2);
+            $this->MultiTexto($this->giroCliente, $x+$offset+2);
+
+            
         }
         $this->setFont('', 'B', 8);
         $this->Texto('Dirección', $x);
