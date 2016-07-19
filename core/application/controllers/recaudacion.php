@@ -342,7 +342,7 @@ class Recaudacion extends CI_Controller {
 					      	'numcomprobante' => $correlativo_cta_cte,
 					        'tipo' => 'INGRESO',
 					        'proceso' => 'CANCELACION',
-					        'glosa' => 'Cancelación de Factura por Caja',
+					        'glosa' => 'Cancelación de Documento por Caja',
 					        'fecha' => date("Y-m-d H:i:s")
 						);
 

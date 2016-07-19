@@ -377,10 +377,10 @@ class Facturasvizualiza extends CI_Controller {
     	$this->db->update('productos', $datos);    	
 		}
 
-		if ($tipodocumento != 3){
+		if ($tipodocumento != 3 && $tipodocumento != 105){
 		/******* CUENTAS CORRIENTES ****/
-
-		 $query = $this->db->query("SELECT cc.id as idcuentacontable FROM cuenta_contable cc WHERE cc.nombre = 'FACTURAS POR COBRAR'");
+		 $nombre_cuenta = $tipodocumento == 2 ? "BOLETAS POR COBRAR" : "FACTURAS POR COBRAR";
+		 $query = $this->db->query("SELECT cc.id as idcuentacontable FROM cuenta_contable cc WHERE cc.nombre = '" . $nombre_cuenta . "'");
 		 $row = $query->result();
 		 $row = $row[0];
 		 $idcuentacontable = $row->idcuentacontable;	
@@ -426,7 +426,7 @@ class Facturasvizualiza extends CI_Controller {
 	        'idcuenta' => $idcuentacontable,
 	        'tipodocumento' => $tipodocumento,
 	        'numdocumento' => $numfactura,
-	        'glosa' => 'Registro de Factura en Cuenta Corriente',
+	        'glosa' => 'Registro de Documento en Cuenta Corriente',
 	        'fecvencimiento' => $fechavenc,
 	        'valor' => $ftotal,
 	        'origen' => 'VENTA',
