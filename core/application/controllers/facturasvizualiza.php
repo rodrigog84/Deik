@@ -377,6 +377,11 @@ class Facturasvizualiza extends CI_Controller {
     	$this->db->update('productos', $datos);    	
 		}
 
+
+		$this->Bitacora->logger("I", 'factura_clientes', $idfactura);
+		$resp['success'] = true;
+		$resp['idfactura'] = $idfactura;		
+
 		if ($tipodocumento != 3 && $tipodocumento != 105){
 		/******* CUENTAS CORRIENTES ****/
 		 $nombre_cuenta = $tipodocumento == 2 ? "BOLETAS POR COBRAR" : "FACTURAS POR COBRAR";
@@ -437,12 +442,6 @@ class Facturasvizualiza extends CI_Controller {
 
 		/*****************************************/
       
-
-      
-
-		$this->Bitacora->logger("I", 'factura_clientes', $idfactura);
-		$resp['success'] = true;
-		$resp['idfactura'] = $idfactura;
 
 		};
 

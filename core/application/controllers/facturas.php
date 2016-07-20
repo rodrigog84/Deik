@@ -2389,6 +2389,10 @@ public function cargacontribuyentes(){
 
     	$this->db->update('productos', $datos);
     	
+        $resp['success'] = true;
+		$resp['idfactura'] = $idfactura;
+
+		$this->Bitacora->logger("I", 'factura_clientes', $idfactura);    	
 	
 		if ($tipodocumento != 3 && $tipodocumento != 105){
 
@@ -2450,10 +2454,7 @@ public function cargacontribuyentes(){
 
 		$this->db->insert('cartola_cuenta_corriente', $cartola_cuenta_corriente); 			
 
-        $resp['success'] = true;
-		$resp['idfactura'] = $idfactura;
 
-		$this->Bitacora->logger("I", 'factura_clientes', $idfactura);
 		}		
 
 		/*****************************************/
