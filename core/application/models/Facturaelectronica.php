@@ -514,4 +514,244 @@ class Facturaelectronica extends CI_Model
 
 
 
+	public function guarda_csv($archivo){
+
+			$this->db->query('truncate guarda_csv'); 
+			$fila = 1;
+			if (($gestor = fopen($archivo, "r")) !== FALSE) {
+			    while (($datos = fgetcsv($gestor, 1000, ",")) !== FALSE) {
+			        $numero = count($datos);
+			        echo "<p> $numero de campos en la línea $fila: <br /></p>\n";
+			        $fila++;
+			        $fechafactura = substr($datos[2],6,4)."-".substr($datos[2],3,2)."-".substr($datos[2],0,2);
+			        $array_rut = explode("-",$datos[4]);
+			        $array_data = array(
+			        					'tipocaf' => $datos[0],
+			        					'folio' => $datos[1],
+			        					'fechafactura' => $fechafactura,
+			        					'condicion' => $datos[3],
+			        					'rut' => $array_rut[0],
+			        					'dv' => $array_rut[1],
+			        					'razonsocial' => $datos[5],
+			        					'giro' => $datos[6],
+			        					'direccion' => $datos[7],
+			        					'comuna' => $datos[8],
+			        					'ciudad' => $datos[9],
+			        					'cuenta' => $datos[10],
+			        					'neto' => $datos[11],
+			        					'iva' => $datos[12],
+			        					'total' => $datos[13],
+			        					'codigo' => $datos[14],
+			        					'cantidad' => $datos[15],
+			        					'unidad' => $datos[16],
+			        					'nombre' => $datos[17],
+			        					'preciounit' => $datos[18],
+			        					'totaldetalle' => $datos[19]
+			        			);
+
+			        $this->db->insert('guarda_csv',$array_data);
+			        /*for ($c=0; $c < $numero; $c++) {
+			            echo $datos[$c] . "<br />\n";
+			        }*/
+			    }
+			    fclose($gestor);
+			}
+
+	}
+
+
+
+	public function crea_dte_csv(){
+
+		$this->db->select('tipocaf, folio ')
+			->from('guarda_csv')
+			->group_by('tipocaf')
+			->group_by('folio');
+
+		$query = $this->db->get();
+		$data_doctos = $query->result();
+
+
+		$config = $this->genera_config();
+		include $this->ruta_libredte();
+		$empresa = $this->get_empresa();
+
+		foreach ($data_doctos as $docto) {
+
+
+			//header('Content-type: text/plain; charset=ISO-8859-1');
+			
+
+			$this->db->select('tipocaf, folio, fechafactura, condicion, rut, dv, razonsocial, giro, direccion, comuna, ciudad, cuenta, neto, iva, total, codigo, cantidad, unidad, nombre, preciounit, totaldetalle ')
+		  			->from('guarda_csv')
+		  			->where('tipocaf',$docto->tipocaf)
+		  			->where('folio',$docto->folio);
+			$query = $this->db->get();
+			$data_csv = $query->result();
+
+			if($docto->tipocaf == 33){
+				$tipodocumento = 101;
+			}else if($docto->tipocaf == 61){
+				$tipodocumento = 102;
+			}else if($docto->tipocaf == 34){
+				$tipodocumento = 103;
+			}else if($docto->tipocaf == 56){
+				$tipodocumento = 104;
+			}else if($docto->tipocaf == 52){
+				$tipodocumento = 105;
+			}
+
+
+			$factura_cliente = array(
+				'tipo_documento' => $tipodocumento,
+		        'id_cliente' => 1,
+		        'num_factura' => $docto->folio,
+		        'id_vendedor' => 1,
+		        'sub_total' => $data_csv[0]->neto,
+		        'neto' => $data_csv[0]->neto,
+		        'iva' => $data_csv[0]->iva,
+		        'totalfactura' => $data_csv[0]->total,
+		        'fecha_factura' => $data_csv[0]->fechafactura,
+		        'fecha_venc' => $data_csv[0]->fechafactura,
+		        'forma' => 1	          
+			);
+
+			$this->db->insert('factura_clientes', $factura_cliente); 
+			$idfactura = $this->db->insert_id();
+
+
+			$datos_empresa_factura = $this->get_empresa_factura($idfactura);
+			$detalle_factura = $this->get_detalle_factura_glosa($idfactura);
+
+			$i = 0;
+			$lista_detalle = array();			
+			foreach ($data_csv as $regcsv) {
+				$factura_clientes_item = array(
+			        'id_factura' => $idfactura,
+			        'glosa' => $regcsv->nombre,
+			        'neto' => $regcsv->totaldetalle,
+			        'iva' => $regcsv->totaldetalle*0.19,
+			        'total' => $regcsv->totaldetalle*1.19
+				);
+
+				$this->db->insert('detalle_factura_glosa', $factura_clientes_item);
+
+				$lista_detalle[$i]['NmbItem'] = $regcsv->nombre;
+				$lista_detalle[$i]['QtyItem'] = $regcsv->cantidad;
+				$lista_detalle[$i]['PrcItem'] = $regcsv->preciounit;
+				$i++;
+				// FIN								
+			}// FIN REGCSV
+
+
+				if($tipodocumento == 101 || $tipodocumento == 103){  // SI ES FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONICA
+
+							$tipo_caf = $docto->tipocaf;
+
+							$factura = [
+							    'Encabezado' => [
+							        'IdDoc' => [
+							            'TipoDTE' => $docto->tipocaf,
+							            'Folio' => $docto->folio,
+							        ],
+							        'Emisor' => [
+							            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
+							            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES,
+							            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
+							            'Acteco' => $empresa->cod_actividad,
+							            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
+							            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
+							        ],
+							        'Receptor' => [
+							            'RUTRecep' => $data_csv[0]->rut."-".$data_csv[0]->dv,
+							            'RznSocRecep' => substr($data_csv[0]->razonsocial,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+							            'GiroRecep' => substr($data_csv[0]->giro,0,40),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+							            'DirRecep' => substr($data_csv[0]->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+							            'CmnaRecep' => substr($data_csv[0]->comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
+							        ],
+							    ],
+								'Detalle' => $lista_detalle
+							];
+
+							//FchResol y NroResol deben cambiar con los datos reales de producción
+							$caratula = [
+							    //'RutEnvia' => '11222333-4', // se obtiene de la firma
+							    'RutReceptor' => '60803000-K',
+							    'FchResol' => $empresa->fec_resolucion,
+							    'NroResol' => $empresa->nro_resolucion
+							];								
+										// Objetos de Firma y Folios
+							$Firma = new sasco\LibreDTE\FirmaElectronica($config['firma']); //lectura de certificado digital		
+
+							$caf = $this->get_content_caf_folio($docto->folio,$tipo_caf);
+							
+							$Folios = new sasco\LibreDTE\Sii\Folios($caf->caf_content);
+							
+							$DTE = new \sasco\LibreDTE\Sii\Dte($factura);
+
+							$DTE->timbrar($Folios);
+							$DTE->firmar($Firma);		
+
+
+							// generar sobre con el envío del DTE y enviar al SII
+							$EnvioDTE = new \sasco\LibreDTE\Sii\EnvioDte();
+							$EnvioDTE->agregar($DTE);
+							$EnvioDTE->setFirma($Firma);
+							$EnvioDTE->setCaratula($caratula);
+							$xml_dte = $EnvioDTE->generar();
+
+							if ($EnvioDTE->schemaValidate()) { // REVISAR PORQUÉ SE CAE CON ESTA VALIDACION
+								
+								$track_id = 0;
+							    $xml_dte = $EnvioDTE->generar();
+							    //$track_id = $EnvioDTE->enviar();
+							    $tipo_envio = $this->busca_parametro_fe('envio_sii'); //ver si está configurado para envío manual o automático
+
+
+								$nombre_dte = $docto->folio."_". $tipo_caf ."_".$idfactura."_".date("His").".xml"; // nombre archivo
+								$path = date('Ym').'/'; // ruta guardado
+								if(!file_exists('./facturacion_electronica/dte/'.$path)){
+									mkdir('./facturacion_electronica/dte/'.$path,0777,true);
+								}				
+								$f_archivo = fopen('./facturacion_electronica/dte/'.$path.$nombre_dte,'w');
+								fwrite($f_archivo,$xml_dte);
+								fclose($f_archivo);
+
+							    if($tipo_envio == 'automatico'){
+								    $track_id = $EnvioDTE->enviar();
+							    }
+
+
+
+							    $this->db->where('f.folio', $docto->folio);
+							    $this->db->where('c.tipo_caf', $tipo_caf);
+								$this->db->update('folios_caf f inner join caf c on f.idcaf = c.id',array('dte' => $xml_dte,
+																										  'estado' => 'O',
+																										  'idfactura' => $idfactura,
+																										  'path_dte' => $path,
+																										  'archivo_dte' => $nombre_dte,
+																										  'trackid' => $track_id
+																										  )); 
+								if($track_id != 0 && $datos_empresa_factura->e_mail != ''){ //existe track id, se envía correo
+									$this->envio_mail_dte($idfactura);
+								}
+
+
+
+
+							}
+
+						} //FIN CREACION FACTURA
+
+							
+
+		}
+
+
+
+
+	}
+
+
+
 }

@@ -280,3 +280,40 @@ ENGINE=InnoDB
  INSERT INTO `correlativos` (`id`, `nombre`, `correlativo`) VALUES (101, 'FACTURA ELECTRONICA', 0);
  INSERT INTO `correlativos` (`id`, `nombre`, `correlativo`) VALUES (103, 'FACTURA EXENTA ELECTRONICA', 0);
  INSERT INTO `correlativos` (`id`, `nombre`, `correlativo`) VALUES (105, 'GUIA DE DESPACHO ELECTRONICA', 0);
+
+ /**********************************************************************/
+
+ ALTER TABLE `cod_activ_econ`
+	CHANGE COLUMN `nombre` `nombre` VARCHAR(100) NOT NULL AFTER `codigo`;
+UPDATE `cod_activ_econ` SET `nombre`='VENTAS AL POR MENOR DE OTROS PRODUCTOS EN ALMACENES ESPECIALIZADOS N.C.P.' WHERE  `id`=430;
+
+
+/*************************************************************************************/
+
+CREATE TABLE `guarda_csv` (
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`tipocaf` INT(11) NOT NULL DEFAULT '0',
+	`folio` INT(11) NOT NULL DEFAULT '0',
+	`fechafactura` DATE NOT NULL DEFAULT '0000-00-00',
+	`condicion` VARCHAR(50) NOT NULL DEFAULT '0',
+	`rut` INT(10) NOT NULL DEFAULT '0',
+	`dv` CHAR(1) NOT NULL DEFAULT '0',
+	`razonsocial` VARCHAR(150) NOT NULL DEFAULT '0',
+	`giro` VARCHAR(150) NOT NULL DEFAULT '0',
+	`direccion` VARCHAR(150) NOT NULL DEFAULT '0',
+	`comuna` VARCHAR(100) NOT NULL DEFAULT '0',
+	`ciudad` VARCHAR(100) NOT NULL DEFAULT '0',
+	`cuenta` VARCHAR(100) NOT NULL DEFAULT '0',
+	`neto` INT(11) NOT NULL DEFAULT '0',
+	`iva` INT(11) NOT NULL DEFAULT '0',
+	`total` INT(11) NOT NULL DEFAULT '0',
+	`codigo` VARCHAR(50) NOT NULL DEFAULT '0',
+	`cantidad` INT(11) NOT NULL DEFAULT '0',
+	`unidad` VARCHAR(50) NOT NULL DEFAULT '0',
+	`nombre` VARCHAR(150) NOT NULL DEFAULT '0',
+	`preciounit` INT(11) NOT NULL DEFAULT '0',
+	`totaldetalle` INT(11) NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+;
