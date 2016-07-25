@@ -214,7 +214,7 @@ class Facturaelectronica extends CI_Model
 
 
 	public function get_content_caf_folio($folio,$tipo_documento){
-		$this->db->select('c.archivo, c.caf_content ')
+		$this->db->select('f.estado, c.archivo, c.caf_content ')
 		  ->from('caf c')
 		  ->join('folios_caf f','f.idcaf = c.id')
 		  ->where('f.folio',$folio)
@@ -516,12 +516,13 @@ class Facturaelectronica extends CI_Model
 
 	public function guarda_csv($archivo){
 
-			$this->db->query('truncate guarda_csv'); 
+			//$this->db->query('truncate guarda_csv'); 
+			$codproceso = randomstring_mm(10);
 			$fila = 1;
 			if (($gestor = fopen($archivo, "r")) !== FALSE) {
 			    while (($datos = fgetcsv($gestor, 1000, ",")) !== FALSE) {
 			        $numero = count($datos);
-			        echo "<p> $numero de campos en la línea $fila: <br /></p>\n";
+			        //echo "<p> $numero de campos en la línea $fila: <br /></p>\n";
 			        $fila++;
 			        $fechafactura = substr($datos[2],6,4)."-".substr($datos[2],3,2)."-".substr($datos[2],0,2);
 			        $array_rut = explode("-",$datos[4]);
@@ -546,7 +547,8 @@ class Facturaelectronica extends CI_Model
 			        					'unidad' => $datos[16],
 			        					'nombre' => $datos[17],
 			        					'preciounit' => $datos[18],
-			        					'totaldetalle' => $datos[19]
+			        					'totaldetalle' => $datos[19],
+			        					'codigoproceso' => $codproceso
 			        			);
 
 			        $this->db->insert('guarda_csv',$array_data);
@@ -557,14 +559,17 @@ class Facturaelectronica extends CI_Model
 			    fclose($gestor);
 			}
 
+			return $codproceso;
+
 	}
 
 
 
-	public function crea_dte_csv(){
+	public function crea_dte_csv($codproceso){
 
 		$this->db->select('tipocaf, folio ')
 			->from('guarda_csv')
+			->where('codigoproceso',$codproceso)
 			->group_by('tipocaf')
 			->group_by('folio');
 
@@ -589,59 +594,79 @@ class Facturaelectronica extends CI_Model
 			$query = $this->db->get();
 			$data_csv = $query->result();
 
-			if($docto->tipocaf == 33){
-				$tipodocumento = 101;
-			}else if($docto->tipocaf == 61){
-				$tipodocumento = 102;
-			}else if($docto->tipocaf == 34){
-				$tipodocumento = 103;
-			}else if($docto->tipocaf == 56){
-				$tipodocumento = 104;
-			}else if($docto->tipocaf == 52){
-				$tipodocumento = 105;
-			}
+
+			$datos_folio = $this->get_content_caf_folio($docto->folio,$docto->tipocaf);
 
 
-			$factura_cliente = array(
-				'tipo_documento' => $tipodocumento,
-		        'id_cliente' => 1,
-		        'num_factura' => $docto->folio,
-		        'id_vendedor' => 1,
-		        'sub_total' => $data_csv[0]->neto,
-		        'neto' => $data_csv[0]->neto,
-		        'iva' => $data_csv[0]->iva,
-		        'totalfactura' => $data_csv[0]->total,
-		        'fecha_factura' => $data_csv[0]->fechafactura,
-		        'fecha_venc' => $data_csv[0]->fechafactura,
-		        'forma' => 1	          
-			);
+			if(count($datos_folio) > 0){
+				//SÓLO SE CARGA AQUELLOS FOLIOS QUE EXISTEN Y ESTÁN PENDIENTES O TOMADOS
+				if($datos_folio->estado == 'P' || $datos_folio->estado == 'T'){
 
-			$this->db->insert('factura_clientes', $factura_cliente); 
-			$idfactura = $this->db->insert_id();
+				$tipodocumento = caftotd($docto->tipocaf);
+
+				$this->db->select('id')
+			  			->from('clientes')
+			  			->where('rut',$data_csv[0]->rut.$data_csv[0]->dv);
+				$query = $this->db->get();
+				$data_cliente = $query->row();
+
+				if(count($data_cliente) > 0){
+					$idcliente = $data_cliente->id;
+				}else{ // SI NO EXISTE CLIENTE, SE CREA
+						$array_data_cliente = array(
+												'rut' => $data_csv[0]->rut.$data_csv[0]->dv,
+												'nombres' => $data_csv[0]->razonsocial,
+												'direccion' => $data_csv[0]->direccion,
+
+											);
+
+						$this->db->insert('clientes', $array_data_cliente);	
+						$idcliente = $this->db->insert_id();											
+
+				}
 
 
-			$datos_empresa_factura = $this->get_empresa_factura($idfactura);
-			$detalle_factura = $this->get_detalle_factura_glosa($idfactura);
 
-			$i = 0;
-			$lista_detalle = array();			
-			foreach ($data_csv as $regcsv) {
-				$factura_clientes_item = array(
-			        'id_factura' => $idfactura,
-			        'glosa' => $regcsv->nombre,
-			        'neto' => $regcsv->totaldetalle,
-			        'iva' => $regcsv->totaldetalle*0.19,
-			        'total' => $regcsv->totaldetalle*1.19
+				$factura_cliente = array(
+					'tipo_documento' => $tipodocumento,
+			        'id_cliente' => $idcliente,
+			        'num_factura' => $docto->folio,
+			        'id_vendedor' => 1,
+			        'sub_total' => $data_csv[0]->neto,
+			        'neto' => $data_csv[0]->neto,
+			        'iva' => $data_csv[0]->iva,
+			        'totalfactura' => $data_csv[0]->total,
+			        'fecha_factura' => $data_csv[0]->fechafactura,
+			        'fecha_venc' => $data_csv[0]->fechafactura,
+			        'forma' => 1	          
 				);
 
-				$this->db->insert('detalle_factura_glosa', $factura_clientes_item);
+				$this->db->insert('factura_clientes', $factura_cliente); 
+				$idfactura = $this->db->insert_id();
 
-				$lista_detalle[$i]['NmbItem'] = $regcsv->nombre;
-				$lista_detalle[$i]['QtyItem'] = $regcsv->cantidad;
-				$lista_detalle[$i]['PrcItem'] = $regcsv->preciounit;
-				$i++;
-				// FIN								
-			}// FIN REGCSV
+
+				$datos_empresa_factura = $this->get_empresa_factura($idfactura);
+				$detalle_factura = $this->get_detalle_factura_glosa($idfactura);
+
+				$i = 0;
+				$lista_detalle = array();			
+				foreach ($data_csv as $regcsv) {
+					$factura_clientes_item = array(
+				        'id_factura' => $idfactura,
+				        'glosa' => $regcsv->nombre,
+				        'neto' => $regcsv->totaldetalle,
+				        'iva' => $regcsv->totaldetalle*0.19,
+				        'total' => $regcsv->totaldetalle*1.19
+					);
+
+					$this->db->insert('detalle_factura_glosa', $factura_clientes_item);
+
+					$lista_detalle[$i]['NmbItem'] = $regcsv->nombre;
+					$lista_detalle[$i]['QtyItem'] = $regcsv->cantidad;
+					$lista_detalle[$i]['PrcItem'] = $regcsv->preciounit;
+					$i++;
+					// FIN								
+				}// FIN REGCSV
 
 
 				if($tipodocumento == 101 || $tipodocumento == 103){  // SI ES FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONICA
@@ -686,7 +711,7 @@ class Facturaelectronica extends CI_Model
 							$caf = $this->get_content_caf_folio($docto->folio,$tipo_caf);
 							
 							$Folios = new sasco\LibreDTE\Sii\Folios($caf->caf_content);
-							
+								
 							$DTE = new \sasco\LibreDTE\Sii\Dte($factura);
 
 							$DTE->timbrar($Folios);
@@ -743,6 +768,9 @@ class Facturaelectronica extends CI_Model
 
 						} //FIN CREACION FACTURA
 
+					} // FIN  if($datos_folio->estado == 'P' || $datos_folio->estado == 'T'){
+
+				} // FIN if(count($datos_folio) > 0){
 							
 
 		}

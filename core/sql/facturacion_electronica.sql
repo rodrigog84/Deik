@@ -313,7 +313,10 @@ CREATE TABLE `guarda_csv` (
 	`nombre` VARCHAR(150) NOT NULL DEFAULT '0',
 	`preciounit` INT(11) NOT NULL DEFAULT '0',
 	`totaldetalle` INT(11) NOT NULL DEFAULT '0',
+	`codigoproceso` VARCHAR(30) NOT NULL DEFAULT '',
+	`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (`id`)
 )
+COLLATE='latin1_swedish_ci'
 ENGINE=InnoDB
 ;
