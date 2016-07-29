@@ -781,5 +781,162 @@ class Facturaelectronica extends CI_Model
 	}
 
 
+	public function get_factura($id_factura){
+
+		$this->db->select('fc.tipo_documento, fc.num_factura, fc.fecha_factura, fc.sub_total, fc.descuento, fc.neto, fc.iva, fc.totalfactura, fc.forma')
+		  ->from('factura_clientes fc')
+		  ->where('fc.id',$id_factura)
+		  ->limit(1);
+		$query = $this->db->get();
+		return $query->row();
+	 }	 
+
+	public function crea_dte($idfactura){
+
+		$data_factura = $this->get_factura($idfactura);
+		$tipodocumento = $data_factura->tipo_documento;
+		$numfactura = $data_factura->num_factura;
+		$fecemision = $data_factura->fecha_factura;
+		if($tipodocumento == 101){
+			$tipo_caf = 33;
+		}else if($tipodocumento == 103){
+			$tipo_caf = 34;
+		}else if($tipodocumento == 105){
+			$tipo_caf = 52;
+		}		
+
+		header('Content-type: text/plain; charset=ISO-8859-1');
+		$this->load->model('facturaelectronica');
+		$config = $this->genera_config();
+		include $this->ruta_libredte();
+
+
+		$empresa = $this->get_empresa();
+		$datos_empresa_factura = $this->get_empresa_factura($idfactura);
+
+		$detalle_factura = $this->get_detalle_factura($idfactura);
+		$lista_detalle = array();
+		$i = 0;
+		foreach ($detalle_factura as $detalle) {
+			$lista_detalle[$i]['NmbItem'] = $detalle->nombre;
+			$lista_detalle[$i]['QtyItem'] = $detalle->cantidad;
+			//$lista_detalle[$i]['PrcItem'] = $detalle->precio;
+			//$lista_detalle[$i]['PrcItem'] = round((($detalle->precio*$detalle->cantidad)/1.19)/$detalle->cantidad,0);
+			//$total = $detalle->precio*$detalle->cantidad;
+			//$neto = round($total/1.19,2);
+
+			//$lista_detalle[$i]['PrcItem'] = round($neto/$detalle->cantidad,2);
+			//$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 ? floor($detalle->precio/1.19) : floor($detalle->precio);
+
+			$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 ? floor(($detalle->totalproducto - $detalle->iva)/$detalle->cantidad) : floor($detalle->precio);
+			if($tipo_caf == 33){
+				$lista_detalle[$i]['MontoItem'] = ($detalle->totalproducto - $detalle->iva);
+			}				
+
+			if($detalle->descuento != 0){
+				$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
+				$lista_detalle[$i]['DescuentoPct'] = $porc_descto;		
+				//$lista_detalle[$i]['PrcItem'] =- $lista_detalle[$i]['PrcItem']*$porc_descto;
+
+			}
+
+			$i++;
+		}
+
+
+		// datos
+		$factura = [
+		    'Encabezado' => [
+		        'IdDoc' => [
+		            'TipoDTE' => $tipo_caf,
+		            'Folio' => $numfactura,
+		            'FchEmis' => $fecemision
+		        ],
+		        'Emisor' => [
+		            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
+		            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+		            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
+		            'Acteco' => $empresa->cod_actividad,
+		            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
+		            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
+		        ],
+		        'Receptor' => [
+		            'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
+		            'RznSocRecep' => substr($datos_empresa_factura->nombre_cliente,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+		            'GiroRecep' => substr($datos_empresa_factura->giro,0,40),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+		            'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+		            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
+		        ],
+		    ],
+			'Detalle' => $lista_detalle
+		];
+
+
+		//FchResol y NroResol deben cambiar con los datos reales de producción
+		$caratula = [
+		    //'RutEnvia' => '11222333-4', // se obtiene de la firma
+		    'RutReceptor' => '60803000-K',
+		    'FchResol' => $empresa->fec_resolucion,
+		    'NroResol' => $empresa->nro_resolucion
+		];
+
+		$Firma = new sasco\LibreDTE\FirmaElectronica($config['firma']); //lectura de certificado digital		
+		$caf = $this->facturaelectronica->get_content_caf_folio($numfactura,$tipo_caf);
+		$Folios = new sasco\LibreDTE\Sii\Folios($caf->caf_content);
+
+		$DTE = new \sasco\LibreDTE\Sii\Dte($factura);
+
+		$DTE->timbrar($Folios);
+		$DTE->firmar($Firma);		
+
+		// generar sobre con el envío del DTE y enviar al SII
+		$EnvioDTE = new \sasco\LibreDTE\Sii\EnvioDte();
+
+		$EnvioDTE->agregar($DTE);
+		$EnvioDTE->setFirma($Firma);
+		$EnvioDTE->setCaratula($caratula);
+		$EnvioDTE->generar();		
+
+		if ($EnvioDTE->schemaValidate()) { // REVISAR PORQUÉ SE CAE CON ESTA VALIDACION
+			
+			$track_id = 0;
+		    $xml_dte = $EnvioDTE->generar();
+
+		    $tipo_envio = $this->busca_parametro_fe('envio_sii'); //ver si está configurado para envío manual o automático
+
+			$nombre_dte = $numfactura."_". $tipo_caf ."_".$idfactura."_".date("His").".xml"; // nombre archivo
+			$path = date('Ym').'/'; // ruta guardado
+			if(!file_exists('./facturacion_electronica/dte/'.$path)){
+				mkdir('./facturacion_electronica/dte/'.$path,0777,true);
+			}				
+			$f_archivo = fopen('./facturacion_electronica/dte/'.$path.$nombre_dte,'w');
+			fwrite($f_archivo,$xml_dte);
+			fclose($f_archivo);
+
+		    if($tipo_envio == 'automatico'){
+			    $track_id = $EnvioDTE->enviar();
+		    }
+
+
+		    $this->db->where('f.folio', $numfactura);
+		    $this->db->where('c.tipo_caf', $tipo_caf);
+			$this->db->update('folios_caf f inner join caf c on f.idcaf = c.id',array('dte' => $xml_dte,
+																					  'estado' => 'O',
+																					  'idfactura' => $idfactura,
+																					  'path_dte' => $path,
+																					  'archivo_dte' => $nombre_dte,
+																					  'trackid' => $track_id
+																					  )); 
+
+			if($track_id != 0 && $datos_empresa_factura->e_mail != ''){ //existe track id, se envía correo
+				$this->envio_mail_dte($idfactura);
+			}
+
+		}
+
+		return $this->datos_dte($idfactura);
+
+	}
+
 
 }
