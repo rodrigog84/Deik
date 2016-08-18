@@ -51,9 +51,10 @@ class Facturaelectronica extends CI_Model
 		    'firma' => [
 		        'file' => $this->ruta_certificado(),
 		        'pass' => $this->busca_parametro_fe('cert_password'),
+		        //'pass' => 'carlos1414',
 		    ],
 		];
-
+		//var_dump($config); exit;
 		return $config;
 	}
 
@@ -62,6 +63,8 @@ class Facturaelectronica extends CI_Model
 		$base_path = __DIR__;
 		$base_path = str_replace("\\", "/", $base_path);
 		$path = $base_path . "/../../facturacion_electronica/certificado/certificado.p12";		
+		//$path = "/var/www/html/Caval/core/facturacion_electronica/certificado/certificado.p12";		
+		//echo $path; exit;
 		return $path;
 	}
 
@@ -214,7 +217,7 @@ class Facturaelectronica extends CI_Model
 
 
 	public function get_content_caf_folio($folio,$tipo_documento){
-		$this->db->select('f.estado, c.archivo, c.caf_content ')
+		$this->db->select('f.estado, c.archivo, c.caf_content, f.idfactura ')
 		  ->from('caf c')
 		  ->join('folios_caf f','f.idcaf = c.id')
 		  ->where('f.folio',$folio)
@@ -227,19 +230,21 @@ class Facturaelectronica extends CI_Model
 
 	public function datos_dte($idfactura){
 
-		$this->db->select('f.id, f.folio, f.path_dte, f.archivo_dte, f.dte, f.pdf, f.pdf_cedible, f.trackid, c.tipo_caf, tc.nombre as tipo_doc, cae.nombre as giro ')
+		$this->db->select('f.id, f.folio, f.path_dte, f.archivo_dte, f.dte, f.pdf, f.pdf_cedible, f.trackid, c.tipo_caf, tc.nombre as tipo_doc, cae.nombre as giro, if(fc.cond_venta<>"",fc.cond_venta,cp.nombre) as cond_pago, if(fc.vendedor<>"",fc.vendedor,v.nombre) as vendedor ',false)
 		  ->from('folios_caf f')
 		  ->join('caf c','f.idcaf = c.id')
 		  ->join('tipo_caf tc','c.tipo_caf = tc.id')
 		  ->join('factura_clientes fc','f.idfactura = fc.id','left')
 		  ->join('clientes cl','fc.id_cliente = cl.id','left')
 		  ->join('cod_activ_econ cae','cl.id_giro = cae.id','left')
+		  ->join('cond_pago cp','fc.id_cond_venta = cp.id','left')
+		  ->join('vendedores v','fc.id_vendedor = v.id','left')
 
 		  ->where('f.idfactura',$idfactura)
 		  ->limit(1);
 		$query = $this->db->get();
 		return $query->row();
-	}	
+	}
 
 
 
@@ -252,15 +257,20 @@ class Facturaelectronica extends CI_Model
 	}	
 
 	public function datos_dte_by_trackid($trackid){
-		$this->db->select('f.id, f.folio, f.path_dte, f.archivo_dte, f.dte, f.pdf, f.pdf_cedible, f.trackid, c.tipo_caf, tc.nombre as tipo_doc ')
+		$this->db->select('f.id, f.folio, f.path_dte, f.archivo_dte, f.dte, f.pdf, f.pdf_cedible, f.trackid, c.tipo_caf, tc.nombre as tipo_doc, cae.nombre as giro, if(fc.cond_venta<>"",fc.cond_venta,cp.nombre) as cond_pago, if(fc.vendedor<>0,fc.vendedor,v.nombre) as vendedor',false)
 		  ->from('folios_caf f')
 		  ->join('caf c','f.idcaf = c.id')
 		  ->join('tipo_caf tc','c.tipo_caf = tc.id')
+		  ->join('factura_clientes fc','f.idfactura = fc.id','left')
+		  ->join('clientes cl','fc.id_cliente = cl.id','left')
+		  ->join('cod_activ_econ cae','cl.id_giro = cae.id','left')	
+		  ->join('cond_pago cp','fc.id_cond_venta = cp.id','left')	
+		  ->join('vendedores v','fc.id_vendedor = v.id','left')  
 		  ->where('f.trackid',$trackid)
 		  ->limit(1);
 		$query = $this->db->get();
 		return $query->row();
-	}	
+	}
 
 
 
@@ -329,8 +339,16 @@ class Facturaelectronica extends CI_Model
 			    $pdf = new \sasco\LibreDTE\Sii\PDF\Dte(false); // =false hoja carta, =true papel contínuo (false por defecto si no se pasa)
 			    $pdf->setFooterText();
 			    $pdf->setLogo('./facturacion_electronica/images/logo_empresa.png'); // debe ser PNG!
-			    $pdf->setGiroCliente($factura->giro); 
-			    $pdf->setGiroEmisor($empresa->giro); 
+			    if(!is_null($factura->giro)){
+			    	$pdf->setGiroCliente($factura->giro); 
+			    }
+			    $pdf->setGiroEmisor($empresa->giro);
+
+
+			    $pdf->setCondPago($factura->cond_pago); 
+			    $pdf->setVendedor($factura->vendedor); 
+
+
 			    $pdf->setResolucion(['FchResol'=>$Caratula['FchResol'], 'NroResol'=>$Caratula['NroResol']]);
 			    /*if(!is_null($cedible)){
 			    	$pdf->setCedible(true);
@@ -548,6 +566,8 @@ class Facturaelectronica extends CI_Model
 			        					'nombre' => $datos[17],
 			        					'preciounit' => $datos[18],
 			        					'totaldetalle' => $datos[19],
+			        					'referencia' => isset($datos[20]) ? $datos[20] : 0,
+			        					'vendedor' => isset($datos[21]) ? $datos[21] : "",
 			        					'codigoproceso' => $codproceso
 			        			);
 
@@ -583,17 +603,15 @@ class Facturaelectronica extends CI_Model
 
 		foreach ($data_doctos as $docto) {
 
-
-			//header('Content-type: text/plain; charset=ISO-8859-1');
+			header('Content-type: text/plain; charset=ISO-8859-1');
 			
 
-			$this->db->select('tipocaf, folio, fechafactura, condicion, rut, dv, razonsocial, giro, direccion, comuna, ciudad, cuenta, neto, iva, total, codigo, cantidad, unidad, nombre, preciounit, totaldetalle ')
+			$this->db->select('tipocaf, folio, referencia, fechafactura, condicion, vendedor, rut, dv, razonsocial, giro, direccion, comuna, ciudad, cuenta, neto, iva, total, codigo, cantidad, unidad, nombre, preciounit, totaldetalle ')
 		  			->from('guarda_csv')
 		  			->where('tipocaf',$docto->tipocaf)
 		  			->where('folio',$docto->folio);
 			$query = $this->db->get();
 			$data_csv = $query->result();
-
 
 			$datos_folio = $this->get_content_caf_folio($docto->folio,$docto->tipocaf);
 
@@ -625,18 +643,26 @@ class Facturaelectronica extends CI_Model
 
 				}
 
+				if($docto->tipocaf == 61){
+					$numfactura = $this->get_content_caf_folio($data_csv[0]->referencia,33)->idfactura;  //referencia siempre es una factura electronica
+				}else{
+					$numfactura = 0;
+				}
 
 
 				$factura_cliente = array(
 					'tipo_documento' => $tipodocumento,
 			        'id_cliente' => $idcliente,
 			        'num_factura' => $docto->folio,
+			        'cond_venta' => $data_csv[0]->condicion,
+			        'vendedor' => $data_csv[0]->vendedor,
 			        'id_vendedor' => 1,
 			        'sub_total' => $data_csv[0]->neto,
 			        'neto' => $data_csv[0]->neto,
 			        'iva' => $data_csv[0]->iva,
 			        'totalfactura' => $data_csv[0]->total,
 			        'fecha_factura' => $data_csv[0]->fechafactura,
+			        'id_factura' => $numfactura,
 			        'fecha_venc' => $data_csv[0]->fechafactura,
 			        'forma' => 1	          
 				);
@@ -664,39 +690,97 @@ class Facturaelectronica extends CI_Model
 					$lista_detalle[$i]['NmbItem'] = $regcsv->nombre;
 					$lista_detalle[$i]['QtyItem'] = $regcsv->cantidad;
 					$lista_detalle[$i]['PrcItem'] = $regcsv->preciounit;
+					$lista_detalle[$i]['MontoItem'] = $regcsv->totaldetalle;
 					$i++;
 					// FIN								
 				}// FIN REGCSV
 
 
-				if($tipodocumento == 101 || $tipodocumento == 103){  // SI ES FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONICA
+				if($tipodocumento == 101 || $tipodocumento == 102 || $tipodocumento == 103){  // SI ES FACTURA ELECTRONICA O NOTA DE CRÉDITO O FACTURA EXENTA ELECTRONICA
 
 							$tipo_caf = $docto->tipocaf;
 
-							$factura = [
-							    'Encabezado' => [
-							        'IdDoc' => [
-							            'TipoDTE' => $docto->tipocaf,
-							            'Folio' => $docto->folio,
-							        ],
-							        'Emisor' => [
-							            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
-							            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES,
-							            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
-							            'Acteco' => $empresa->cod_actividad,
-							            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
-							            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
-							        ],
-							        'Receptor' => [
-							            'RUTRecep' => $data_csv[0]->rut."-".$data_csv[0]->dv,
-							            'RznSocRecep' => substr($data_csv[0]->razonsocial,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
-							            'GiroRecep' => substr($data_csv[0]->giro,0,40),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
-							            'DirRecep' => substr($data_csv[0]->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
-							            'CmnaRecep' => substr($data_csv[0]->comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
-							        ],
-							    ],
-								'Detalle' => $lista_detalle
-							];
+							if($tipo_caf == 61){
+
+								$tipo_nota_credito = 1;
+            					$glosa = 'Anula factura  '. $data_csv[0]->referencia;								
+
+
+								$factura = [
+								    'Encabezado' => [
+								        'IdDoc' => [
+								            'TipoDTE' => $docto->tipocaf,
+								            'Folio' => $docto->folio,
+								            'FchEmis' => $data_csv[0]->fechafactura
+								        ],
+								        'Emisor' => [
+								            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
+								            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES,
+								            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
+								            'Acteco' => $empresa->cod_actividad,
+								            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
+								            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
+								        ],
+								        'Receptor' => [
+								            'RUTRecep' => $data_csv[0]->rut."-".$data_csv[0]->dv,
+								            'RznSocRecep' => substr($data_csv[0]->razonsocial,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+								            'GiroRecep' => substr($data_csv[0]->giro,0,40),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+								            'DirRecep' => substr($data_csv[0]->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+								            'CmnaRecep' => substr($data_csv[0]->comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
+								        ],
+					                    'Totales' => [
+					                        // estos valores serán calculados automáticamente
+					                        'MntNeto' => $data_csv[0]->neto,
+					                        //'TasaIVA' => \sasco\LibreDTE\Sii::getIVA(),
+					                        'IVA' => $data_csv[0]->iva,
+					                        'MntTotal' => $data_csv[0]->total,
+					                    ], 								        
+								    ],
+									'Detalle' => $lista_detalle,
+					                'Referencia' => [
+					                    'TpoDocRef' => 33,
+					                    'FolioRef' => $data_csv[0]->referencia,
+					                    'CodRef' => $tipo_nota_credito,
+					                    'RazonRef' => $glosa,
+					                ] 									
+								];
+
+							}else{
+								$factura = [
+								    'Encabezado' => [
+								        'IdDoc' => [
+								            'TipoDTE' => $docto->tipocaf,
+								            'Folio' => $docto->folio,
+								            'FchEmis' => $data_csv[0]->fechafactura
+								        ],
+								        'Emisor' => [
+								            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
+								            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES,
+								            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
+								            'Acteco' => $empresa->cod_actividad,
+								            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
+								            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
+								        ],
+								        'Receptor' => [
+								            'RUTRecep' => $data_csv[0]->rut."-".$data_csv[0]->dv,
+								            'RznSocRecep' => substr($data_csv[0]->razonsocial,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+								            'GiroRecep' => substr($data_csv[0]->giro,0,40),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+								            'DirRecep' => substr($data_csv[0]->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+								            'CmnaRecep' => substr($data_csv[0]->comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
+								        ],
+					                    /*'Totales' => [
+					                        // estos valores serán calculados automáticamente
+					                        'MntNeto' => $data_csv[0]->neto,
+					                        'TasaIVA' => \sasco\LibreDTE\Sii::getIVA(),
+					                        'IVA' => $data_csv[0]->iva,
+					                        'MntTotal' => $data_csv[0]->total,
+					                    ],*/ 									        
+								    ],
+									'Detalle' => $lista_detalle
+								];
+
+							}
+
 
 							//FchResol y NroResol deben cambiar con los datos reales de producción
 							$caratula = [
@@ -805,6 +889,7 @@ class Facturaelectronica extends CI_Model
 			$tipo_caf = 52;
 		}		
 
+
 		header('Content-type: text/plain; charset=ISO-8859-1');
 		$this->load->model('facturaelectronica');
 		$config = $this->genera_config();
@@ -886,7 +971,9 @@ class Facturaelectronica extends CI_Model
 
 		$DTE = new \sasco\LibreDTE\Sii\Dte($factura);
 
+
 		$DTE->timbrar($Folios);
+		//var_dump($Firma); exit;
 		$DTE->firmar($Firma);		
 
 		// generar sobre con el envío del DTE y enviar al SII

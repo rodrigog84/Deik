@@ -291,11 +291,13 @@ UPDATE `cod_activ_econ` SET `nombre`='VENTAS AL POR MENOR DE OTROS PRODUCTOS EN 
 /*************************************************************************************/
 
 CREATE TABLE `guarda_csv` (
-	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`id` INT(11) NOT NULL,
 	`tipocaf` INT(11) NOT NULL DEFAULT '0',
 	`folio` INT(11) NOT NULL DEFAULT '0',
+	`referencia` INT(11) NOT NULL DEFAULT '0',
 	`fechafactura` DATE NOT NULL DEFAULT '0000-00-00',
 	`condicion` VARCHAR(50) NOT NULL DEFAULT '0',
+	`vendedor` VARCHAR(100) NOT NULL DEFAULT '0',
 	`rut` INT(10) NOT NULL DEFAULT '0',
 	`dv` CHAR(1) NOT NULL DEFAULT '0',
 	`razonsocial` VARCHAR(150) NOT NULL DEFAULT '0',
@@ -308,15 +310,23 @@ CREATE TABLE `guarda_csv` (
 	`iva` INT(11) NOT NULL DEFAULT '0',
 	`total` INT(11) NOT NULL DEFAULT '0',
 	`codigo` VARCHAR(50) NOT NULL DEFAULT '0',
-	`cantidad` INT(11) NOT NULL DEFAULT '0',
+	`cantidad` DOUBLE NOT NULL DEFAULT '0',
 	`unidad` VARCHAR(50) NOT NULL DEFAULT '0',
 	`nombre` VARCHAR(150) NOT NULL DEFAULT '0',
 	`preciounit` INT(11) NOT NULL DEFAULT '0',
 	`totaldetalle` INT(11) NOT NULL DEFAULT '0',
 	`codigoproceso` VARCHAR(30) NOT NULL DEFAULT '',
-	`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (`id`)
+	`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 COLLATE='latin1_swedish_ci'
 ENGINE=InnoDB
 ;
+
+
+
+ALTER TABLE `guarda_csv`
+	ADD COLUMN `vendedor` VARCHAR(250) NOT NULL DEFAULT '0' AFTER `condicion`;
+ALTER TABLE `factura_clientes`
+	ADD COLUMN `cond_venta` VARCHAR(50) NOT NULL AFTER `id_cond_venta`;	
+ALTER TABLE `factura_clientes`
+	ADD COLUMN `vendedor` VARCHAR(250) NOT NULL AFTER `cond_venta`;	
