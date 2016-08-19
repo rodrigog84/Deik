@@ -163,7 +163,7 @@ class Facturaglosa extends CI_Controller {
 				//$neto = round($total/1.19,2);
 
 				//$lista_detalle[$i]['PrcItem'] = round($neto/$detalle->cantidad,2);
-				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 ? floor($detalle->neto) : floor($detalle->total);
+				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 || $tipo_caf == 52 ? floor($detalle->neto) : floor($detalle->total);
 
 				/*if($detalle->descuento != 0){
 					$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
