@@ -330,3 +330,7 @@ ALTER TABLE `factura_clientes`
 	ADD COLUMN `cond_venta` VARCHAR(50) NOT NULL AFTER `id_cond_venta`;	
 ALTER TABLE `factura_clientes`
 	ADD COLUMN `vendedor` VARCHAR(250) NOT NULL AFTER `cond_venta`;	
+
+
+ALTER TABLE `clientes`
+	ADD COLUMN `tipodocref` INT NOT NULL DEFAULT '0' AFTER `e_mail_contacto`;	

@@ -2493,6 +2493,14 @@ public function cargacontribuyentes(){
 			$detalle_factura = $this->facturaelectronica->get_detalle_factura($idfactura);
 			$datos_factura = $this->facturaelectronica->get_factura($idfactura);
 
+			$referencia = array();
+			if($datos_empresa_factura->tipodocref != 0){
+				$referencia['NroLinRef'] = 1;
+				$referencia['TpoDocRef'] = $datos_empresa_factura->tipodocref;
+				$referencia['FolioRef'] = $numfactura;
+				$referencia['FchRef'] = substr($fechafactura,0,10);
+
+			}
 
 			$lista_detalle = array();
 			$i = 0;
@@ -2550,9 +2558,10 @@ public function cargacontribuyentes(){
 		                'MntTotal' => isset($datos_factura->totalfactura) ? $datos_factura->totalfactura : 0,
 		            ],				        
 			    ],
-				'Detalle' => $lista_detalle
+				'Detalle' => $lista_detalle,
+				'Referencia' => $referencia,
 			];
-
+			//print_r($factura); exit;
 			//FchResol y NroResol deben cambiar con los datos reales de producción
 			$caratula = [
 			    //'RutEnvia' => '11222333-4', // se obtiene de la firma
