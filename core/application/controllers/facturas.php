@@ -2491,8 +2491,16 @@ public function cargacontribuyentes(){
 			$datos_empresa_factura = $this->facturaelectronica->get_empresa_factura($idfactura);
 
 			$detalle_factura = $this->facturaelectronica->get_detalle_factura($idfactura);
+			$datos_factura = $this->facturaelectronica->get_factura($idfactura);
 
+			$referencia = array();
+			if($datos_empresa_factura->tipodocref != 0){
+				$referencia['NroLinRef'] = 1;
+				$referencia['TpoDocRef'] = $datos_empresa_factura->tipodocref;
+				$referencia['FolioRef'] = $numfactura;
+				$referencia['FchRef'] = substr($fechafactura,0,10);
 
+			}
 
 			$lista_detalle = array();
 			$i = 0;
@@ -2543,10 +2551,18 @@ public function cargacontribuyentes(){
 			            'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
 			            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
 			        ],
+		            'Totales' => [
+		                // estos valores serán calculados automáticamente
+		                'MntNeto' => isset($datos_factura->neto) ? $datos_factura->neto : 0,
+		                'TasaIVA' => \sasco\LibreDTE\Sii::getIVA(),
+		                'IVA' => isset($datos_factura->iva) ? $datos_factura->iva : 0,
+		                'MntTotal' => isset($datos_factura->totalfactura) ? $datos_factura->totalfactura : 0,
+		            ],				        
 			    ],
-				'Detalle' => $lista_detalle
+				'Detalle' => $lista_detalle,
+				'Referencia' => $referencia,
 			];
-
+			//print_r($factura); exit;
 			//FchResol y NroResol deben cambiar con los datos reales de producción
 			$caratula = [
 			    //'RutEnvia' => '11222333-4', // se obtiene de la firma
