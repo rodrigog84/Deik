@@ -328,7 +328,7 @@ class Facturaelectronica extends CI_Model
 			        die('No se pudieron obtener los datos del DTE');
 			    $pdf = new \sasco\LibreDTE\Sii\PDF\Dte(false); // =false hoja carta, =true papel contínuo (false por defecto si no se pasa)
 			    $pdf->setFooterText();
-			    $pdf->setLogo('./facturacion_electronica/images/logo_empresa.png'); // debe ser PNG!
+			    $pdf->setLogo($base_path . '/../../facturacion_electronica/images/logo_empresa.png'); // debe ser PNG!
 			    $pdf->setGiroCliente($factura->giro); 
 			    $pdf->setGiroEmisor($empresa->giro); 
 			    $pdf->setResolucion(['FchResol'=>$Caratula['FchResol'], 'NroResol'=>$Caratula['NroResol']]);
