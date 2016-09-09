@@ -183,6 +183,7 @@ class Facturaglosa extends CI_Controller {
 			        'IdDoc' => [
 			            'TipoDTE' => $tipo_caf,
 			            'Folio' => $numdocuemnto,
+			            'FchEmis' => substr($fechafactura,0,10)
 			        ],
 			        'Emisor' => [
 			            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
