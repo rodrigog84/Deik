@@ -9,7 +9,7 @@ Ext.define('Infosys_web.view.ordencompra.Editar', {
     layout: 'fit',
     autoShow: true,
     height: 660,
-    width: 1220,
+    width: 1300,
     modal: true,
     iconCls: 'icon-sheet',
     //y: 10,
@@ -81,10 +81,24 @@ Ext.define('Infosys_web.view.ordencompra.Editar', {
                                     xtype: 'datefield',
                                     fieldCls: 'required',
                                     maxHeight: 25,
-                                    width: 230,
+                                    width: 200,
+                                    labelWidth: 60,
                                     fieldLabel: '<b>FECHA</b>',
                                     itemId: 'fechaordenId',
                                     name: 'fecha',
+                                    value: new Date()
+                                },{
+                                    xtype: 'displayfield',
+                                    width: 20                                          
+                                },{
+                                    xtype: 'datefield',
+                                    fieldCls: 'required',
+                                    maxHeight: 25,
+                                    labelWidth: 90,
+                                    width: 210,
+                                    fieldLabel: '<b>RECEPCION</b>',
+                                    itemId: 'fecharecepcionId',
+                                    name: 'fecha_recepcion',
                                     value: new Date()
                                 }
                                 ]
@@ -184,6 +198,20 @@ Ext.define('Infosys_web.view.ordencompra.Editar', {
                                     name : 'e_mail_contacto',
                                     itemId: 'mail_contactoId',
                                     fieldLabel: 'Mail Contacto'
+                                },{xtype: 'splitter'},{
+                                    xtype: 'combo',
+                                    itemId: 'tipoVendedorId',
+                                    width: 350,
+                                    labelWidth: 80,
+                                    fieldCls: 'required',
+                                    maxHeight: 25,
+                                    fieldLabel: '<b>VENDEDOR</b>',
+                                    forceSelection : true,
+                                    name : 'id_vendedor',
+                                    valueField : 'id',
+                                    displayField : 'nombre',
+                                    emptyText : "Seleccione",
+                                    store : 'Vendedores'                                    //disabled : true, 
                                 }
 
 
@@ -253,15 +281,16 @@ Ext.define('Infosys_web.view.ordencompra.Editar', {
                             {xtype: 'splitter'},
                             {
                                 xtype: 'numberfield',
-                                width: 130,
+                                width: 140,
                                 labelWidth: 40,
                                 fieldLabel: 'Precio',
                                 itemId: 'precioId',
-                                style: 'font-weight: bold;'
+                                style: 'font-weight: bold;',
+                                decimalPrecision: 3
                             },{xtype: 'splitter'},
                             {
                                 xtype: 'textfield',
-                                width: 80,
+                                width: 130,
                                 labelWidth: 40,
                                 minValue: 0,
                                 fieldLabel: 'Stock',
@@ -273,12 +302,13 @@ Ext.define('Infosys_web.view.ordencompra.Editar', {
                             {xtype: 'splitter'},
                             {
                                 xtype: 'numberfield',
-                                width: 120,
+                                width: 140,
                                 labelWidth: 60,
                                 minValue: 0,
                                 value: 1,
                                 fieldLabel: 'Cantidad',
-                                itemId: 'cantidadId'
+                                itemId: 'cantidadId',
+                                decimalPrecision: 3
                             },{
                                 xtype: 'numberfield',
                                 width: 120,
@@ -309,6 +339,14 @@ Ext.define('Infosys_web.view.ordencompra.Editar', {
                                 width: 80,
                                 allowBlank: true,
                                 action: 'agregarItem2'
+                            },{
+                                xtype: 'numberfield',
+                                align: 'center',
+                                labelWidth: 60,
+                                itemId: 'cantmedId',
+                                fieldLabel: 'Cantidad medidad',
+                                name: 'cant_medidad',                                
+                                hidden: true
                             }]
                         }
 
@@ -337,8 +375,9 @@ Ext.define('Infosys_web.view.ordencompra.Editar', {
                             { text: 'Id descuento',  dataIndex: 'id_descuento', width: 250, hidden : true },
                             { text: 'codigo',  dataIndex: 'codigo', width: 250, hidden : true },
                             { text: 'Producto',  dataIndex: 'nombre', width: 250 },
-                            { text: 'Precio Unitario',  dataIndex: 'precio', align: 'right', flex:1, renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,000")} },
-                            { text: 'Cantidad',  dataIndex: 'cantidad', align: 'right', width: 100},
+                            { text: 'Precio Unitario',  dataIndex: 'precio', align: 'right', width: 120, decimalPrecision: 3 },
+                            { text: 'Cantidad',  dataIndex: 'cantidad', align: 'right', width: 100, decimalPrecision: 3},
+                            { text: 'Cant Medidad',  dataIndex: 'cant_medida', align: 'right',width: 100, hidden: true, decimalPrecision: 3},
                             { text: 'Descuento',  dataIndex: 'dcto', align: 'right', flex:1, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} },
                             { text: 'Neto',  dataIndex: 'neto', align: 'right', flex:1,renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} },
                             { text: 'Iva',  dataIndex: 'iva', align: 'right', flex:1,renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} },

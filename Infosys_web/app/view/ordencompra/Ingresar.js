@@ -9,7 +9,7 @@ Ext.define('Infosys_web.view.ordencompra.Ingresar', {
     layout: 'fit',
     autoShow: true,
     height: 660,
-    width: 1220,
+    width: 1300,
     modal: true,
     iconCls: 'icon-sheet',
     //y: 10,
@@ -71,15 +71,40 @@ Ext.define('Infosys_web.view.ordencompra.Ingresar', {
                                     action: 'wbuscarproveedor2'
                                 },{
                                     xtype: 'displayfield',
-                                    width: 390                                          
+                                    width: 265                                          
+                                },{xtype: 'splitter'},{
+                                    xtype: 'textfield',
+                                    width: 155,
+                                    labelWidth: 40,
+                                    fieldLabel: 'Rut',
+                                    name : 'rut',
+                                    itemId: 'rutId',
+                                    readOnly : true                                  
+                                },{
+                                    xtype: 'displayfield',
+                                    width: 40                                          
                                 },{
                                     xtype: 'datefield',
                                     fieldCls: 'required',
                                     maxHeight: 25,
-                                    width: 230,
+                                    width: 200,
+                                    labelWidth: 60,
                                     fieldLabel: '<b>FECHA</b>',
                                     itemId: 'fechaordenId',
                                     name: 'fecha',
+                                    value: new Date()
+                                },{
+                                    xtype: 'displayfield',
+                                    width: 20                                          
+                                },{
+                                    xtype: 'datefield',
+                                    fieldCls: 'required',
+                                    maxHeight: 25,
+                                    labelWidth: 90,
+                                    width: 210,
+                                    fieldLabel: '<b>RECEPCION</b>',
+                                    itemId: 'fecharecepcionId',
+                                    name: 'fecha_recepcion',
                                     value: new Date()
                                 }
                                 ]
@@ -88,23 +113,13 @@ Ext.define('Infosys_web.view.ordencompra.Ingresar', {
                                 xtype: 'fieldcontainer',
                                 layout: 'hbox',
                                 items: [{
-                                    msgTarget: 'side',
                                     fieldLabel: 'Nombre Empresa',
                                     xtype: 'textfield',
-                                    width: 895,
+                                    width: 795,
+                                    labelWidth: 120,
                                     name : 'nombres',
                                     itemId: 'nombreId',
                                     readOnly : true
-                                   
-                                },{
-                                    msgTarget: 'side',
-                                    fieldLabel: 'Rut',
-                                    xtype: 'textfield',
-                                    width: 895,
-                                    name : 'rut',
-                                    itemId: 'rutId',
-                                    readOnly : true,
-                                    hidden: true
                                    
                                 }
                                 ]
@@ -114,32 +129,36 @@ Ext.define('Infosys_web.view.ordencompra.Ingresar', {
                                 layout: 'hbox',
                                 items: [{
                                     xtype: 'textfield',
-                                    width: 895,
+                                    width: 795,
+                                    labelWidth: 120,
                                     name : 'direccion',
                                     itemId: 'direccionId',
                                     fieldLabel: 'Direccion Empresa',
                                     readOnly : true
+                                },{
+                                    xtype: 'displayfield',
+                                    width: 20                                          
+                                },{
+                                    xtype: 'textfield',
+                                    width: 395,
+                                    labelWidth: 40,
+                                    name : 'nom_giro',
+                                    itemId: 'nom_giroId',
+                                    fieldLabel: 'Giro',
+                                    readOnly : true
+                                },{
+                                    xtype: 'textfield',
+                                    width: 295,
+                                    name : 'id_giro',
+                                    itemId: 'giroId',
+                                    fieldLabel: 'Giro',
+                                    hidden: true
                                 }]
                             },
                             {
                                 xtype: 'fieldcontainer',
                                 layout: 'hbox',
                                 items: [{
-                                xtype: 'textfield',
-                                name : 'id_giro',
-                                itemId: 'giroId',
-                                hidden: true
-                                },
-                                {
-                                    xtype: 'textfield',
-                                    width: 450,
-                                    name : 'nom_giro',
-                                    itemId: 'nom_giroId',
-                                    fieldLabel: 'Giro Empresa',
-                                    readOnly : true
-                                },
-                                    {xtype: 'splitter'},
-                                {
                                     xtype: 'textfield',
                                     width: 240,
                                     name : 'fono',
@@ -147,8 +166,6 @@ Ext.define('Infosys_web.view.ordencompra.Ingresar', {
                                     fieldLabel: 'Telefono Empresa',
                                     readOnly : true
                                 }
-                                
-                               
                                 ]
                             },
                             {
@@ -179,6 +196,20 @@ Ext.define('Infosys_web.view.ordencompra.Ingresar', {
                                     name : 'e_mail_contacto',
                                     itemId: 'mail_contactoId',
                                     fieldLabel: 'Mail Contacto'
+                                },{xtype: 'splitter'},{
+                                    xtype: 'combo',
+                                    itemId: 'tipoVendedorId',
+                                    width: 350,
+                                    labelWidth: 80,
+                                    fieldCls: 'required',
+                                    maxHeight: 25,
+                                    fieldLabel: '<b>VENDEDOR</b>',
+                                    forceSelection : true,
+                                    name : 'id_vendedor',
+                                    valueField : 'id',
+                                    displayField : 'nombre',
+                                    emptyText : "Seleccione",
+                                    store : 'Vendedores'                                    //disabled : true, 
                                 }
 
 
@@ -230,6 +261,14 @@ Ext.define('Infosys_web.view.ordencompra.Ingresar', {
                                 fieldLabel: 'Producto',
                                 name: 'Productos',                                
                                 hidden: true
+                            },{
+                                xtype: 'numberfield',
+                                align: 'center',
+                                labelWidth: 60,
+                                itemId: 'cantmedId',
+                                fieldLabel: 'Cantidad medidad',
+                                name: 'cant_medidad',                                
+                                hidden: true
                             },
                             {xtype: 'splitter'},
                             {
@@ -252,11 +291,12 @@ Ext.define('Infosys_web.view.ordencompra.Ingresar', {
                                 labelWidth: 40,
                                 fieldLabel: 'Precio',
                                 itemId: 'precioId',
-                                style: 'font-weight: bold;'
+                                style: 'font-weight: bold;',
+                                decimalPrecision: 3
                             },{xtype: 'splitter'},
                             {
                                 xtype: 'textfield',
-                                width: 80,
+                                width: 120,
                                 labelWidth: 40,
                                 minValue: 0,
                                 fieldLabel: 'Stock',
@@ -268,12 +308,14 @@ Ext.define('Infosys_web.view.ordencompra.Ingresar', {
                             {xtype: 'splitter'},
                             {
                                 xtype: 'numberfield',
-                                width: 120,
+                                width: 150,
                                 labelWidth: 60,
                                 minValue: 0,
                                 value: 1,
                                 fieldLabel: 'Cantidad',
-                                itemId: 'cantidadId'
+                                itemId: 'cantidadId',
+                                decimalPrecision: 3
+
                             },{
                                 xtype: 'numberfield',
                                 width: 120,
@@ -333,8 +375,9 @@ Ext.define('Infosys_web.view.ordencompra.Ingresar', {
                             { text: 'Id descuento',  dataIndex: 'id_descuento', width: 250, hidden : true },
                             { text: 'codigo',  dataIndex: 'codigo', width: 250, hidden : true },
                             { text: 'Producto',  dataIndex: 'nombre', width: 250 },
-                            { text: 'Precio Unitario',  dataIndex: 'precio', align: 'right',flex:1, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} },
-                            { text: 'Cantidad',  dataIndex: 'cantidad', align: 'right',width: 100},
+                            { text: 'Precio Unitario',  dataIndex: 'precio', align: 'right',flex:1, decimalPrecision: 3},
+                            { text: 'Cantidad',  dataIndex: 'cantidad', align: 'right',width: 120, decimalPrecision: 3},
+                            { text: 'Cant Medidad',  dataIndex: 'cant_medida', align: 'right',width: 100, hidden: true, decimalPrecision: 3},
                             { text: 'Descuento',  dataIndex: 'dcto', align: 'right',flex:1, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} },
                             { text: 'Neto',  dataIndex: 'neto', align: 'right',flex:1,renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} },
                             { text: 'Iva',  dataIndex: 'iva', align: 'right',flex:1,renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} },

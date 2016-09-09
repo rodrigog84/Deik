@@ -50,7 +50,7 @@ $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'root'; //'chilefor_admin21'
-$db['default']['password'] = ''; //'^o6_5+TGP8JK';
+$db['default']['password'] = 'deik'; //'^o6_5+TGP8JK';
 $db['default']['database'] = 'deik'; // 'chilefor_cf_ctz';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';

@@ -38,7 +38,6 @@ Ext.define('Infosys_web.controller.Preventa', {
             'Preventa.Autoriza3',
             'Preventa.Autoriza2',
             'Preventa.IngresarClientes'
-
             ],
 
     //referencias, es un alias interno para el controller
@@ -79,9 +78,6 @@ Ext.define('Infosys_web.controller.Preventa', {
         ref: 'buscarsucursalespreventa2',
         selector: 'buscarsucursalespreventa2'
     },{
-        ref: 'observacionespreventa',
-        selector: 'observacionespreventa'
-    },{
         ref: 'observacionespreventa2',
         selector: 'observacionespreventa2'
     },{
@@ -102,7 +98,10 @@ Ext.define('Infosys_web.controller.Preventa', {
     },{
         ref: 'clientesingresarpreventa',
         selector: 'clientesingresarpreventa'
-    }    
+    },{
+        ref: 'observacionespreventa',
+        selector: 'observacionespreventa'
+    }
   
     ],
     
@@ -291,6 +290,65 @@ Ext.define('Infosys_web.controller.Preventa', {
             'preventaeditar button[action=validarutedita]': {
                 click: this.validarutedita
             },
+            'observacionespreventa button[action=validar]': {
+                click: this.validarut2
+            },
+
+        });
+    },
+
+    validarut2: function(){
+
+        var view = this.getObservacionespreventa();
+        var rut = view.down('#rutId').getValue();
+        var okey = "SI";
+        var cero = " ";
+        
+        if (!rut){
+             Ext.Msg.alert('Alerta', 'Debe Ingresar Rut');
+                 return;
+        };
+
+        Ext.Ajax.request({
+            url: preurl + 'preventa/validaRut?valida='+rut,
+            params: {
+                id: 1
+            },
+            
+            success: function(response){
+                var resp = Ext.JSON.decode(response.responseText);
+                if (resp.success == true) {
+                    var rutm = resp.rut;
+                    if (resp.existe == true){
+                        var observa = resp.observa;
+                        if (observa){
+                         view.down("#nombreId").setValue(observa.nombre);
+                         view.down("#rutId").setValue(observa.rut);
+                         view.down("#rutmId").setValue(rut);
+                         view.down("#camionId").setValue(observa.pat_camion);
+                         view.down("#carroId").setValue(observa.pat_carro);
+                         view.down("#fonoId").setValue(observa.fono);
+                         view.down("#validaId").setValue(okey);
+                         view.down("#observaId").focus();
+                    }             
+                    };
+                    if (resp.existe == false){
+                        view.down("#nombreId").focus();
+                        view.down("#rutId").setValue(rutm);
+                        view.down("#rutmId").setValue(rut);
+                        view.down("#validaId").setValue(okey);
+                    }  
+                    
+                }else{
+
+                      Ext.Msg.alert('Informacion', 'Rut Incorrecto');                      
+                      return false;
+                     
+                      
+                }
+               
+            }
+
         });
     },
 
@@ -534,6 +592,7 @@ Ext.define('Infosys_web.controller.Preventa', {
                      var cliente= resp.cliente;
                      var estado = resp.estado;
                      var clave = (cliente);
+                     console.log(clave)
 
                     if (clave){                        
                            var view = Ext.create('Infosys_web.view.Preventa.Autoriza2').show();
@@ -573,26 +632,93 @@ Ext.define('Infosys_web.controller.Preventa', {
     },
 
     ingresaobs: function(){
-        var viewIngresa = this.getObservacionespreventa();
-        var view = this.getPreventaingresar();
-        var observa = viewIngresa.down('#observaId').getValue();
-        if (observa){
-             view.down('#observacionesId').setValue(observa);
+
+        var view = this.getObservacionespreventa();
+        var viewIngresar = this.getPreventaingresar();                
+        var rut = view.down('#rutmId').getValue();
+        var nombre = view.down('#nombreId').getValue();
+        var camion = view.down('#camionId').getValue();
+        var fono = view.down('#fonoId').getValue();
+        var carro = view.down('#carroId').getValue();
+        var observa = view.down('#observaId').getValue();
+        var valida = view.down('#validaId').getValue();
+        var numero = viewIngresar.down('#ticketId').getValue();
+        var id = viewIngresar.down('#observaId').getValue();       
+        
+        var permite = "SI"
+
+        if (valida == "NO"){
+             Ext.Msg.alert('Alerta', 'Debe Validar Rut');
+                 return;
+        };        
+        
+        if (!rut){
+             Ext.Msg.alert('Alerta', 'Debe Ingresar Rut');
+                 return;
         };
-        viewIngresa.close();
+        if (!nombre){
+             Ext.Msg.alert('Alerta', 'Debe Ingresar Nombre');
+                 return;
+        };       
+       
+        Ext.Ajax.request({
+            url: preurl + 'preventa/saveobserva',
+            params: {
+                rut: rut,
+                nombre: nombre,
+                camion: camion,
+                carro : carro,
+                fono : fono,
+                observa : observa,
+                numero: numero,
+                id: id
+            },
+            success: function(response){
+                var resp = Ext.JSON.decode(response.responseText);
+                var idobserva = resp.idobserva;         
+                view.close();
+                viewIngresar.down("#observaId").setValue(idobserva);
+                viewIngresar.down("#permiteId").setValue(permite);
+            }           
+        });
     },
 
     agregarobserva: function(){
 
-         var viewIngresa = this.getPreventaingresar();
-         var observa = viewIngresa.down('#observacionesId').getValue();        
-         Ext.create('Infosys_web.view.Preventa.Observaciones').show();
-         var view = this.getObservacionespreventa();
-         if (!observa){             
-             observa= "";
-         };
-         view.down('#observaId').setValue(observa);
-        
+        var viewIngresa = this.getPreventaingresar();
+        var observa = viewIngresa.down('#observaId').getValue();
+        var numpreventa = viewIngresa.down('#ticketId').getValue();
+        if (!observa){
+            var view = Ext.create('Infosys_web.view.Preventa.Observaciones').show();
+            view.down("#rutId").focus();
+            view.down("#preventaId").setValue(numpreventa);          
+
+        }else{
+            Ext.Ajax.request({
+            url: preurl + 'preventa/getObserva',
+            params: {
+                idobserva: observa
+            },
+            success: function(response){
+                var resp = Ext.JSON.decode(response.responseText);
+                console.log("llegamos")
+                if (resp.success == true){                
+                var observar = (resp.observar);
+                var rut = (observar.rut);
+                console.log(rut);
+                var view = Ext.create('Infosys_web.view.Preventa.Observaciones').show();
+                view.down('#rutmId').setValue(observar.rut);
+                view.down('#rutId').setValue(observar.rutm);
+                view.down('#nombreId').setValue(observar.nombre);
+                view.down('#camionId').setValue(observar.pat_camion);
+                view.down('#carroId').setValue(observar.pat_carro);
+                view.down('#fonoId').setValue(observar.fono);
+                view.down('#observaId').setValue(observar.observacion);
+                };
+            }           
+            });
+        }
+
     },
 
     special: function(f,e){
@@ -856,6 +982,12 @@ Ext.define('Infosys_web.controller.Preventa', {
         var bolEnable = true;
         var secuencia = secuencia + 1;
 
+        if (!descuento){
+            this.recalculardescuentopro();  
+            var descuento = view.down('#totdescuentoId').getValue();   
+
+        };
+
               
         if (descuento == 1){            
             var descuento = 0;
@@ -914,6 +1046,7 @@ Ext.define('Infosys_web.controller.Preventa', {
                 view.down('#cantidadId').setValue(cero2);
                 view.down('#descuentoId').setValue(cero1);
                 view.down('#precioId').setValue(cero1);
+                view.down('#totdescuentoId').setValue(cero); 
                 view.down('#cantidadOriginalId').setValue(cero1);
 
                 return; 
@@ -948,6 +1081,7 @@ Ext.define('Infosys_web.controller.Preventa', {
         view.down('#precioId').setValue(cero);
         view.down('#cantidadOriginalId').setValue(cero);
         view.down('#totdescuentoId').setValue(cero1);
+        view.down('#totdescuentoId').setValue(cero); 
         view.down('#DescuentoproId').setValue(cero);
 
     },
@@ -1335,6 +1469,7 @@ Ext.define('Infosys_web.controller.Preventa', {
         var cantidad = view.down('#cantidadId').getValue();
         var total = ((precio * cantidad));
         var desc = view.down('#DescuentoproId').getValue();
+       
         if (desc){
         var descuento = view.down('#DescuentoproId');
         var stCombo = descuento.getStore();
@@ -1540,6 +1675,13 @@ Ext.define('Infosys_web.controller.Preventa', {
         var bolEnable = true;
         var secuencia = secuencia + 1;
         
+        if (!descuento){
+            this.recalculardescuentopro();  
+            var descuento = view.down('#totdescuentoId').getValue();   
+
+        };
+
+             
         if (secuencia > 21){
 
            Ext.Msg.alert('Alerta', 'Ya sobrepaso el maximo de Registros');
@@ -1608,6 +1750,7 @@ Ext.define('Infosys_web.controller.Preventa', {
                 view.down('#nombreproductoId').setValue(cero);
                 view.down('#cantidadId').setValue(cero);
                 view.down('#cantidadOriginalId').setValue(cero);
+                view.down('#totdescuentoId').setValue(cero);                
                 view.down('#precioId').setValue(cero);
                 return; 
             }
@@ -1638,8 +1781,8 @@ Ext.define('Infosys_web.controller.Preventa', {
         view.down('#cantidadId').setValue(cero2);
         view.down('#precioId').setValue(cero);
         view.down('#cantidadOriginalId').setValue(cero);
-        view.down('#secuenciaId').setValue(secuencia);
-        
+        view.down('#totdescuentoId').setValue(cero);  
+        view.down('#secuenciaId').setValue(secuencia);        
         view.down("#buscarproc").focus();
     },
 
@@ -2328,7 +2471,7 @@ Ext.define('Infosys_web.controller.Preventa', {
         var fechapreventa = viewIngresa.down('#fechaventaId').getValue();
         var stItem = this.getPreventaItemsStore();
         var stPreventa = this.getPreventaStore();
-        var observa = viewIngresa.down('#observacionesId').getValue();
+        var observa = viewIngresa.down('#observaId').getValue();
      
         if(!finalafectoId){
             Ext.Msg.alert('Ingrese Productos a la Venta');

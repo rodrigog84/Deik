@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<EnvioDTE xmlns="http://www.sii.cl/SiiDte" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sii.cl/SiiDte EnvioDTE_v10.xsd" version="1.0">
+  <SetDTE ID="SetDoc">
+    <Caratula version="1.0">
+      <RutEmisor>76019353-4</RutEmisor>
+      <RutEnvia>6419970-6</RutEnvia>
+      <RutReceptor>60803000-K</RutReceptor>
+      <FchResol>2014-08-22</FchResol>
+      <NroResol>80</NroResol>
+      <TmstFirmaEnv>2016-08-31T10:48:06</TmstFirmaEnv>
+      <SubTotDTE>
+        <TpoDTE>33</TpoDTE>
+        <NroDTE>1</NroDTE>
+      </SubTotDTE>
+    </Caratula>
+    <DTE version="1.0">
+  <Documento ID="T33F1505">
+    <Encabezado>
+      <IdDoc>
+        <TipoDTE>33</TipoDTE>
+        <Folio>1505</Folio>
+        <FchEmis>2016-08-31</FchEmis>
+      </IdDoc>
+      <Emisor>
+        <RUTEmisor>76019353-4</RUTEmisor>
+        <RznSoc>SOCIEDAD COMERCIAL DEIK Y COMPAÑIA LIMITADA</RznSoc>
+        <GiroEmis>VENTAS AL POR MENOR DE OTROS PRODUCTOS EN ALMACENES ESPECIALIZADOS N.C.P.</GiroEmis>
+        <Acteco>523999</Acteco>
+        <DirOrigen>8 ORIENTE No.1378</DirOrigen>
+        <CmnaOrigen>TALCA</CmnaOrigen>
+      </Emisor>
+      <Receptor>
+        <RUTRecep>76874860-8</RUTRecep>
+        <RznSocRecep>ARRIENDO DE MAQUINARIAS RTK LTDA</RznSocRecep>
+        <GiroRecep>ALQUILER DE MAQUINARIA Y EQUIPO DE CONST</GiroRecep>
+        <DirRecep>21 ORIENTE NO.350</DirRecep>
+        <CmnaRecep>TALCA</CmnaRecep>
+      </Receptor>
+      <Totales>
+        <MntNeto>463761</MntNeto>
+        <TasaIVA>19</TasaIVA>
+        <IVA>88115</IVA>
+        <MntTotal>551876</MntTotal>
+      </Totales>
+    </Encabezado>
+    <Detalle>
+      <NroLinDet>1</NroLinDet>
+      <NmbItem>GABINETE METALICO 500X400X200 1P             </NmbItem>
+      <QtyItem>1.000</QtyItem>
+      <PrcItem>32950</PrcItem>
+      <MontoItem>32950</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>2</NroLinDet>
+      <NmbItem>INT. AUTOMATICO MOLDEA. 200A 25KA NF250-CV MI</NmbItem>
+      <QtyItem>1.000</QtyItem>
+      <PrcItem>90563</PrcItem>
+      <MontoItem>90563</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>3</NroLinDet>
+      <NmbItem>CABLE COVIFLEX 1 X 4 AWG COVISA              </NmbItem>
+      <QtyItem>160.000</QtyItem>
+      <PrcItem>1594.956</PrcItem>
+      <MontoItem>255193</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>4</NroLinDet>
+      <NmbItem>CABLE THHN 8 AWG VERD.                       </NmbItem>
+      <QtyItem>3.000</QtyItem>
+      <PrcItem>648</PrcItem>
+      <MontoItem>1944</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>5</NroLinDet>
+      <NmbItem>BARRA TOMA TIERRA (COPERWARE) 1/2 X 1MT      </NmbItem>
+      <QtyItem>1.000</QtyItem>
+      <PrcItem>1260</PrcItem>
+      <MontoItem>1260</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>6</NroLinDet>
+      <NmbItem>TERMINAL CU ESTAÑADO 1 AWG                   </NmbItem>
+      <QtyItem>15.000</QtyItem>
+      <PrcItem>306.733</PrcItem>
+      <MontoItem>4601</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>7</NroLinDet>
+      <NmbItem>INT. AUTOMATICO 1 X 16A "C" LEXO           </NmbItem>
+      <QtyItem>1.000</QtyItem>
+      <PrcItem>1282</PrcItem>
+      <MontoItem>1282</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>8</NroLinDet>
+      <NmbItem>TUBO CONDUIT 50X3MT II TIGRE                 </NmbItem>
+      <QtyItem>12.000</QtyItem>
+      <PrcItem>1789.917</PrcItem>
+      <MontoItem>21479</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>9</NroLinDet>
+      <NmbItem>CURVA CONDUIT 50MM                           </NmbItem>
+      <QtyItem>20.000</QtyItem>
+      <PrcItem>379</PrcItem>
+      <MontoItem>7580</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>10</NroLinDet>
+      <NmbItem>ABRAZADERA 2PC ELECTROGALVANIZADA 1,1/2"     </NmbItem>
+      <QtyItem>15.000</QtyItem>
+      <PrcItem>164.733</PrcItem>
+      <MontoItem>2471</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>11</NroLinDet>
+      <NmbItem>AMARRA P. 4,8X400 NEG. FASTLINE              </NmbItem>
+      <QtyItem>100.000</QtyItem>
+      <PrcItem>42.02</PrcItem>
+      <MontoItem>4202</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>12</NroLinDet>
+      <NmbItem>GUARDA MOTOR NS2-25 6,3 - 10 A CHINT         </NmbItem>
+      <QtyItem>1.000</QtyItem>
+      <PrcItem>16454</PrcItem>
+      <MontoItem>16454</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>13</NroLinDet>
+      <NmbItem>INT. AUTOMATICO 3 X 25A 6,0KA LEGRAND        </NmbItem>
+      <QtyItem>1.000</QtyItem>
+      <PrcItem>21353</PrcItem>
+      <MontoItem>21353</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>14</NroLinDet>
+      <NmbItem>TERMINAL CONDUIT 50MM                        </NmbItem>
+      <QtyItem>4.000</QtyItem>
+      <PrcItem>488.25</PrcItem>
+      <MontoItem>1953</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>15</NroLinDet>
+      <NmbItem>PEGAMENTO PVC EN POMO 25CC VINILIT           </NmbItem>
+      <QtyItem>1.000</QtyItem>
+      <PrcItem>476</PrcItem>
+      <MontoItem>476</MontoItem>
+    </Detalle>
+    <TED version="1.0">
+  <DD>
+    <RE>76019353-4</RE>
+    <TD>33</TD>
+    <F>1505</F>
+    <FE>2016-08-31</FE>
+    <RR>76874860-8</RR>
+    <RSR>ARRIENDO DE MAQUINARIAS RTK LTDA</RSR>
+    <MNT>551876</MNT>
+    <IT1>GABINETE METALICO 500X400X200 1P</IT1>
+    <CAF version="1.0">
+<DA>
+<RE>76019353-4</RE>
+<RS>SOCIEDAD COMERCIAL DEIK Y COMPANIA LIMIT</RS>
+<TD>33</TD>
+<RNG><D>1401</D><H>1650</H></RNG>
+<FA>2016-08-16</FA>
+<RSAPK><M>21iFEAIRi3Gnr97rSNnOCUL27wBN5s+gEv6xb+bhmm24ATpi5Z+4uB+0jnvQ2bb0TotRyA43josDyoc2wL8qrQ==</M><E>Aw==</E></RSAPK>
+<IDK>300</IDK>
+</DA>
+<FRMA algoritmo="SHA1withRSA">SSQCFlYz1NKR1XvojlqDb9s2mp0Qrmeumgk8Xh3qWvaTEjQwy3WOyHsOTImEUl4tFSDfl1rLxzDAP2bBKIEBmQ==</FRMA>
+</CAF>
+    <TSTED>2016-08-31T10:48:06</TSTED>
+  </DD>
+  <FRMT algoritmo="SHA1withRSA">MOwSbcpeyPS3Q/kVbIVj3TLpjVIUqp2U+Fgn34lxf0TWH+S42UdObonp8/XaHhi19TNwkTd54C1PD1erXraZZA==</FRMT>
+</TED>
+  <TmstFirma>2016-08-31T10:48:06</TmstFirma></Documento>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#"><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI="#T33F1505"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>PWbr4xBcsqaeeux5+hO/EJr+xVw=</DigestValue></Reference></SignedInfo><SignatureValue>RjRedN1kF2cGNiOKEqeRM/A89qIUhRNSiAcnZj1eaolg1ObCUeutUVHrf8SCqhND
+y2u1sZw3cWtb1QVMN2eZci4A5N8gW8dXAE8TBvwB4cB6beAlk5lYddDBD7BEOLn/
+Gg9ZSSyoCiKAo/NdOFDoAt7CrZkdO0NNt2tDQH1Mpq2cCGnAHwONNl9IqQUL4QdN
+iNxbGtk1QITLIq1tCXiXmBnFIQhtm4BS7cA4vzuRjup7m1AyDLL6qbwfR4bDHKlC
+6DUW+8otOIoanUs1arBSLhtVaq9GiyAgSOlfmnKPcVKvitL9ki6KTfn5ZmwYACx5
+B2iHsD2+89aYv2ohg0zcdw==</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>n88xfYaBMyJlx3FwqC2i99RXpfdN2FhD7k2gAJ0qQS77b2SDXcXcsz84Newy9+dN
+ctkfrZ2NaUHgZMY/VZAUj+THflJyG5iP63l1aVkQF2O9lqEsdmJQ2icCzWMzqEZ6
+rRYF35FtZxpQkEMhorOvJNXLKAOnUW93TmnU+wOumRHpbxoiehCheYd4ZhO+zPNg
+iZk6zzDqekcJ86Atj27P21VlXYTFVWdYFIhVp2r5e9oS8ZtmdSNKNC7y68UH/mzq
+XcRvJM6RGiTMt7KFbc5kMlfDs5UgeBudpz6PFbuKm1lLJn808dVXQbFlHcxpPYZa
+N7g1tzQOM5CP25bZrH/sKw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIFzDCCBLSgAwIBAgICSPAwDQYJKoZIhvcNAQEFBQAwgaYxCzAJBgNVBAYTAkNM
+MRgwFgYDVQQKEw9BY2VwdGEuY29tIFMuQS4xSDBGBgNVBAMTP0FjZXB0YS5jb20g
+QXV0b3JpZGFkIENlcnRpZmljYWRvcmEgQ2xhc2UgMiBQZXJzb25hIE5hdHVyYWwg
+LSBHMzEeMBwGCSqGSIb3DQEJARYPaW5mb0BhY2VwdGEuY29tMRMwEQYDVQQFEwo5
+NjkxOTA1MC04MB4XDTE2MDYxMDE1NDYyOVoXDTE5MDYxMDE1NDYyOVowgYAxCzAJ
+BgNVBAYTAkNMMRgwFgYDVQQMEw9QRVJTT05BIE5BVFVSQUwxIDAeBgNVBAMTF01P
+SVNFUyBKT1JHRSBERUlLIE5VTkVaMSEwHwYJKoZIhvcNAQkBFhJjZGRlaWtAaG90
+bWFpbC5jb20xEjAQBgNVBAUTCTY0MTk5NzAtNjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAJ/PMX2GgTMiZcdxcKgtovfUV6X3TdhYQ+5NoACdKkEu+29k
+g13F3LM/ODXsMvfnTXLZH62djWlB4GTGP1WQFI/kx35SchuYj+t5dWlZEBdjvZah
+LHZiUNonAs1jM6hGeq0WBd+RbWcaUJBDIaKzryTVyygDp1Fvd05p1PsDrpkR6W8a
+InoQoXmHeGYTvszzYImZOs8w6npHCfOgLY9uz9tVZV2ExVVnWBSIVadq+XvaEvGb
+ZnUjSjQu8uvFB/5s6l3EbyTOkRokzLeyhW3OZDJXw7OVIHgbnac+jxW7iptZSyZ/
+NPHVV0GxZR3MaT2GWje4Nbc0DjOQj9uW2ax/7CsCAwEAAaOCAiYwggIiMB8GA1Ud
+IwQYMBaAFEAkGj2pMXqFd3o9nnKTOYTlQDgZMB0GA1UdDgQWBBSZ3M8Cee507TAW
+lmGQS2RUC5KhjTALBgNVHQ8EBAMCBPAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsG
+AQUFBwMEMBEGCWCGSAGG+EIBAQQEAwIFoDBuBgNVHSAEZzBlMGMGCisGAQQBtWuH
+agowVTAoBggrBgEFBQcCARYcaHR0cDovL3d3dy5hY2VwdGEuY29tL0NQUy1HMzAp
+BggrBgEFBQcCAjAdMBYWD0FjZXB0YS5jb20gUy5BLjADAgEJGgNUQkQwWgYDVR0S
+BFMwUaAYBggrBgEEAcEBAqAMFgo5NjkxOTA1MC04oCQGCCsGAQUFBwgDoBgwFgwK
+OTY5MTkwNTAtOAYIKwYBBAHBAQKBD2luZm9AYWNlcHRhLmNvbTBbBgNVHREEVDBS
+oBcGCCsGAQQBwQEBoAsWCTY0MTk5NzAtNqAjBggrBgEFBQcIA6AXMBUMCTY0MTk5
+NzAtNgYIKwYBBAHBAQKBEmNkZGVpa0Bob3RtYWlsLmNvbTA/BggrBgEFBQcBAQQz
+MDEwLwYIKwYBBQUHMAGGI2h0dHA6Ly9vY3NwLmFjZXB0YS5jb20vQ2xhc2UzQmlv
+LUczMDcGA1UdHwQwMC4wLKAqoCiGJmh0dHA6Ly9jcmwuYWNlcHRhLmNvbS9DbGFz
+ZTNCaW8tRzMuY3JsMA0GCSqGSIb3DQEBBQUAA4IBAQB5tqWVS14g+ZKL77ILM6a1
+q6TYoGoEasJbaPqhWOyFTgCIJb7S50cX6IQWbOxdWm3mn5SIvSXeKdFNX5hT3QYu
+T/9N2JEjjbUrdKQ0AqFK7YpFuCrFEklpchAi0wrVhMBQ67Kqbmo0X+BYiFvHGolT
+tbHLYeGskyDu8DCjYyRG+8b86zB97sdp0NLdk9pzqwxBFU7cRCoj/o3j9fmZvq8Z
+IbfLJBTGN5p+uaF6k6Ys1/X4PDBGRCuUrs9AEeNHO7okWXg9j/MHvA0od25v91Tj
+8gsc+eCFKtrOoa0BMwmWPbuiYuuVnOX/RFVDywfv2WHEW8Pc5ajAmZ7bvq/AuOqT</X509Certificate></X509Data></KeyInfo></Signature></DTE>
+  </SetDTE>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI="#SetDoc"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>RPiVGWhI+YS3KMFi6nUKGlqF0T8=</DigestValue></Reference></SignedInfo><SignatureValue>VbjPMfzMVUzmlPpaYXzsoAFlBHRWdoRNfclum1iRnqWk5glc/9+jMwNQZX74En8+
+u2d4qZrlt24ojl9QlDlVwlAjPH+eREoYQb3c1b2neDyk1f0TblVtfH6h8zDE0VJ8
+lfEHtfoeG5WqLmb9j3JcaaBl/VL9c9X8JhdRlwnXL1CsFkbGrvOiD/UbD+F3K0OA
+CQ1X/Kpd8rhCHkt92YUjiQtY2M7jJY8SDg9xb7c8hjAOoZ5jWjE2+JU3EXOqXnN8
+Ugjf9EkZG81KjCmuxxGsWkye+ol1138e7yuIqCq3xAmvuEdQ1yzdIv4l8Uls90yZ
+5XX8/dhKE4Iz2P4JsRiL6g==</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>n88xfYaBMyJlx3FwqC2i99RXpfdN2FhD7k2gAJ0qQS77b2SDXcXcsz84Newy9+dN
+ctkfrZ2NaUHgZMY/VZAUj+THflJyG5iP63l1aVkQF2O9lqEsdmJQ2icCzWMzqEZ6
+rRYF35FtZxpQkEMhorOvJNXLKAOnUW93TmnU+wOumRHpbxoiehCheYd4ZhO+zPNg
+iZk6zzDqekcJ86Atj27P21VlXYTFVWdYFIhVp2r5e9oS8ZtmdSNKNC7y68UH/mzq
+XcRvJM6RGiTMt7KFbc5kMlfDs5UgeBudpz6PFbuKm1lLJn808dVXQbFlHcxpPYZa
+N7g1tzQOM5CP25bZrH/sKw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIFzDCCBLSgAwIBAgICSPAwDQYJKoZIhvcNAQEFBQAwgaYxCzAJBgNVBAYTAkNM
+MRgwFgYDVQQKEw9BY2VwdGEuY29tIFMuQS4xSDBGBgNVBAMTP0FjZXB0YS5jb20g
+QXV0b3JpZGFkIENlcnRpZmljYWRvcmEgQ2xhc2UgMiBQZXJzb25hIE5hdHVyYWwg
+LSBHMzEeMBwGCSqGSIb3DQEJARYPaW5mb0BhY2VwdGEuY29tMRMwEQYDVQQFEwo5
+NjkxOTA1MC04MB4XDTE2MDYxMDE1NDYyOVoXDTE5MDYxMDE1NDYyOVowgYAxCzAJ
+BgNVBAYTAkNMMRgwFgYDVQQMEw9QRVJTT05BIE5BVFVSQUwxIDAeBgNVBAMTF01P
+SVNFUyBKT1JHRSBERUlLIE5VTkVaMSEwHwYJKoZIhvcNAQkBFhJjZGRlaWtAaG90
+bWFpbC5jb20xEjAQBgNVBAUTCTY0MTk5NzAtNjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAJ/PMX2GgTMiZcdxcKgtovfUV6X3TdhYQ+5NoACdKkEu+29k
+g13F3LM/ODXsMvfnTXLZH62djWlB4GTGP1WQFI/kx35SchuYj+t5dWlZEBdjvZah
+LHZiUNonAs1jM6hGeq0WBd+RbWcaUJBDIaKzryTVyygDp1Fvd05p1PsDrpkR6W8a
+InoQoXmHeGYTvszzYImZOs8w6npHCfOgLY9uz9tVZV2ExVVnWBSIVadq+XvaEvGb
+ZnUjSjQu8uvFB/5s6l3EbyTOkRokzLeyhW3OZDJXw7OVIHgbnac+jxW7iptZSyZ/
+NPHVV0GxZR3MaT2GWje4Nbc0DjOQj9uW2ax/7CsCAwEAAaOCAiYwggIiMB8GA1Ud
+IwQYMBaAFEAkGj2pMXqFd3o9nnKTOYTlQDgZMB0GA1UdDgQWBBSZ3M8Cee507TAW
+lmGQS2RUC5KhjTALBgNVHQ8EBAMCBPAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsG
+AQUFBwMEMBEGCWCGSAGG+EIBAQQEAwIFoDBuBgNVHSAEZzBlMGMGCisGAQQBtWuH
+agowVTAoBggrBgEFBQcCARYcaHR0cDovL3d3dy5hY2VwdGEuY29tL0NQUy1HMzAp
+BggrBgEFBQcCAjAdMBYWD0FjZXB0YS5jb20gUy5BLjADAgEJGgNUQkQwWgYDVR0S
+BFMwUaAYBggrBgEEAcEBAqAMFgo5NjkxOTA1MC04oCQGCCsGAQUFBwgDoBgwFgwK
+OTY5MTkwNTAtOAYIKwYBBAHBAQKBD2luZm9AYWNlcHRhLmNvbTBbBgNVHREEVDBS
+oBcGCCsGAQQBwQEBoAsWCTY0MTk5NzAtNqAjBggrBgEFBQcIA6AXMBUMCTY0MTk5
+NzAtNgYIKwYBBAHBAQKBEmNkZGVpa0Bob3RtYWlsLmNvbTA/BggrBgEFBQcBAQQz
+MDEwLwYIKwYBBQUHMAGGI2h0dHA6Ly9vY3NwLmFjZXB0YS5jb20vQ2xhc2UzQmlv
+LUczMDcGA1UdHwQwMC4wLKAqoCiGJmh0dHA6Ly9jcmwuYWNlcHRhLmNvbS9DbGFz
+ZTNCaW8tRzMuY3JsMA0GCSqGSIb3DQEBBQUAA4IBAQB5tqWVS14g+ZKL77ILM6a1
+q6TYoGoEasJbaPqhWOyFTgCIJb7S50cX6IQWbOxdWm3mn5SIvSXeKdFNX5hT3QYu
+T/9N2JEjjbUrdKQ0AqFK7YpFuCrFEklpchAi0wrVhMBQ67Kqbmo0X+BYiFvHGolT
+tbHLYeGskyDu8DCjYyRG+8b86zB97sdp0NLdk9pzqwxBFU7cRCoj/o3j9fmZvq8Z
+IbfLJBTGN5p+uaF6k6Ys1/X4PDBGRCuUrs9AEeNHO7okWXg9j/MHvA0od25v91Tj
+8gsc+eCFKtrOoa0BMwmWPbuiYuuVnOX/RFVDywfv2WHEW8Pc5ajAmZ7bvq/AuOqT</X509Certificate></X509Data></KeyInfo></Signature></EnvioDTE>

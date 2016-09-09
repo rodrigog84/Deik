@@ -29,7 +29,7 @@ Ext.define('Infosys_web.view.ordencompra.Principal_recepcion' ,{
         dataIndex: 'num_orden'
     },{
         header: "Empresa",
-        flex: 1,
+         width: 350,
         dataIndex: 'empresa'
     },{
         header: "Emitida",
@@ -43,6 +43,15 @@ Ext.define('Infosys_web.view.ordencompra.Principal_recepcion' ,{
         header: "Cumplida",
         flex: 1,
         dataIndex: 'cumplida'
+    },{
+        header: "id_vendedor",
+        flex: 1,
+        dataIndex: 'id_vendedor',
+        hidden: true
+    },{
+        header: "Vendedor",
+        flex: 1,
+        dataIndex: 'nom_vendedor'
     },{
         header: "Contacto",
         flex: 1,
@@ -74,7 +83,12 @@ Ext.define('Infosys_web.view.ordencompra.Principal_recepcion' ,{
                 xtype: 'button',
                 iconCls: 'icon-add',
                 text: 'Recepcionar',
-                action: 'recepcionarordencompradef'
+                action: 'recepcionarordencompra'
+            },{
+                xtype: 'button',
+                iconCls: 'icon-add',
+                text: 'Recep Forzada',
+                action: 'recepcionforzada'
             },'-',{
                 xtype: 'button',
                 iconCls: 'icon-export',
@@ -83,7 +97,7 @@ Ext.define('Infosys_web.view.ordencompra.Principal_recepcion' ,{
             },{
                 xtype: 'button',
                 iconCls : 'icon-pdf',
-                text: 'Edita / Imprimir PDF',
+                text: 'Imprimir PDF',
                 action:'generapdf'
             },
             '->',

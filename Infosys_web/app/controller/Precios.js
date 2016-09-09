@@ -4,7 +4,8 @@ Ext.define('Infosys_web.controller.Precios', {
     //asociamos vistas, models y stores al controller
 
     stores: ['Precios',
-             'precios.Items'            
+             'precios.Items',
+             'Productosf'            
              ],
 
     models: ['Precios',
@@ -82,6 +83,9 @@ Ext.define('Infosys_web.controller.Precios', {
             'buscarproductosprecios button[action=seleccionarproductos]': {
                 click: this.seleccionarproductos
             },
+            'buscarproductosprecios button[action=buscar]': {
+                click: this.buscarp
+            },
             'preciosingresar button[action=grabaringreso]': {
                 click: this.grabaringreso
             },
@@ -101,6 +105,15 @@ Ext.define('Infosys_web.controller.Precios', {
 
             
         });
+    },
+
+
+    buscarp: function(){
+        var view = this.getBuscarproductosprecios();
+        var st = this.getProductosfStore()
+        var nombre = view.down('#nombreId').getValue()
+        st.proxy.extraParams = {nombre : nombre}
+        st.load();
     },
 
     exportarexcelproductos: function(){

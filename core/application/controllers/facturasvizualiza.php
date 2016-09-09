@@ -233,7 +233,7 @@ class Facturasvizualiza extends CI_Controller {
 		$sucursal = $this->input->post('sucursal');		
 		$idcliente = $this->input->post('idcliente');
 		$numfactura = $this->input->post('numfactura');
-		$observacion = $this->input->post('observacion');
+		//$observacion = $this->input->post('observacion');
 		$idobserva = $this->input->post('idobserva');
 		$fechafactura = $this->input->post('fechafactura');
 		$idticket = $this->input->post('idticket');
@@ -253,6 +253,7 @@ class Facturasvizualiza extends CI_Controller {
 		$idpreventa = $this->input->post('preventa');
 		$numcheque = $this->input->post('numcheque');
 		$fpago = $this->input->post('fpago');
+		$idbodega = 1;
 
         if ($tipodocumento == 2){
 
@@ -293,13 +294,16 @@ class Facturasvizualiza extends CI_Controller {
 		$idfactura = $this->db->insert_id();
 
 		$preventa = array(
-			'id_documento' => $idfactura
+			'id_documento' => $numfactura
 		);
 
 		$this->db->where('id', $idticket);	  
 	    $this->db->update('preventa', $preventa);
 
-		foreach($items as $v){
+	    $items = $this->db->get_where('preventa_detalle', array('id_ticket' => $idticket));
+
+		foreach($items->result() as $v){
+			
 			$factura_clientes_item = array(
 		        'id_producto' => $v->id_producto,
 		        'id_factura' => $idfactura,
@@ -316,67 +320,54 @@ class Facturasvizualiza extends CI_Controller {
 		$producto = $v->id_producto;
 		$this->db->insert('detalle_factura_cliente', $factura_clientes_item);
 		
-		$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto.'"');
-		 if($query->num_rows()>0){
-		 	$row = $query->first_row();
-		 	$saldo = ($row->stock)-($v->cantidad);
-		 };
-
-		 $query = $this->db->query('SELECT * FROM existencia WHERE id_producto="'.$producto.'"');
-    	 $row = $query->result();
-			if ($query->num_rows()>0){
-				$row = $row[0];	 
-		        if ($producto==($row->id_producto)){
+		$query = $this->db->query('SELECT * FROM existencia WHERE id_producto='.$producto.' and id_bodega='.$idbodega.'');
+	    	 $row = $query->result();
+			 if ($query->num_rows()>0){
+				$row = $row[0];	
+				$saldo = ($row->stock)-($v->cantidad);
+				$idexiste = ($row->id);
+		        if ($producto==($row->id_producto) and $idbodega==($row->id_bodega)){
 				    $datos3 = array(
 					'stock' => $saldo,
-			        'fecha_ultimo_movimiento' => $fechafactura
+			        'fecha_ultimo_movimiento' => date('Y-m-d H:i:s')
 					);
-					$this->db->where('id_producto', $producto);
+					$this->db->where('id', $idexiste);
 		    	    $this->db->update('existencia', $datos3);
 	    	    }else{
+
 	    	    	$datos3 = array(
 					'id_producto' => $producto,
 			        'stock' =>  $saldo,
-			        'fecha_ultimo_movimiento' =>$fechafactura				
+			        'id_bodega' => $idbodega,
+			        'fecha_ultimo_movimiento' =>date('Y-m-d H:i:s')				
 					);
 					$this->db->insert('existencia', $datos3);
 		    	 	}
-				}else{
-					if ($producto==($producto)){
-					    $datos3 = array(
-						'stock' => $saldo,
-				        'fecha_ultimo_movimiento' => $fechafactura
-						);
-						$this->db->where('id_producto', $producto);
-			    	    $this->db->update('existencia', $datos3);
-		    	    }else{
-		    	    	$datos3 = array(
-						'id_producto' => $producto,
-				        'stock' =>  $saldo,
-				        'fecha_ultimo_movimiento' =>$fechafactura					
-						);
-						$this->db->insert('existencia', $datos3);
-			    	}
-		}
+				}else{					
+
+	    	    	$datos3 = array(
+					'id_producto' => $producto,
+			        'stock' =>  $v->cantidad,
+			        'id_bodega' => $idbodega,
+			        'fecha_ultimo_movimiento' =>date('Y-m-d H:i:s')				
+					);
+					$this->db->insert('existencia', $datos3);
+			    	
+				};
 
 		$datos2 = array(
 				'num_movimiento' => $numfactura,
-		        'id_producto' => $v->id,
+		        'id_producto' => $v->id_producto,
 		        'id_tipo_movimiento' => $tipodocumento,
 		        'valor_producto' =>  $v->valor_unit,
 		        'cantidad_salida' => $v->cantidad,
+		        'id_bodega' => $idbodega,
 		        'fecha_movimiento' => $fechafactura
 		);
 
 		$this->db->insert('existencia_detalle', $datos2);
-		$datos = array(
-         'stock' => $saldo,
-    	);
-
-    	$this->db->where('id', $producto);
-    	$this->db->update('productos', $datos);    	
+		
 		}
-
 
 		$this->Bitacora->logger("I", 'factura_clientes', $idfactura);
 		$resp['success'] = true;
@@ -472,14 +463,6 @@ class Facturasvizualiza extends CI_Controller {
 			$detalle_factura = $this->facturaelectronica->get_detalle_factura($idfactura);
 			$datos_factura = $this->facturaelectronica->get_factura($idfactura);
 
-			$referencia = array();
-			if($datos_empresa_factura->tipodocref != 0){
-				$referencia['NroLinRef'] = 1;
-				$referencia['TpoDocRef'] = $datos_empresa_factura->tipodocref;
-				$referencia['FolioRef'] = $numfactura;
-				$referencia['FchRef'] = substr($fechafactura,0,10);
-
-			}
 
 			$lista_detalle = array();
 			$i = 0;
@@ -494,7 +477,7 @@ class Facturasvizualiza extends CI_Controller {
 				//$lista_detalle[$i]['PrcItem'] = round($neto/$detalle->cantidad,2);
 				//$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 ? floor($detalle->precio/1.19) : floor($detalle->precio);
 
-				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 ? floor(($detalle->totalproducto - $detalle->iva)/$detalle->cantidad) : floor($detalle->precio);
+				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 || $tipo_caf == 52 ? floor(($detalle->totalproducto - $detalle->iva)/$detalle->cantidad) : floor($detalle->precio);
 				if($tipo_caf == 33){
 					$lista_detalle[$i]['MontoItem'] = ($detalle->totalproducto - $detalle->iva);
 				}				
@@ -516,6 +499,7 @@ class Facturasvizualiza extends CI_Controller {
 			        'IdDoc' => [
 			            'TipoDTE' => $tipo_caf,
 			            'Folio' => $numfactura,
+			            'FchEmis' => substr($fechafactura,0,10)
 			        ],
 			        'Emisor' => [
 			            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
@@ -540,8 +524,7 @@ class Facturasvizualiza extends CI_Controller {
 		                'MntTotal' => isset($datos_factura->totalfactura) ? $datos_factura->totalfactura : 0,
 		            ],				        
 			    ],
-				'Detalle' => $lista_detalle,
-				'Referencia' => $referencia,
+				'Detalle' => $lista_detalle
 			];
 
 			//FchResol y NroResol deben cambiar con los datos reales de producción
@@ -626,7 +609,7 @@ class Facturasvizualiza extends CI_Controller {
 
 		$idcliente = $this->input->post('idcliente');
 		$numfactura = $this->input->post('numfactura');
-		$observacion = $this->input->post('observacion');
+		//$observacion = $this->input->post('observacion');
 		$idobserva = $this->input->post('idobserva');
 		$fechafactura = $this->input->post('fechafactura');
 		$fechavenc = $this->input->post('fechavenc');
@@ -656,7 +639,6 @@ class Facturasvizualiza extends CI_Controller {
 	        'id_cliente' => $idcliente,
 	        'num_factura' => $numfactura,
 	        'id_vendedor' => $vendedor,
-	        'observacion' => $observacion,
 	        'id_observa' => $idobserva,
 	        'sub_total' => $neto,
 	        'descuento' => ($neto - $fafecto),

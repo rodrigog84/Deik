@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<EnvioDTE xmlns="http://www.sii.cl/SiiDte" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sii.cl/SiiDte EnvioDTE_v10.xsd" version="1.0">
+  <SetDTE ID="SetDoc">
+    <Caratula version="1.0">
+      <RutEmisor>76019353-4</RutEmisor>
+      <RutEnvia>6419970-6</RutEnvia>
+      <RutReceptor>60803000-K</RutReceptor>
+      <FchResol>2014-08-22</FchResol>
+      <NroResol>80</NroResol>
+      <TmstFirmaEnv>2016-07-30T11:36:51</TmstFirmaEnv>
+      <SubTotDTE>
+        <TpoDTE>33</TpoDTE>
+        <NroDTE>1</NroDTE>
+      </SubTotDTE>
+    </Caratula>
+    <DTE version="1.0">
+  <Documento ID="T33F213">
+    <Encabezado>
+      <IdDoc>
+        <TipoDTE>33</TipoDTE>
+        <Folio>213</Folio>
+        <FchEmis>2016-07-30</FchEmis>
+      </IdDoc>
+      <Emisor>
+        <RUTEmisor>76019353-4</RUTEmisor>
+        <RznSoc>SOCIEDAD COMERCIAL DEIK Y COMPAÑIA LIMITADA</RznSoc>
+        <GiroEmis>VENTAS AL POR MENOR DE OTROS PRODUCTOS EN ALMACENES ESPECIALIZADOS N.C.P.</GiroEmis>
+        <Acteco>523999</Acteco>
+        <DirOrigen>8 ORIENTE No.1378</DirOrigen>
+        <CmnaOrigen>TALCA</CmnaOrigen>
+      </Emisor>
+      <Receptor>
+        <RUTRecep>76376283-1</RUTRecep>
+        <RznSocRecep>SOCIEDAD COMERCIAL LEON Y COMPANIA LIMITADA</RznSocRecep>
+        <GiroRecep>OTRAS ACTIVIDADES EMPRESARIALES N.C.P.</GiroRecep>
+        <DirRecep>POB C SALGADO 1519</DirRecep>
+        <CmnaRecep>SAN JAVIER</CmnaRecep>
+      </Receptor>
+      <Totales>
+        <MntNeto>43034</MntNeto>
+        <TasaIVA>19</TasaIVA>
+        <IVA>8176</IVA>
+        <MntTotal>51210</MntTotal>
+      </Totales>
+    </Encabezado>
+    <Detalle>
+      <NroLinDet>1</NroLinDet>
+      <NmbItem>GOLILLA PLANA ZINCADA 3/8"                   </NmbItem>
+      <QtyItem>300.00</QtyItem>
+      <PrcItem>21</PrcItem>
+      <MontoItem>6555</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>2</NroLinDet>
+      <NmbItem>TUERCA HEXAGONAL ZINCADA 3/8"                </NmbItem>
+      <QtyItem>100.00</QtyItem>
+      <PrcItem>18</PrcItem>
+      <MontoItem>1849</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>3</NroLinDet>
+      <NmbItem>TORNILLO CAB. EXAGONAL P. BROCA #3 C/ GOL. 12</NmbItem>
+      <QtyItem>200.00</QtyItem>
+      <PrcItem>21</PrcItem>
+      <MontoItem>4370</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>4</NroLinDet>
+      <NmbItem>TORNILLO CAB. EXAGONAL P. BROCA #3 C/ GOL. 12</NmbItem>
+      <QtyItem>300.00</QtyItem>
+      <PrcItem>18</PrcItem>
+      <MontoItem>5546</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>5</NroLinDet>
+      <NmbItem>GOLILLA PRESION ZINCADA 3/8"                 </NmbItem>
+      <QtyItem>100.00</QtyItem>
+      <PrcItem>23</PrcItem>
+      <MontoItem>2353</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>6</NroLinDet>
+      <NmbItem>TUBO TERMOCONTRAIBLE PARED FINA 10MM         </NmbItem>
+      <QtyItem>3.00</QtyItem>
+      <PrcItem>451</PrcItem>
+      <MontoItem>1354</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>7</NroLinDet>
+      <NmbItem>PUNTA (DADO) EXAGONAL MAGNETICA 5/16 X 42MM  </NmbItem>
+      <QtyItem>5.00</QtyItem>
+      <PrcItem>806</PrcItem>
+      <MontoItem>4034</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>8</NroLinDet>
+      <NmbItem>DISCO DE CORTE LISO PSF METAL 115 x 1,0MM WUR</NmbItem>
+      <QtyItem>10.00</QtyItem>
+      <PrcItem>528</PrcItem>
+      <MontoItem>5286</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>9</NroLinDet>
+      <NmbItem>CHAPA METALICA PARA TABLERO C/ LLAVE         </NmbItem>
+      <QtyItem>2.00</QtyItem>
+      <PrcItem>4735</PrcItem>
+      <MontoItem>9471</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>10</NroLinDet>
+      <NmbItem>LUBRICANTE M1 SPRAY 300ML STARRETT           </NmbItem>
+      <QtyItem>1.00</QtyItem>
+      <PrcItem>2216</PrcItem>
+      <MontoItem>2216</MontoItem>
+    </Detalle>
+    <TED version="1.0">
+  <DD>
+    <RE>76019353-4</RE>
+    <TD>33</TD>
+    <F>213</F>
+    <FE>2016-07-30</FE>
+    <RR>76376283-1</RR>
+    <RSR>SOCIEDAD COMERCIAL LEON Y COMPANIA LIMIT</RSR>
+    <MNT>51210</MNT>
+    <IT1>GOLILLA PLANA ZINCADA 3/8"              </IT1>
+    <CAF version="1.0">
+<DA>
+<RE>76019353-4</RE>
+<RS>SOCIEDAD COMERCIAL DEIK Y COMPANIA LIMIT</RS>
+<TD>33</TD>
+<RNG><D>1</D><H>1400</H></RNG>
+<FA>2016-07-24</FA>
+<RSAPK><M>5JyzXxYDEh0apdnsx/HewBVYt7V6MyHgVX6N0xfkcG+MEKkPV2clcrmu4FL4AiV4+cOAOjUoCzy7q+g1rEzXKw==</M><E>Aw==</E></RSAPK>
+<IDK>300</IDK>
+</DA>
+<FRMA algoritmo="SHA1withRSA">lwVpid7fXAR4S68/PVugt9JIgomHBTQ25n2/uOFN/xj2K6fGZTRrjAOl8H/qZgcoM89tOLe0zBs0qSO2HpnnYA==</FRMA>
+</CAF>
+    <TSTED>2016-07-30T11:36:51</TSTED>
+  </DD>
+  <FRMT algoritmo="SHA1withRSA">EQelC1mrmWMrWBtl++BX4Kp/I0eLyQ4SKdC68a8i+bUiVa8m/IRniMVyMnGfDso0NzAyxHcdLB8c6RpjIIrfpg==</FRMT>
+</TED>
+  <TmstFirma>2016-07-30T11:36:51</TmstFirma></Documento>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#"><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI="#T33F213"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>vDVTkFZMAHbkfO13ThzHuG7WhT4=</DigestValue></Reference></SignedInfo><SignatureValue>V8RpxW3hmtfUngDK8V/27cP9aFFDbqfZ8OdjrAtpTqZ2OZ3u/M2VqSmiWBfVjNOr
+MLnQCtbcIr94q8VlMX07Gqi2ORUMXoTWU2FZgD/0Me/6LUHz8KF2nge/+ti/n22i
+l0GctTubhuZUQXPhsk3Y4o9YShe9yfTg7oAAeCZx7EI0YpR+AbMyZ2iBOObdCm8j
+sd+OPUlF7OS6BUSKKauLfQGN4uyWXBbrhZNlfPvI4yab2qj0uao1S61xmAnlWq0p
+nCiv/GdeuYrELj1Z4gxcTnDwvc7HuD6yv6znwBcHrY16Lp3LH1p8pNc7/bwmUVbT
+S9PCzWz4sZ5YNDdauhoAEQ==</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>n88xfYaBMyJlx3FwqC2i99RXpfdN2FhD7k2gAJ0qQS77b2SDXcXcsz84Newy9+dN
+ctkfrZ2NaUHgZMY/VZAUj+THflJyG5iP63l1aVkQF2O9lqEsdmJQ2icCzWMzqEZ6
+rRYF35FtZxpQkEMhorOvJNXLKAOnUW93TmnU+wOumRHpbxoiehCheYd4ZhO+zPNg
+iZk6zzDqekcJ86Atj27P21VlXYTFVWdYFIhVp2r5e9oS8ZtmdSNKNC7y68UH/mzq
+XcRvJM6RGiTMt7KFbc5kMlfDs5UgeBudpz6PFbuKm1lLJn808dVXQbFlHcxpPYZa
+N7g1tzQOM5CP25bZrH/sKw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIFzDCCBLSgAwIBAgICSPAwDQYJKoZIhvcNAQEFBQAwgaYxCzAJBgNVBAYTAkNM
+MRgwFgYDVQQKEw9BY2VwdGEuY29tIFMuQS4xSDBGBgNVBAMTP0FjZXB0YS5jb20g
+QXV0b3JpZGFkIENlcnRpZmljYWRvcmEgQ2xhc2UgMiBQZXJzb25hIE5hdHVyYWwg
+LSBHMzEeMBwGCSqGSIb3DQEJARYPaW5mb0BhY2VwdGEuY29tMRMwEQYDVQQFEwo5
+NjkxOTA1MC04MB4XDTE2MDYxMDE1NDYyOVoXDTE5MDYxMDE1NDYyOVowgYAxCzAJ
+BgNVBAYTAkNMMRgwFgYDVQQMEw9QRVJTT05BIE5BVFVSQUwxIDAeBgNVBAMTF01P
+SVNFUyBKT1JHRSBERUlLIE5VTkVaMSEwHwYJKoZIhvcNAQkBFhJjZGRlaWtAaG90
+bWFpbC5jb20xEjAQBgNVBAUTCTY0MTk5NzAtNjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAJ/PMX2GgTMiZcdxcKgtovfUV6X3TdhYQ+5NoACdKkEu+29k
+g13F3LM/ODXsMvfnTXLZH62djWlB4GTGP1WQFI/kx35SchuYj+t5dWlZEBdjvZah
+LHZiUNonAs1jM6hGeq0WBd+RbWcaUJBDIaKzryTVyygDp1Fvd05p1PsDrpkR6W8a
+InoQoXmHeGYTvszzYImZOs8w6npHCfOgLY9uz9tVZV2ExVVnWBSIVadq+XvaEvGb
+ZnUjSjQu8uvFB/5s6l3EbyTOkRokzLeyhW3OZDJXw7OVIHgbnac+jxW7iptZSyZ/
+NPHVV0GxZR3MaT2GWje4Nbc0DjOQj9uW2ax/7CsCAwEAAaOCAiYwggIiMB8GA1Ud
+IwQYMBaAFEAkGj2pMXqFd3o9nnKTOYTlQDgZMB0GA1UdDgQWBBSZ3M8Cee507TAW
+lmGQS2RUC5KhjTALBgNVHQ8EBAMCBPAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsG
+AQUFBwMEMBEGCWCGSAGG+EIBAQQEAwIFoDBuBgNVHSAEZzBlMGMGCisGAQQBtWuH
+agowVTAoBggrBgEFBQcCARYcaHR0cDovL3d3dy5hY2VwdGEuY29tL0NQUy1HMzAp
+BggrBgEFBQcCAjAdMBYWD0FjZXB0YS5jb20gUy5BLjADAgEJGgNUQkQwWgYDVR0S
+BFMwUaAYBggrBgEEAcEBAqAMFgo5NjkxOTA1MC04oCQGCCsGAQUFBwgDoBgwFgwK
+OTY5MTkwNTAtOAYIKwYBBAHBAQKBD2luZm9AYWNlcHRhLmNvbTBbBgNVHREEVDBS
+oBcGCCsGAQQBwQEBoAsWCTY0MTk5NzAtNqAjBggrBgEFBQcIA6AXMBUMCTY0MTk5
+NzAtNgYIKwYBBAHBAQKBEmNkZGVpa0Bob3RtYWlsLmNvbTA/BggrBgEFBQcBAQQz
+MDEwLwYIKwYBBQUHMAGGI2h0dHA6Ly9vY3NwLmFjZXB0YS5jb20vQ2xhc2UzQmlv
+LUczMDcGA1UdHwQwMC4wLKAqoCiGJmh0dHA6Ly9jcmwuYWNlcHRhLmNvbS9DbGFz
+ZTNCaW8tRzMuY3JsMA0GCSqGSIb3DQEBBQUAA4IBAQB5tqWVS14g+ZKL77ILM6a1
+q6TYoGoEasJbaPqhWOyFTgCIJb7S50cX6IQWbOxdWm3mn5SIvSXeKdFNX5hT3QYu
+T/9N2JEjjbUrdKQ0AqFK7YpFuCrFEklpchAi0wrVhMBQ67Kqbmo0X+BYiFvHGolT
+tbHLYeGskyDu8DCjYyRG+8b86zB97sdp0NLdk9pzqwxBFU7cRCoj/o3j9fmZvq8Z
+IbfLJBTGN5p+uaF6k6Ys1/X4PDBGRCuUrs9AEeNHO7okWXg9j/MHvA0od25v91Tj
+8gsc+eCFKtrOoa0BMwmWPbuiYuuVnOX/RFVDywfv2WHEW8Pc5ajAmZ7bvq/AuOqT</X509Certificate></X509Data></KeyInfo></Signature></DTE>
+  </SetDTE>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI="#SetDoc"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>SLyHd9VhTIrv7gggPfs6wCp5sow=</DigestValue></Reference></SignedInfo><SignatureValue>dYlae8Le/B8tOmSRyGF291Q0IX/lsfoW4R22SLlVrtqeXR51j0oqRBPZYy2xI5H7
+M24qh6ASwPe8gY9wmtQK7Kc4NTapFHVTwlrbxxWz3dPOWl0tdk0jsj8XuFN7ZREs
+jskcfJWisqOxda12ky/HHxV0swLYfEvdDnxQJI9sUrlZUP1hNQ9JINnJGwT6RzYu
+mWycSOHWA95F2oArhbNL9Ihi5L+4fEs+WO3aCnLUcALBE5yWDsbRGHoBC1j6kTh5
+DmO6Vrn92qpQXchRBNmVteYddcnciKxufXnEB3p8P9bGTCXRVOrZMM+sH5Sl+iGV
+cdnUxLNEPClpRxbpGZXmxA==</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>n88xfYaBMyJlx3FwqC2i99RXpfdN2FhD7k2gAJ0qQS77b2SDXcXcsz84Newy9+dN
+ctkfrZ2NaUHgZMY/VZAUj+THflJyG5iP63l1aVkQF2O9lqEsdmJQ2icCzWMzqEZ6
+rRYF35FtZxpQkEMhorOvJNXLKAOnUW93TmnU+wOumRHpbxoiehCheYd4ZhO+zPNg
+iZk6zzDqekcJ86Atj27P21VlXYTFVWdYFIhVp2r5e9oS8ZtmdSNKNC7y68UH/mzq
+XcRvJM6RGiTMt7KFbc5kMlfDs5UgeBudpz6PFbuKm1lLJn808dVXQbFlHcxpPYZa
+N7g1tzQOM5CP25bZrH/sKw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIFzDCCBLSgAwIBAgICSPAwDQYJKoZIhvcNAQEFBQAwgaYxCzAJBgNVBAYTAkNM
+MRgwFgYDVQQKEw9BY2VwdGEuY29tIFMuQS4xSDBGBgNVBAMTP0FjZXB0YS5jb20g
+QXV0b3JpZGFkIENlcnRpZmljYWRvcmEgQ2xhc2UgMiBQZXJzb25hIE5hdHVyYWwg
+LSBHMzEeMBwGCSqGSIb3DQEJARYPaW5mb0BhY2VwdGEuY29tMRMwEQYDVQQFEwo5
+NjkxOTA1MC04MB4XDTE2MDYxMDE1NDYyOVoXDTE5MDYxMDE1NDYyOVowgYAxCzAJ
+BgNVBAYTAkNMMRgwFgYDVQQMEw9QRVJTT05BIE5BVFVSQUwxIDAeBgNVBAMTF01P
+SVNFUyBKT1JHRSBERUlLIE5VTkVaMSEwHwYJKoZIhvcNAQkBFhJjZGRlaWtAaG90
+bWFpbC5jb20xEjAQBgNVBAUTCTY0MTk5NzAtNjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAJ/PMX2GgTMiZcdxcKgtovfUV6X3TdhYQ+5NoACdKkEu+29k
+g13F3LM/ODXsMvfnTXLZH62djWlB4GTGP1WQFI/kx35SchuYj+t5dWlZEBdjvZah
+LHZiUNonAs1jM6hGeq0WBd+RbWcaUJBDIaKzryTVyygDp1Fvd05p1PsDrpkR6W8a
+InoQoXmHeGYTvszzYImZOs8w6npHCfOgLY9uz9tVZV2ExVVnWBSIVadq+XvaEvGb
+ZnUjSjQu8uvFB/5s6l3EbyTOkRokzLeyhW3OZDJXw7OVIHgbnac+jxW7iptZSyZ/
+NPHVV0GxZR3MaT2GWje4Nbc0DjOQj9uW2ax/7CsCAwEAAaOCAiYwggIiMB8GA1Ud
+IwQYMBaAFEAkGj2pMXqFd3o9nnKTOYTlQDgZMB0GA1UdDgQWBBSZ3M8Cee507TAW
+lmGQS2RUC5KhjTALBgNVHQ8EBAMCBPAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsG
+AQUFBwMEMBEGCWCGSAGG+EIBAQQEAwIFoDBuBgNVHSAEZzBlMGMGCisGAQQBtWuH
+agowVTAoBggrBgEFBQcCARYcaHR0cDovL3d3dy5hY2VwdGEuY29tL0NQUy1HMzAp
+BggrBgEFBQcCAjAdMBYWD0FjZXB0YS5jb20gUy5BLjADAgEJGgNUQkQwWgYDVR0S
+BFMwUaAYBggrBgEEAcEBAqAMFgo5NjkxOTA1MC04oCQGCCsGAQUFBwgDoBgwFgwK
+OTY5MTkwNTAtOAYIKwYBBAHBAQKBD2luZm9AYWNlcHRhLmNvbTBbBgNVHREEVDBS
+oBcGCCsGAQQBwQEBoAsWCTY0MTk5NzAtNqAjBggrBgEFBQcIA6AXMBUMCTY0MTk5
+NzAtNgYIKwYBBAHBAQKBEmNkZGVpa0Bob3RtYWlsLmNvbTA/BggrBgEFBQcBAQQz
+MDEwLwYIKwYBBQUHMAGGI2h0dHA6Ly9vY3NwLmFjZXB0YS5jb20vQ2xhc2UzQmlv
+LUczMDcGA1UdHwQwMC4wLKAqoCiGJmh0dHA6Ly9jcmwuYWNlcHRhLmNvbS9DbGFz
+ZTNCaW8tRzMuY3JsMA0GCSqGSIb3DQEBBQUAA4IBAQB5tqWVS14g+ZKL77ILM6a1
+q6TYoGoEasJbaPqhWOyFTgCIJb7S50cX6IQWbOxdWm3mn5SIvSXeKdFNX5hT3QYu
+T/9N2JEjjbUrdKQ0AqFK7YpFuCrFEklpchAi0wrVhMBQ67Kqbmo0X+BYiFvHGolT
+tbHLYeGskyDu8DCjYyRG+8b86zB97sdp0NLdk9pzqwxBFU7cRCoj/o3j9fmZvq8Z
+IbfLJBTGN5p+uaF6k6Ys1/X4PDBGRCuUrs9AEeNHO7okWXg9j/MHvA0od25v91Tj
+8gsc+eCFKtrOoa0BMwmWPbuiYuuVnOX/RFVDywfv2WHEW8Pc5ajAmZ7bvq/AuOqT</X509Certificate></X509Data></KeyInfo></Signature></EnvioDTE>

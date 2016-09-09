@@ -178,7 +178,7 @@ class Vendedores extends CI_Controller {
         $nombre = $this->input->post('nombre');
 
 		if($nombre){
-			$query = $this->db->query('SELECT * FROM vendedores WHERE id like "%'.$nombre.'%"');
+			$query = $this->db->query('SELECT * FROM vendedores WHERE id like "'.$nombre.'"');
 		}else{
 			
 			$query = $this->db->query('SELECT * FROM vendedores');

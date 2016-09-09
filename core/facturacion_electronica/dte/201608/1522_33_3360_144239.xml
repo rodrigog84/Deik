@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<EnvioDTE xmlns="http://www.sii.cl/SiiDte" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sii.cl/SiiDte EnvioDTE_v10.xsd" version="1.0">
+  <SetDTE ID="SetDoc">
+    <Caratula version="1.0">
+      <RutEmisor>76019353-4</RutEmisor>
+      <RutEnvia>6419970-6</RutEnvia>
+      <RutReceptor>60803000-K</RutReceptor>
+      <FchResol>2014-08-22</FchResol>
+      <NroResol>80</NroResol>
+      <TmstFirmaEnv>2016-08-31T14:42:39</TmstFirmaEnv>
+      <SubTotDTE>
+        <TpoDTE>33</TpoDTE>
+        <NroDTE>1</NroDTE>
+      </SubTotDTE>
+    </Caratula>
+    <DTE version="1.0">
+  <Documento ID="T33F1522">
+    <Encabezado>
+      <IdDoc>
+        <TipoDTE>33</TipoDTE>
+        <Folio>1522</Folio>
+        <FchEmis>2016-08-31</FchEmis>
+      </IdDoc>
+      <Emisor>
+        <RUTEmisor>76019353-4</RUTEmisor>
+        <RznSoc>SOCIEDAD COMERCIAL DEIK Y COMPAÑIA LIMITADA</RznSoc>
+        <GiroEmis>VENTAS AL POR MENOR DE OTROS PRODUCTOS EN ALMACENES ESPECIALIZADOS N.C.P.</GiroEmis>
+        <Acteco>523999</Acteco>
+        <DirOrigen>8 ORIENTE No.1378</DirOrigen>
+        <CmnaOrigen>TALCA</CmnaOrigen>
+      </Emisor>
+      <Receptor>
+        <RUTRecep>77608350-K</RUTRecep>
+        <RznSocRecep>INGENIERIA TERMICA CLIMATIZA LIMITADA</RznSocRecep>
+        <GiroRecep>ACONDICIONAMIENTO DE EDIFICIOS</GiroRecep>
+        <DirRecep>CALLE DE SERVICIO 20 OTE NO.45</DirRecep>
+        <CmnaRecep>TALCA</CmnaRecep>
+      </Receptor>
+      <Totales>
+        <MntNeto>71279</MntNeto>
+        <TasaIVA>19</TasaIVA>
+        <IVA>13543</IVA>
+        <MntTotal>84822</MntTotal>
+      </Totales>
+    </Encabezado>
+    <Detalle>
+      <NroLinDet>1</NroLinDet>
+      <NmbItem>CONTACTOR ST20 BOB. 220V 1NA1NC 22A MITSUBISH</NmbItem>
+      <QtyItem>1.000</QtyItem>
+      <PrcItem>21655</PrcItem>
+      <MontoItem>21655</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>2</NroLinDet>
+      <NmbItem>TRANSFORMADOR 24V 3A                         </NmbItem>
+      <QtyItem>1.000</QtyItem>
+      <PrcItem>4564</PrcItem>
+      <MontoItem>4564</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>3</NroLinDet>
+      <NmbItem>INT. AUTOMATICO 1 X 16A "C" LEXO           </NmbItem>
+      <QtyItem>1.000</QtyItem>
+      <PrcItem>1116</PrcItem>
+      <MontoItem>1116</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>4</NroLinDet>
+      <NmbItem>GABINETE METALICO 400X300X200 1P             </NmbItem>
+      <QtyItem>1.000</QtyItem>
+      <PrcItem>18217</PrcItem>
+      <MontoItem>18217</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>5</NroLinDet>
+      <NmbItem>RELE CAPSULADO 8 PINES  220VCA               </NmbItem>
+      <QtyItem>2.000</QtyItem>
+      <PrcItem>1751</PrcItem>
+      <MontoItem>3502</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>6</NroLinDet>
+      <NmbItem>BASE PARA RELE CAPSULADO 8 PIN               </NmbItem>
+      <QtyItem>2.000</QtyItem>
+      <PrcItem>1038.5</PrcItem>
+      <MontoItem>2077</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>7</NroLinDet>
+      <NmbItem>RELE TERMICO TH-T18KP 9,0A (7,0 A 11,0A) MITS</NmbItem>
+      <QtyItem>1.000</QtyItem>
+      <PrcItem>15843</PrcItem>
+      <MontoItem>15843</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>8</NroLinDet>
+      <NmbItem>REGLETA PLASTICA DE CONEXION 16MM 12P 30A    </NmbItem>
+      <QtyItem>1.000</QtyItem>
+      <PrcItem>650</PrcItem>
+      <MontoItem>650</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>9</NroLinDet>
+      <NmbItem>LUZ PILOTO LED VERDE 22MM 220V TELETRIC      </NmbItem>
+      <QtyItem>2.000</QtyItem>
+      <PrcItem>731</PrcItem>
+      <MontoItem>1462</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>10</NroLinDet>
+      <NmbItem>LUZ PILOTO LED ROJA 22MM 220V TELETRIC       </NmbItem>
+      <QtyItem>1.000</QtyItem>
+      <PrcItem>731</PrcItem>
+      <MontoItem>731</MontoItem>
+    </Detalle>
+    <Detalle>
+      <NroLinDet>11</NroLinDet>
+      <NmbItem>TERMINAL HORQUILLA AZUL 16-14AWG 4,3MM       </NmbItem>
+      <QtyItem>80.000</QtyItem>
+      <PrcItem>18.275</PrcItem>
+      <MontoItem>1462</MontoItem>
+    </Detalle>
+    <TED version="1.0">
+  <DD>
+    <RE>76019353-4</RE>
+    <TD>33</TD>
+    <F>1522</F>
+    <FE>2016-08-31</FE>
+    <RR>77608350-K</RR>
+    <RSR>INGENIERIA TERMICA CLIMATIZA LIMITADA</RSR>
+    <MNT>84822</MNT>
+    <IT1>CONTACTOR ST20 BOB. 220V 1NA1NC 22A MITS</IT1>
+    <CAF version="1.0">
+<DA>
+<RE>76019353-4</RE>
+<RS>SOCIEDAD COMERCIAL DEIK Y COMPANIA LIMIT</RS>
+<TD>33</TD>
+<RNG><D>1401</D><H>1650</H></RNG>
+<FA>2016-08-16</FA>
+<RSAPK><M>21iFEAIRi3Gnr97rSNnOCUL27wBN5s+gEv6xb+bhmm24ATpi5Z+4uB+0jnvQ2bb0TotRyA43josDyoc2wL8qrQ==</M><E>Aw==</E></RSAPK>
+<IDK>300</IDK>
+</DA>
+<FRMA algoritmo="SHA1withRSA">SSQCFlYz1NKR1XvojlqDb9s2mp0Qrmeumgk8Xh3qWvaTEjQwy3WOyHsOTImEUl4tFSDfl1rLxzDAP2bBKIEBmQ==</FRMA>
+</CAF>
+    <TSTED>2016-08-31T14:42:38</TSTED>
+  </DD>
+  <FRMT algoritmo="SHA1withRSA">xmMRj073qWj82dSxKeMWU3saAaJzBsnUZZd1MeDVeNkXeIzewFws2eriAHaI5SZjs3LAgOiZd1lR2rKyyHDDsg==</FRMT>
+</TED>
+  <TmstFirma>2016-08-31T14:42:38</TmstFirma></Documento>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#"><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI="#T33F1522"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>ucx7Qlirs96UGedFwgcRBU22Qc0=</DigestValue></Reference></SignedInfo><SignatureValue>c3Y5oyduW1/daxYsG+VXFo8+uUJfvYI0VvkG7YuUNRYx3Ae2/pWn3l0Dt2Ri9eeP
+d0bgJEbgAVMQKedLRjoCnL8jo0QmQ3GH0tCtR3ZrdKBN2xRvmMdBuvyDc/t78z0c
+CYtJz1/7Ue7QB3wa49FSIenFGyK21vN5lF6IRmWpmqAS0mrUQNyINUcAq9CtFkcj
+XIxaAjHVeWoK+PltpyOBv6M5f9USUTBMPvZXdLQ4dqa70JVP63UWHnd57A8MUNaP
+DA+AcAB2ZzoD3tzrsQac+4bXj6hEIw/0T50UOOQ6Ic9ur0WiIZzVGXXc5UvoFC0S
+3T9dYfs8GFwkQvFYDkcXdQ==</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>n88xfYaBMyJlx3FwqC2i99RXpfdN2FhD7k2gAJ0qQS77b2SDXcXcsz84Newy9+dN
+ctkfrZ2NaUHgZMY/VZAUj+THflJyG5iP63l1aVkQF2O9lqEsdmJQ2icCzWMzqEZ6
+rRYF35FtZxpQkEMhorOvJNXLKAOnUW93TmnU+wOumRHpbxoiehCheYd4ZhO+zPNg
+iZk6zzDqekcJ86Atj27P21VlXYTFVWdYFIhVp2r5e9oS8ZtmdSNKNC7y68UH/mzq
+XcRvJM6RGiTMt7KFbc5kMlfDs5UgeBudpz6PFbuKm1lLJn808dVXQbFlHcxpPYZa
+N7g1tzQOM5CP25bZrH/sKw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIFzDCCBLSgAwIBAgICSPAwDQYJKoZIhvcNAQEFBQAwgaYxCzAJBgNVBAYTAkNM
+MRgwFgYDVQQKEw9BY2VwdGEuY29tIFMuQS4xSDBGBgNVBAMTP0FjZXB0YS5jb20g
+QXV0b3JpZGFkIENlcnRpZmljYWRvcmEgQ2xhc2UgMiBQZXJzb25hIE5hdHVyYWwg
+LSBHMzEeMBwGCSqGSIb3DQEJARYPaW5mb0BhY2VwdGEuY29tMRMwEQYDVQQFEwo5
+NjkxOTA1MC04MB4XDTE2MDYxMDE1NDYyOVoXDTE5MDYxMDE1NDYyOVowgYAxCzAJ
+BgNVBAYTAkNMMRgwFgYDVQQMEw9QRVJTT05BIE5BVFVSQUwxIDAeBgNVBAMTF01P
+SVNFUyBKT1JHRSBERUlLIE5VTkVaMSEwHwYJKoZIhvcNAQkBFhJjZGRlaWtAaG90
+bWFpbC5jb20xEjAQBgNVBAUTCTY0MTk5NzAtNjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAJ/PMX2GgTMiZcdxcKgtovfUV6X3TdhYQ+5NoACdKkEu+29k
+g13F3LM/ODXsMvfnTXLZH62djWlB4GTGP1WQFI/kx35SchuYj+t5dWlZEBdjvZah
+LHZiUNonAs1jM6hGeq0WBd+RbWcaUJBDIaKzryTVyygDp1Fvd05p1PsDrpkR6W8a
+InoQoXmHeGYTvszzYImZOs8w6npHCfOgLY9uz9tVZV2ExVVnWBSIVadq+XvaEvGb
+ZnUjSjQu8uvFB/5s6l3EbyTOkRokzLeyhW3OZDJXw7OVIHgbnac+jxW7iptZSyZ/
+NPHVV0GxZR3MaT2GWje4Nbc0DjOQj9uW2ax/7CsCAwEAAaOCAiYwggIiMB8GA1Ud
+IwQYMBaAFEAkGj2pMXqFd3o9nnKTOYTlQDgZMB0GA1UdDgQWBBSZ3M8Cee507TAW
+lmGQS2RUC5KhjTALBgNVHQ8EBAMCBPAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsG
+AQUFBwMEMBEGCWCGSAGG+EIBAQQEAwIFoDBuBgNVHSAEZzBlMGMGCisGAQQBtWuH
+agowVTAoBggrBgEFBQcCARYcaHR0cDovL3d3dy5hY2VwdGEuY29tL0NQUy1HMzAp
+BggrBgEFBQcCAjAdMBYWD0FjZXB0YS5jb20gUy5BLjADAgEJGgNUQkQwWgYDVR0S
+BFMwUaAYBggrBgEEAcEBAqAMFgo5NjkxOTA1MC04oCQGCCsGAQUFBwgDoBgwFgwK
+OTY5MTkwNTAtOAYIKwYBBAHBAQKBD2luZm9AYWNlcHRhLmNvbTBbBgNVHREEVDBS
+oBcGCCsGAQQBwQEBoAsWCTY0MTk5NzAtNqAjBggrBgEFBQcIA6AXMBUMCTY0MTk5
+NzAtNgYIKwYBBAHBAQKBEmNkZGVpa0Bob3RtYWlsLmNvbTA/BggrBgEFBQcBAQQz
+MDEwLwYIKwYBBQUHMAGGI2h0dHA6Ly9vY3NwLmFjZXB0YS5jb20vQ2xhc2UzQmlv
+LUczMDcGA1UdHwQwMC4wLKAqoCiGJmh0dHA6Ly9jcmwuYWNlcHRhLmNvbS9DbGFz
+ZTNCaW8tRzMuY3JsMA0GCSqGSIb3DQEBBQUAA4IBAQB5tqWVS14g+ZKL77ILM6a1
+q6TYoGoEasJbaPqhWOyFTgCIJb7S50cX6IQWbOxdWm3mn5SIvSXeKdFNX5hT3QYu
+T/9N2JEjjbUrdKQ0AqFK7YpFuCrFEklpchAi0wrVhMBQ67Kqbmo0X+BYiFvHGolT
+tbHLYeGskyDu8DCjYyRG+8b86zB97sdp0NLdk9pzqwxBFU7cRCoj/o3j9fmZvq8Z
+IbfLJBTGN5p+uaF6k6Ys1/X4PDBGRCuUrs9AEeNHO7okWXg9j/MHvA0od25v91Tj
+8gsc+eCFKtrOoa0BMwmWPbuiYuuVnOX/RFVDywfv2WHEW8Pc5ajAmZ7bvq/AuOqT</X509Certificate></X509Data></KeyInfo></Signature></DTE>
+  </SetDTE>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI="#SetDoc"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>NaGv7V/GbdVKGuMOi6V6euT9qik=</DigestValue></Reference></SignedInfo><SignatureValue>Zdxi+HUJINJD0+Q8+VWzph2C3SmTT4VRyVnLJSUWvB4wzYCg4hz5h4nQ86EVNQbo
+GpIisEaUoT5xO4Puqqn9IUXRIYYRFFWBB29z8V/f2QHfkkZbvj5C8dRHXTa5P7Tx
+w3IV3GpEBIn5+3hqEAcriYu+RFtZVvVzhY4gbAeP23gudZ28x0VPWpND4LbBajmP
+8rLq4vWEwNJGtdeFKdxJuLbrluXvqg1WzXDFBI6Q6ShIK2bhfu+/ogtT8aOau7pu
+vZmCrN4WLaErIxGC4IxCF9bXT5KKvvaad3MmzS1ZlqTiwYVy37dCzdEjFrj9bZ3G
+3oZJiXk8B2pF6jx6gOadXQ==</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>n88xfYaBMyJlx3FwqC2i99RXpfdN2FhD7k2gAJ0qQS77b2SDXcXcsz84Newy9+dN
+ctkfrZ2NaUHgZMY/VZAUj+THflJyG5iP63l1aVkQF2O9lqEsdmJQ2icCzWMzqEZ6
+rRYF35FtZxpQkEMhorOvJNXLKAOnUW93TmnU+wOumRHpbxoiehCheYd4ZhO+zPNg
+iZk6zzDqekcJ86Atj27P21VlXYTFVWdYFIhVp2r5e9oS8ZtmdSNKNC7y68UH/mzq
+XcRvJM6RGiTMt7KFbc5kMlfDs5UgeBudpz6PFbuKm1lLJn808dVXQbFlHcxpPYZa
+N7g1tzQOM5CP25bZrH/sKw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIFzDCCBLSgAwIBAgICSPAwDQYJKoZIhvcNAQEFBQAwgaYxCzAJBgNVBAYTAkNM
+MRgwFgYDVQQKEw9BY2VwdGEuY29tIFMuQS4xSDBGBgNVBAMTP0FjZXB0YS5jb20g
+QXV0b3JpZGFkIENlcnRpZmljYWRvcmEgQ2xhc2UgMiBQZXJzb25hIE5hdHVyYWwg
+LSBHMzEeMBwGCSqGSIb3DQEJARYPaW5mb0BhY2VwdGEuY29tMRMwEQYDVQQFEwo5
+NjkxOTA1MC04MB4XDTE2MDYxMDE1NDYyOVoXDTE5MDYxMDE1NDYyOVowgYAxCzAJ
+BgNVBAYTAkNMMRgwFgYDVQQMEw9QRVJTT05BIE5BVFVSQUwxIDAeBgNVBAMTF01P
+SVNFUyBKT1JHRSBERUlLIE5VTkVaMSEwHwYJKoZIhvcNAQkBFhJjZGRlaWtAaG90
+bWFpbC5jb20xEjAQBgNVBAUTCTY0MTk5NzAtNjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAJ/PMX2GgTMiZcdxcKgtovfUV6X3TdhYQ+5NoACdKkEu+29k
+g13F3LM/ODXsMvfnTXLZH62djWlB4GTGP1WQFI/kx35SchuYj+t5dWlZEBdjvZah
+LHZiUNonAs1jM6hGeq0WBd+RbWcaUJBDIaKzryTVyygDp1Fvd05p1PsDrpkR6W8a
+InoQoXmHeGYTvszzYImZOs8w6npHCfOgLY9uz9tVZV2ExVVnWBSIVadq+XvaEvGb
+ZnUjSjQu8uvFB/5s6l3EbyTOkRokzLeyhW3OZDJXw7OVIHgbnac+jxW7iptZSyZ/
+NPHVV0GxZR3MaT2GWje4Nbc0DjOQj9uW2ax/7CsCAwEAAaOCAiYwggIiMB8GA1Ud
+IwQYMBaAFEAkGj2pMXqFd3o9nnKTOYTlQDgZMB0GA1UdDgQWBBSZ3M8Cee507TAW
+lmGQS2RUC5KhjTALBgNVHQ8EBAMCBPAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsG
+AQUFBwMEMBEGCWCGSAGG+EIBAQQEAwIFoDBuBgNVHSAEZzBlMGMGCisGAQQBtWuH
+agowVTAoBggrBgEFBQcCARYcaHR0cDovL3d3dy5hY2VwdGEuY29tL0NQUy1HMzAp
+BggrBgEFBQcCAjAdMBYWD0FjZXB0YS5jb20gUy5BLjADAgEJGgNUQkQwWgYDVR0S
+BFMwUaAYBggrBgEEAcEBAqAMFgo5NjkxOTA1MC04oCQGCCsGAQUFBwgDoBgwFgwK
+OTY5MTkwNTAtOAYIKwYBBAHBAQKBD2luZm9AYWNlcHRhLmNvbTBbBgNVHREEVDBS
+oBcGCCsGAQQBwQEBoAsWCTY0MTk5NzAtNqAjBggrBgEFBQcIA6AXMBUMCTY0MTk5
+NzAtNgYIKwYBBAHBAQKBEmNkZGVpa0Bob3RtYWlsLmNvbTA/BggrBgEFBQcBAQQz
+MDEwLwYIKwYBBQUHMAGGI2h0dHA6Ly9vY3NwLmFjZXB0YS5jb20vQ2xhc2UzQmlv
+LUczMDcGA1UdHwQwMC4wLKAqoCiGJmh0dHA6Ly9jcmwuYWNlcHRhLmNvbS9DbGFz
+ZTNCaW8tRzMuY3JsMA0GCSqGSIb3DQEBBQUAA4IBAQB5tqWVS14g+ZKL77ILM6a1
+q6TYoGoEasJbaPqhWOyFTgCIJb7S50cX6IQWbOxdWm3mn5SIvSXeKdFNX5hT3QYu
+T/9N2JEjjbUrdKQ0AqFK7YpFuCrFEklpchAi0wrVhMBQ67Kqbmo0X+BYiFvHGolT
+tbHLYeGskyDu8DCjYyRG+8b86zB97sdp0NLdk9pzqwxBFU7cRCoj/o3j9fmZvq8Z
+IbfLJBTGN5p+uaF6k6Ys1/X4PDBGRCuUrs9AEeNHO7okWXg9j/MHvA0od25v91Tj
+8gsc+eCFKtrOoa0BMwmWPbuiYuuVnOX/RFVDywfv2WHEW8Pc5ajAmZ7bvq/AuOqT</X509Certificate></X509Data></KeyInfo></Signature></EnvioDTE>

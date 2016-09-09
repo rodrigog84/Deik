@@ -115,7 +115,7 @@ public function validaRut(){
 	        'direccion' => strtoupper($data->direccion),
 	        'id_ciudad' => $data->id_ciudad,
 	        'id_comuna' => $data->id_comuna,
-	        'rut' => $rutgraba,
+	        'rut' => $data->rut,
 	        'id_vendedor' => $data->id_vendedor,
 	        'e_mail' => $data->e_mail,
 	        'descuento' => $data->descuento,		
@@ -152,6 +152,9 @@ public function validaRut(){
 		$fonocontacto = $this->input->post('fono_contacto');
 		$emailcontacto = $this->input->post('e_mail_contacto');
 		$tipocliente = $this->input->post('tipocliente');
+		if(!$tipocliente){
+			$tipocliente = 3;
+		};
 				
 		$data = array(
 			'nombres' => strtoupper($nombres),
@@ -163,8 +166,7 @@ public function validaRut(){
 	        'id_comuna' => $comuna,
 	        'fecha_ult_actualiz' => date('Y-m-d'),
             'estado' => $estado,
-          	'tipo' => $tipocliente
-              
+          	'tipo' => $tipocliente              
 	    );
 		$this->db->where('id', $id);
 		

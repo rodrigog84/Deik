@@ -395,6 +395,15 @@ Ext.define('Infosys_web.view.guiasdespacho.Facturaguias', {
                                 fieldLabel: 'Total',
                                 readOnly: true,
                                 itemId: 'totalId'
+                            },{
+                                xtype: 'numberfield',
+                                width: 170,
+                                minValue: 0,
+                                value: 0,
+                                fieldLabel: 'Secuencia',
+                                readOnly: true,
+                                itemId: 'secuenciaId',
+                                hidden: true
                             },
                             {xtype: 'splitter'},
                             {
@@ -418,13 +427,14 @@ Ext.define('Infosys_web.view.guiasdespacho.Facturaguias', {
                             tbar: [{
                                 iconCls: 'icon-delete',
                                 text: 'Eliminar',
-                                action: 'eliminaritem'
+                                action: 'eliminaritem2'
                             }
                             ],
                             height: 210,
                             columns: [
-                                    { text: 'Id Guia',  dataIndex: 'id_guia', width: 250, hidden: true },
-                                    { text: 'Guia',  dataIndex: 'num_guia', width: 250, align: 'right', },
+                                    { text: 'Id Guia',  dataIndex: 'id_guia', width: 50, hidden: true },
+                                    { text: 'Num',  dataIndex: 'secuencia', width: 50},
+                                    { text: 'Guia',  dataIndex: 'num_guia', width: 120, align: 'right', },
                                     { text: 'Neto',  dataIndex: 'neto',  align: 'right', width: 250, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} },
                                     { text: 'Iva',  dataIndex: 'iva',  align: 'right', width: 250, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} },
                                     { text: 'Total',  dataIndex: 'total',  align: 'right', width: 250, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} }
@@ -449,41 +459,7 @@ Ext.define('Infosys_web.view.guiasdespacho.Facturaguias', {
                             fieldLabel: '<b>VALOR NETO</b>',
                             labelAlign: 'top'
                         },
-                        {xtype: 'splitter'},
-                        {
-                            xtype: 'combo',
-                            width: 280,
-                            queryMode: 'local',
-                            itemId: 'tipoDescuentoId',
-                            fieldLabel: '<b>DESCUENTO</b>',
-                            store: 'Tabladescuento',
-                            emptyText : "Seleccione",
-                            valueField: 'id',
-                            //disabled : true,   
-                            labelAlign: 'top',
-                            displayField: 'nombre'
-                        },{
-                            xtype: 'numberfield',
-                            fieldCls: 'required',
-                            width: 200,
-                            name : 'descuento',
-                            itemId: 'finaldescuentoId',
-                            //disabled : true,  
-                            readOnly: true,
-                            fieldLabel: '<b>descuento</b>',
-                            hidden: true
-                        },
-                        {xtype: 'splitter'},
-                        {
-                            xtype: 'numberfield',
-                            fieldCls: 'required',
-                            width: 150,
-                            name : 'descuentovalor',
-                            itemId: 'descuentovalorId',
-                            readOnly: true,
-                            fieldLabel: '<b>DESCUENTO $</b>',
-                            labelAlign: 'top'
-                        },{xtype: 'splitter'},{
+                        {xtype: 'splitter'},{
                             xtype: 'numberfield',
                             fieldCls: 'required',
                             width: 150,

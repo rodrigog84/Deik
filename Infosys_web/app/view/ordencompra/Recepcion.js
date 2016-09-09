@@ -7,7 +7,7 @@ Ext.define('Infosys_web.view.ordencompra.Recepcion', {
     title : 'Recepcionar Orden de Compra',
     layout: 'fit',
     autoShow: true,
-    width: 940,
+    width: 1150,
     height: 550,
     modal: true,
     iconCls: 'icon-sheet',
@@ -67,7 +67,16 @@ Ext.define('Infosys_web.view.ordencompra.Recepcion', {
                             },{
                                 xtype: 'numberfield',
                                 width: 140,
-                                fieldLabel: 'Numero',
+                                fieldLabel: ' Numero Recepcion',
+                                itemId: 'numrecepcionId',
+                                name: 'num_recepcion',
+                                style: 'font-weight: bold;',
+                                readOnly : true
+                            },
+                            {xtype: 'splitter'},{
+                                xtype: 'numberfield',
+                                width: 140,
+                                fieldLabel: 'Numero Orden',
                                 itemId: 'numeroId',
                                 name: 'num_orden',
                                 style: 'font-weight: bold;',
@@ -149,12 +158,27 @@ Ext.define('Infosys_web.view.ordencompra.Recepcion', {
                                     xtype: 'datefield',
                                     fieldCls: 'required',
                                     maxHeight: 25,
-                                    width: 230,
+                                    width: 200,
+                                    labelWidth: 60,
                                     fieldLabel: '<b>FECHA</b>',
                                     itemId: 'fechaordenId',
                                     name: 'fecha',
                                     value: new Date()
+                                },{
+                                    xtype: 'displayfield',
+                                    width: 20                                          
+                                },{
+                                    xtype: 'datefield',
+                                    fieldCls: 'required',
+                                    maxHeight: 25,
+                                    labelWidth: 90,
+                                    width: 210,
+                                    fieldLabel: '<b>RECEPCION</b>',
+                                    itemId: 'fecharecepcionId',
+                                    name: 'fecha_recepcion',
+                                    value: "0000-00-00"
                                 }
+
                                 ]
                             },
                             {
@@ -230,7 +254,22 @@ Ext.define('Infosys_web.view.ordencompra.Recepcion', {
                                     name : 'e_mail_contacto',
                                     itemId: 'mail_contactoId',
                                     fieldLabel: 'Mail Contacto'
-                                }
+                                },{xtype: 'splitter'},{
+                                    xtype: 'combo',
+                                    itemId: 'tipoVendedorId',
+                                    width: 350,
+                                    labelWidth: 80,
+                                    fieldCls: 'required',
+                                    maxHeight: 25,
+                                    fieldLabel: '<b>VENDEDOR</b>',
+                                    forceSelection : true,
+                                    name : 'id_vendedor',
+                                    valueField : 'id',
+                                    displayField : 'nombre',
+                                    emptyText : "Seleccione",
+                                    store : 'Vendedores',
+                                    readOnly : true
+                                   }
 
 
                                 ]
@@ -266,8 +305,9 @@ Ext.define('Infosys_web.view.ordencompra.Recepcion', {
                     columns: [
                         { text: 'Id',  dataIndex: 'id', width: 250, hidden: true },
                         { text: 'Nombre',  dataIndex: 'nombre', width: 250 },
-                        { text: 'Precio Unitario',  dataIndex: 'subtotal', flex:1 },
-                        { text: 'Cantidad',  dataIndex: 'cantidad', width: 80 },
+                        { text: 'Precio Unitario',  dataIndex: 'subtotal', flex:1, decimalPrecision: 3 },
+                        { text: 'Cantidad',  dataIndex: 'cantidad', width: 80, decimalPrecision: 3 },
+                        { text: 'Cantidad Medida',  dataIndex: 'cant_medida', decimalPrecision: 3, width: 80, hidden: true, decimalPrecision: 3 },
                         { xtype: 'checkcolumn', text: 'Recepcion', dataIndex: 'existe', 
                         listeners : {
                             checkchange : function(column, recordIndex, checked) {
@@ -278,7 +318,7 @@ Ext.define('Infosys_web.view.ordencompra.Recepcion', {
                                 if(checked){
                                     record.set({stock: record.get('cantidad')})
                                     if((record.get('total'))>0 && (record.get('cantidad'))>0){
-                                        var valor_calc = Math.round((record.get('total')) / (record.get('cantidad')) );
+                                        var valor_calc = (record.get('subtotal'));
                                         record.set({
                                             valor: valor_calc
                                         });             
@@ -292,14 +332,8 @@ Ext.define('Infosys_web.view.ordencompra.Recepcion', {
 
 
                     },
-                        { text: 'Recibido', dataIndex: 'stock', width: 100, 
-                        renderer: function(valor,r , e){
-                           return valor
-                        }, editor: {xtype: 'numberfield', allowBlank: false,minValue: 0,maxValue: 10000000000}},
-                        { text: 'Valor', dataIndex: 'valor', width: 100, 
-                        renderer: function(valor){
-                            return valor
-                        }, editor: {xtype: 'numberfield', allowBlank: false,minValue: 0,maxValue: 10000000000}}
+                        { text: 'Recibido', dataIndex: 'stock', width: 120, editor: {xtype: 'numberfield', minValue: 0,maxValue: 10000000000, decimalPrecision: 3}},
+                        { text: 'Valor', dataIndex: 'valor', width: 120, editor: {xtype: 'numberfield', minValue: 0,maxValue: 10000000000, decimalPrecision: 3}}
                         
                     ]
                 }

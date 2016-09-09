@@ -394,7 +394,6 @@ Ext.define('Infosys_web.view.Preventa.EditarPreventa', {
                                 width: 210,
                                 queryMode: 'local',
                                 itemId: 'DescuentoproId',
-                                editable: false,
                                 fieldLabel: 'Descto %',
                                 store: 'Tabladescuento',
                                 emptyText : "Seleccione",
@@ -478,7 +477,6 @@ Ext.define('Infosys_web.view.Preventa.EditarPreventa', {
                             store: 'Tabladescuento',
                             emptyText : "Seleccione",
                             valueField: 'id',
-                            editable: false,
                             labelAlign: 'top',
                             displayField: 'nombre'
                         },{

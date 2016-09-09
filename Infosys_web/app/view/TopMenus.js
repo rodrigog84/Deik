@@ -263,7 +263,7 @@ Ext.define('Infosys_web.view.TopMenus' ,{
                         iconCls: '',
                         itemId: 'adq_cr_rcompra',
                         disabled: true,
-                        action: ''
+                        action: 'mrecepcion'
                 },{
                         text: 'Recepcion Forzada',
                         iconCls: '',

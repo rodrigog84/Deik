@@ -179,10 +179,10 @@ Ext.define('Infosys_web.view.Pago_caja.Principal' ,{
                 fieldLabel: 'Efectivo',
                 hidden: true
             },{
-                width: 110,
+                width: 70,
                 xtype: 'numberfield',
                 itemId: 'comprobanteId',
-                fieldLabel: 'Comprobante',
+                fieldLabel: '',
                 hidden: true
             },{
                 xtype: 'textfield',

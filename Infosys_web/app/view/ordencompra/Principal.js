@@ -7,7 +7,7 @@ Ext.define('Infosys_web.view.ordencompra.Principal' ,{
     iconCls: 'icon-grid',
 
     title : 'Ordenes de Compra ',
-    store: 'Orden_compra',
+    store: 'Ordencompra_original',
     autoHeight: true,
     viewConfig: {
         forceFit: true
@@ -29,12 +29,21 @@ Ext.define('Infosys_web.view.ordencompra.Principal' ,{
         dataIndex: 'num_orden'
     },{
         header: "Empresa",
-        flex: 1,
+        width: 350,
         dataIndex: 'empresa'
     },{
         header: "Rut",
         flex: 1,
         dataIndex: 'rut'
+    },{
+        header: "id_vendedor",
+        flex: 1,
+        dataIndex: 'id_vendedor',
+        hidden: true
+    },{
+        header: "Vendedor",
+        flex: 1,
+        dataIndex: 'nom_vendedor'
     },{
         header: "Direccion",
         flex: 1,
@@ -79,19 +88,22 @@ Ext.define('Infosys_web.view.ordencompra.Principal' ,{
         flex: 1,
         dataIndex: 'descuento',
         align: 'right',
-        renderer: function(valor){return Ext.util.Format.number((valor),"0,00")}
+        renderer: function(valor){return Ext.util.Format.number((valor),"0,00")},
+        hidden: true
     },{
         header: "Neto",
         flex: 1,
         dataIndex: 'neto',
         align: 'right',
-        renderer: function(valor){return Ext.util.Format.number((valor),"0,00")}
+        renderer: function(valor){return Ext.util.Format.number((valor),"0,00")},
+        hidden: true
     },{
         header: "Iva",
         flex: 1,
         dataIndex: 'iva',
         align: 'right',
-        renderer: function(valor){return Ext.util.Format.number((valor),"0,00")}
+        renderer: function(valor){return Ext.util.Format.number((valor),"0,00")},
+        hidden: true
     },{
         header: "Total",
         flex: 1,
@@ -104,6 +116,11 @@ Ext.define('Infosys_web.view.ordencompra.Principal' ,{
         dataIndex: 'fecha',
         type: 'date',
         renderer:Ext.util.Format.dateRenderer('d/m/Y') 
+    },{
+        header: "Estado",
+        flex: 1,
+        dataIndex: 'estado',
+        hidden: true
     }],
     
     initComponent: function() {
@@ -127,12 +144,14 @@ Ext.define('Infosys_web.view.ordencompra.Principal' ,{
                 xtype: 'button',
                 iconCls: 'icon-add',
                 text: 'Recepcionar',
-                action: 'recepcionarordencompra'
+                action: 'recepcionarordencompra',
+                hidden: true
             },{
                 xtype: 'button',
                 iconCls: 'icon-add',
                 text: 'Recep Forzada',
-                action: 'recepcionforzada'
+                action: 'recepcionforzada',
+                hidden: true
             },{
                 xtype: 'button',
                 iconCls : 'icon-pdf',
@@ -183,7 +202,7 @@ Ext.define('Infosys_web.view.ordencompra.Principal' ,{
         {
             xtype: 'pagingtoolbar',
             dock:'bottom',
-            store: 'Orden_compra',
+            store: 'Ordencompra_original',
             displayInfo: true
         }];
         

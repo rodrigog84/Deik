@@ -12,6 +12,7 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
              'Sucursales_clientes',
              'Factura4',
              'Despachafactura',
+             'Despachaproductos',
              'guiasdespacho.Selector',
              'Tipo_documento.Selectorg'],
 
@@ -120,7 +121,7 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
             'facturaguias #rutId': {
                 specialkey: this.special
             },
-           'guiasdespachobuscarclientes button[action=seleccionarclienteguias]': {
+            'guiasdespachobuscarclientes button[action=seleccionarclienteguias]': {
                 click: this.seleccionarclienteguias
             },
             'guiasdespachobuscarclientes2 button[action=seleccionarclienteguias2]': {
@@ -141,8 +142,11 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
             'facturaguias button[action=buscarguias]': {
                 click: this.buscarguias
             },
-            'guiasdespachobuscarclientes button[action=buscarclientes]': {
-                click: this.buscarclientes
+            'guiasdespachobuscarclientes button[action=buscarclientesguias]': {
+                click: this.buscarclientesguias
+            },
+            'guiasdespachobuscarclientes2 button[action=buscarclientesguias2]': {
+                click: this.buscarclientesguias2
             },
             'facturaguias button[action=grabarfactura]': {
                 click: this.grabarfactura
@@ -189,6 +193,9 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
             'buscarfacturasdespacho button[action=seleccionarfactura]': {
                 click: this.seleccionarfactura
             },
+            'buscarfacturasdespacho button[action=encuentrafactura]': {
+                click: this.encuentrafactura
+            },
             'despachofactura button[action=agregarItem2]': {
                 click: this.agregarItem2
             },
@@ -224,7 +231,10 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
             },
             'despachofactura #tipodocumentoId': {
                 select: this.selectItemdocuemento
-            },  
+            },
+            'facturaguias button[action=eliminaritem2]': {
+                click: this.eliminaritem2
+            }, 
 
         });
     },
@@ -391,7 +401,7 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
 
     seleccionartodas2: function(){
 
-        var stItem1 = this.getDespachafacturaStore();
+        var stItem1 = this.getDespachaproductosStore();
         var stItem = this.getProductosItemsStore();
         var view = this.getBuscarproductosfacturadirecta();
         var viewIngresa = this.getDespachofactura();
@@ -481,11 +491,11 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
         });
 
         Ext.Ajax.request({
-            url: preurl + 'facturas/save5',
+            url: preurl + 'facturas/save',
             params: {
                 idcliente: idcliente,
                 idfactura: idfactura,
-                numdocumento: numdocumento,
+                numfactura: numdocumento,
                 idsucursal: idsucursal,
                 idcondventa: idcondventa,
                 idtipo: idtipo,
@@ -502,12 +512,11 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
                 totalfacturas: viewIngresa.down('#finaltotalpostId').getValue(),
                 totaldescuento: viewIngresa.down('#descuentofinalId').getValue()
             },
-             success: function(response){
+            success: function(response){
                 var resp = Ext.JSON.decode(response.responseText);
                 var idfactura= resp.idfactura;
                  viewIngresa.close();
-                 stGuias.load();
-                 window.open(preurl + 'facturas/exportPDF/?idfactura='+idfactura);
+                 stGuias.load();                 //window.open(preurl + 'facturas/exportPDF/?idfactura='+idfactura);
 
             }
            
@@ -767,7 +776,7 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
     buscarproductos: function(){
 
         var view = this.getDespachofactura();
-        var st = this.getDespachafacturaStore()
+        var st = this.getDespachaproductosStore()
         var nombre = view.down('#facturaId').getValue()
         st.proxy.extraParams = {nombre : nombre}
         st.load();
@@ -854,7 +863,8 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
        if (nombre){
           var edit =  Ext.create('Infosys_web.view.guiasdespacho.BuscarFacturas').show();
           var st = this.getFactura4Store();
-          st.proxy.extraParams = {nombre : nombre};
+          st.proxy.extraParams = {nombre : nombre,
+                                  opcion : "Nombre"};
           st.load();
        }else {
           Ext.Msg.alert('Alerta', 'Debe seleccionar Cliente.');
@@ -1245,7 +1255,6 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
         var stItem = this.getGuiasdespachoItemsStore();
         var stFactura = this.getGuiasdespachopendientesStore();
         var stFactura = this.getGuiasdespachopendientes2Store();
-
         if(vendedor==0  && tipo_documento.getValue() == 1){
             Ext.Msg.alert('Ingrese Datos del Vendedor');
             return;   
@@ -1277,10 +1286,11 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
                 netofactura: viewIngresa.down('#finaltotalnetoId').getValue(),
                 ivafactura: viewIngresa.down('#finaltotalivaId').getValue(),
                 afectofactura: viewIngresa.down('#finalafectoId').getValue(),
-                descuentofactuta : viewIngresa.down('#descuentovalorId').getValue(),
+                tipodocumento : 101,
+                //descuentofactuta : viewIngresa.down('#descuentovalorId').getValue(),
                 totalfacturas: viewIngresa.down('#finaltotalpostId').getValue()               
             },
-             success: function(response){
+            success: function(response){
                 var resp = Ext.JSON.decode(response.responseText);
                 var idfactura= resp.idfactura;
                 viewIngresa.close();
@@ -1413,12 +1423,15 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
         var netofin = view.down('#finaltotalnetoId').getValue();
         var afectofin = view.down('#finalafectoId').getValue();
         var ivafin = view.down('#finaltotalivaId').getValue();
+        var secuencia = view.down('#secuenciaId').getValue();
         var totalfin = totalfin + total;
         var netofin = netofin + neto;
-        var afectofin = netofin + neto;
+        //var afectofin = netofin + neto;
+        var afectofin = netofin;
         var ivafin= ivafin + iva;
         var espacios = "";
-        var ceros = 0;        
+        var ceros = 0;
+        var secuencia = secuencia + 1;       
                 
         if(neto==0){
             Ext.Msg.alert('Alerta', 'Debe Ingresar Valores');
@@ -1429,8 +1442,24 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
             Ext.Msg.alert('Alerta', 'Debe Ingresar Datos a la Factura.');
             return false;
         };
+
+        if (secuencia > 8 & tipo_documento ==2 ){
+
+           Ext.Msg.alert('Alerta', 'Ya sobrepaso el maximo de Registros');
+                exists = 1;
+                cero="";
+                view.down('#idguiaId').setValue(espacios);
+                view.down('#numguiaId').setValue(espacios);
+                view.down('#ivaId').setValue(ceros);
+                view.down('#totalId').setValue(ceros);
+                view.down('#netoId').setValue(ceros);
+                return; 
+            
+
+        };
         
         stItem.add(new Infosys_web.model.Guiasdespacho.Item({
+            secuencia: secuencia,
             id_guia: idguia,
             num_guia: numguia,
             neto: neto,
@@ -1444,6 +1473,7 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
         view.down('#finaltotalnetoId').setValue(Ext.util.Format.number(netofin, '0'));
         view.down('#finaltotalivaId').setValue(Ext.util.Format.number(ivafin, '0'));
         view.down('#finalafectoId').setValue(Ext.util.Format.number(afectofin, '0'));
+        view.down('#secuenciaId').setValue(secuencia);
         
        Ext.Ajax.request({
                 url: preurl + 'guias/marcarguias',
@@ -1467,10 +1497,12 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
     },
 
     eliminaritem2: function() {
-        var view = this.getCotizacioneditar();
-        var nueneto = view.down('#finalpretotalnId').getValue();
-        var nueiva =  view.down('#ivadId').getValue();
+        var view = this.getFacturaguias();
+        var nueneto = view.down('#finaltotalnetoId').getValue();
+        var nueiva =  view.down('#finaltotalivaId').getValue();
         var nuetotal = view.down('#finaltotalpostId').getValue();
+        var secuencia = view.down('#secuenciaId').getValue();
+        var secuencia = secuencia - 1;
         var grid  = view.down('#itemsgridId');
         if (grid.getSelectionModel().hasSelection()) {
             var row = grid.getSelectionModel().getSelection()[0];
@@ -1480,10 +1512,10 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
             var nueiva = nuetotal - nueneto;
             view.down('#finaltotalId').setValue(Ext.util.Format.number(nuetotal, '0,000'));
             view.down('#finaltotalpostId').setValue(Ext.util.Format.number(nuetotal, '0'));
-            view.down('#finalpretotalId').setValue(Ext.util.Format.number(nueneto, '0'));
-            view.down('#ivaId').setValue(Ext.util.Format.number(nueiva, '0'));
-            view.down('#ivadId').setValue(Ext.util.Format.number(nueiva, '0'));
-            view.down('#finalpretotalnId').setValue(Ext.util.Format.number(nueneto, '0'));       
+            view.down('#finaltotalnetoId').setValue(Ext.util.Format.number(nueneto, '0'));
+            view.down('#finalafectoId').setValue(Ext.util.Format.number(nueneto, '0'));
+            view.down('#finaltotalivaId').setValue(Ext.util.Format.number(nueiva, '0'));
+            view.down('#secuenciaId').setValue(secuencia);     
 
             grid.getStore().remove(row);
         }else{
@@ -1593,9 +1625,19 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
        
     },
 
-    buscarclientes : function(){
+    buscarclientesguias : function(){
 
         var view = this.getGuiasdespachobuscarclientes()
+        var st = this.getClientesStore()
+        var nombre = view.down('#nombreId').getValue()
+        st.proxy.extraParams = {nombre : nombre,
+                                opcion : "Nombre"}
+        st.load();
+    },
+
+     buscarclientesguias2 : function(){
+
+        var view = this.getGuiasdespachobuscarclientes2()
         var st = this.getClientesStore()
         var nombre = view.down('#nombreId').getValue()
         st.proxy.extraParams = {nombre : nombre,
@@ -1740,7 +1782,7 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
 
 
 
-    factguia: function(){
+    /*factguia: function(){
 
         var nombre = 1;    
         Ext.Ajax.request({
@@ -1773,7 +1815,49 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
 
             }            
         });
+    },*/
+
+
+    factguia: function(){
+
+        var nombre = 101; 
+
+        response_certificado = Ext.Ajax.request({
+        async: false,
+        url: preurl + 'facturas/existe_certificado/'});
+        var obj_certificado = Ext.decode(response_certificado.responseText);
+
+
+        if(obj_certificado.existe == true){
+
+            //buscar folio factura electronica
+            // se buscan folios pendientes, o ocupados hace más de 4 horas
+
+            response_folio = Ext.Ajax.request({
+            async: false,
+            url: preurl + 'facturas/folio_documento_electronico/'+nombre});  
+            var obj_folio = Ext.decode(response_folio.responseText);
+            //console.log(obj_folio); 
+            nuevo_folio = obj_folio.folio;
+            var view = Ext.create('Infosys_web.view.guiasdespacho.Facturaguias').show();
+            if(nuevo_folio != 0){
+                view.down('#numfacturaId').setValue(nuevo_folio);  
+                view.down('#nomdocumentoId').setValue('FACTURA ELECTRONICA');  
+                habilita = true;
+            }else{
+                Ext.Msg.alert('Atención','No existen folios disponibles');
+                view.down('#numfacturaId').setValue('');  
+
+                //return
+            }
+
+        }else{
+                Ext.Msg.alert('Atención','No se ha cargado certificado');
+                view.down('#numfacturaId').setValue('');  
+        }
+
     },
+
 
     despachofactura: function(){
         var view = Ext.create('Infosys_web.view.guiasdespacho.Despachafactura').show();
@@ -1824,7 +1908,7 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
 
     buscarfact: function(){
 
-        var view = this.getGuiasprincipalpendientes()
+        var view = this.getBuscarfacturasdespacho()
         var st = this.getGuiasdespachopendientes2Store()
         var opcion = view.down('#tipoSeleccionId').getValue()
         var nombre = view.down('#nombreId').getValue()
@@ -1841,6 +1925,16 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
         var nombre = view.down('#nombreId').getValue()
         st.proxy.extraParams = {nombre : nombre,
                                 opcion : opcion}
+        st.load();
+    },
+
+    encuentrafactura: function(){
+
+        var view = this.getBuscarfacturasdespacho();
+        var st = this.getFactura4Store()
+        var nombre = view.down('#nombreId').getValue()
+        st.proxy.extraParams = {nombre : nombre,
+                                opcion : "Numero"}
         st.load();
     },
 

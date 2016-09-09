@@ -7,6 +7,29 @@ class Cond_pago extends CI_Controller {
 		parent::__construct();
 		
 		$this->load->database();
+
+	}
+
+	public function calculodias(){
+
+		$resp = array();
+		$idpago = $this->input->post('idpago');
+
+		$query = $this->db->query('SELECT * FROM cond_pago WHERE id like "'.$idpago.'"
+			');
+
+		$data = array();
+		foreach ($query->result() as $row)
+		{
+			$dias = $row->dias;
+		}
+	
+		
+	    $resp['success'] = true;
+        $resp['dias'] = $dias;
+        
+        echo json_encode($resp);   
+	
 	}
 
 	public function save(){
@@ -47,7 +70,7 @@ class Cond_pago extends CI_Controller {
 
         $resp['success'] = true;
 
-         $this->Bitacora->logger("M", 'cond_pago', $id);
+        $this->Bitacora->logger("M", 'cond_pago', $id);
 
 
         echo json_encode($resp);

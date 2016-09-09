@@ -351,13 +351,6 @@ Ext.define('Infosys_web.controller.Facturaglosa', {
             return false;
         };
         
-
-        if(glosa.length > 70){  // se validan los datos sólo si es factura
-            Ext.Msg.alert('Alerta', 'Glosa no puede contener más de 70 caracteres.');
-            return false;
-        };
-
-
         if (tipo_documento == 19  || tipo_documento == 103){
         
         if(neto==0 ){  // se validan los datos sólo si es factura

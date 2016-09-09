@@ -18,7 +18,7 @@ Ext.define('Infosys_web.view.guiasdespacho.BuscarProductos' ,{
             iconCls: 'icon-grid',
 
             title : 'Productos',
-            store: 'Despachafactura',
+            store: 'Despachaproductos',
             autoHeight: true,
             viewConfig: {
                 forceFit: true
@@ -81,7 +81,7 @@ Ext.define('Infosys_web.view.guiasdespacho.BuscarProductos' ,{
         {
             xtype: 'pagingtoolbar',
             dock:'bottom',
-            store: 'Despachafactura',
+            store: 'Despachaproductos',
             displayInfo: true
         }];
         

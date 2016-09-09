@@ -12,18 +12,7 @@ class Procesos extends CI_Controller {
 
 	public function lectura_csv_fe(){
 
-		 	$archivo = "./facturacion_electronica/csv/FACTURAS.CSV";
-			$this->load->model('facturaelectronica');
-			$codproceso = $this->facturaelectronica->guarda_csv($archivo);
-			$this->facturaelectronica->crea_dte_csv($codproceso);
-
-
-	}
-
-
-	public function lectura_csv_fe_manual(){
-
-		 	$archivo = "./facturacion_electronica/csv/FACTURAS.CSV";
+		 	$archivo = "./facturacion_electronica/csv/facturas.csv";
 			$this->load->model('facturaelectronica');
 			$codproceso = $this->facturaelectronica->guarda_csv($archivo);
 			$this->facturaelectronica->crea_dte_csv($codproceso);

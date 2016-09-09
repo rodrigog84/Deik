@@ -25,6 +25,10 @@ Ext.define('Infosys_web.view.ordencompra.BuscarProductos2' ,{
 
             },
            columns: [{
+                header: "Id",
+                width: 100,
+                dataIndex: 'id'
+            },{
                 header: "Codigo",
                 width: 100,
                 dataIndex: 'codigo'
@@ -32,6 +36,16 @@ Ext.define('Infosys_web.view.ordencompra.BuscarProductos2' ,{
                 header: "Nombres",
                 width: 750,
                 dataIndex: 'nombre'
+            },{
+                header: "id Unidad Medida",
+                 width: 100,
+                dataIndex: 'id_uni_medida',
+                hidden: true
+            },{
+                header: "id Unidad Medida",
+                 width: 100,
+                dataIndex: 'cantidad_medida',
+                hidden : true
             },{
                 header: "Ubicacion Fisica",
                  width: 100,
@@ -41,8 +55,7 @@ Ext.define('Infosys_web.view.ordencompra.BuscarProductos2' ,{
                 header: "Precio Venta",
                 width: 100,
                 dataIndex: 'p_venta',
-                align: 'right',
-                renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00")}
+                align: 'right'
             },{
                 header: "Precio Neto",
                 width: 100,
@@ -71,7 +84,7 @@ Ext.define('Infosys_web.view.ordencompra.BuscarProductos2' ,{
             {
                 xtype: 'button',
                 iconCls: 'icon-search',
-                action: 'buscar',
+                action: 'buscarp2',
                 text : 'Buscar'
             }
             ]      

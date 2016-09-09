@@ -1,9 +1,9 @@
 Ext.define('Infosys_web.view.ordencompra.BuscarProductos' ,{
     extend: 'Ext.window.Window',
-    alias : 'widget.buscarproductos',
+    alias : 'widget.buscarproductosord',
     
     requires: ['Ext.toolbar.Paging'],
-    title : 'Busqueda Productos',
+    title : 'Busqueda Productos Orden',
     layout: 'fit',
     autoShow: true,
     width: 1080,
@@ -30,8 +30,21 @@ Ext.define('Infosys_web.view.ordencompra.BuscarProductos' ,{
                 dataIndex: 'codigo'
             },{
                 header: "Nombres",
-                width: 750,
+                width: 650,
                 dataIndex: 'nombre'
+            },{
+                header: "id Unidad Medida",
+                 width: 100,
+                dataIndex: 'id_uni_medida',
+                hidden: true
+            },{
+                header: "id Unidad Medida",
+                 width: 100,
+                dataIndex: 'nom_medida',
+            },{
+                header: "id Unidad Medida",
+                 width: 100,
+                dataIndex: 'cantidad_medida'
             },{
                 header: "Ubicacion Fisica",
                  width: 100,
@@ -41,8 +54,7 @@ Ext.define('Infosys_web.view.ordencompra.BuscarProductos' ,{
                 header: "Precio Venta",
                 width: 100,
                 dataIndex: 'p_venta',
-                align: 'right',
-                renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00")}
+                align: 'right'
             },{
                 header: "Precio Neto",
                 width: 100,
@@ -71,7 +83,7 @@ Ext.define('Infosys_web.view.ordencompra.BuscarProductos' ,{
             {
                 xtype: 'button',
                 iconCls: 'icon-search',
-                action: 'buscar',
+                action: 'buscarprod',
                 text : 'Buscar'
             }
             ]      

@@ -33,7 +33,7 @@ class Productosfact extends CI_Controller {
 	        	$sql_nombre .= "acc.nombre like '%".$nombre."%' and ";
 	        }
 	        
-			$query = $this->db->query('SELECT acc.*, c.nombre as nom_ubi_prod, ca.nombre as nom_uni_medida, m.nombre as nom_marca, fa.nombre as nom_familia, bo.nombre as nom_bodega, ag.nombre as nom_agrupacion, sb.nombre as nom_subfamilia FROM productos acc
+			$query = $this->db->query('SELECT acc.*, c.nombre as nom_ubi_prod, ca.nombre as nom_uni_medida, m.nombre as nom_marca, fa.nombre as nom_familia, bo.nombre as nom_bodega, ag.nombre as nom_agrupacion, sb.nombre as nom_subfamilia, ca.nombre as nom_medida, ca.cantidad as cantidad_medida FROM productos acc
 			left join mae_ubica c on (acc.id_ubi_prod = c.id)
 			left join marcas m on (acc.id_marca = m.id)
 			left join mae_medida ca on (acc.id_uni_medida = ca.id)
@@ -54,9 +54,9 @@ class Productosfact extends CI_Controller {
 			$countAll = $total;
 
 		}else if($familia) {
-			$query = $this->db->query('SELECT acc.*, c.nombre as nom_ubi_prod, ca.nombre as nom_uni_medida,
-			fa.nombre as nom_familia, bo.nombre as nom_bodega, ag.nombre as nom_agrupacion, sb.nombre as nom_subfamilia FROM productos acc
+			$query = $this->db->query('SELECT acc.*, c.nombre as nom_ubi_prod, ca.nombre as nom_uni_medida, m.nombre as nom_marca, fa.nombre as nom_familia, bo.nombre as nom_bodega, ag.nombre as nom_agrupacion, sb.nombre as nom_subfamilia, ca.nombre as nom_medida, ca.cantidad as cantidad_medida FROM productos acc
 			left join mae_ubica c on (acc.id_ubi_prod = c.id)
+			left join marcas m on (acc.id_marca = m.id)
 			left join mae_medida ca on (acc.id_uni_medida = ca.id)
 			left join familias fa on (acc.id_familia = fa.id)
 			left join agrupacion ag on (acc.id_agrupacion = ag.id)
@@ -76,9 +76,9 @@ class Productosfact extends CI_Controller {
 
 			
 		}else if($subfamilia) {
-			$query = $this->db->query('SELECT acc.*, c.nombre as nom_ubi_prod, ca.nombre as nom_uni_medida,
-			fa.nombre as nom_familia, bo.nombre as nom_bodega, ag.nombre as nom_agrupacion, sb.nombre as nom_subfamilia FROM productos acc
+			$query = $this->db->query('SELECT acc.*, c.nombre as nom_ubi_prod, ca.nombre as nom_uni_medida, m.nombre as nom_marca, fa.nombre as nom_familia, bo.nombre as nom_bodega, ag.nombre as nom_agrupacion, sb.nombre as nom_subfamilia, ca.nombre as nom_medida, ca.cantidad as cantidad_medida FROM productos acc
 			left join mae_ubica c on (acc.id_ubi_prod = c.id)
+			left join marcas m on (acc.id_marca = m.id)
 			left join mae_medida ca on (acc.id_uni_medida = ca.id)
 			left join familias fa on (acc.id_familia = fa.id)
 			left join agrupacion ag on (acc.id_agrupacion = ag.id)
@@ -99,9 +99,9 @@ class Productosfact extends CI_Controller {
 			
 
 		}else if($agrupacion) {
-			$query = $this->db->query('SELECT acc.*, c.nombre as nom_ubi_prod, ca.nombre as nom_uni_medida,
-			fa.nombre as nom_familia, bo.nombre as nom_bodega, ag.nombre as nom_agrupacion, sb.nombre as nom_subfamilia FROM productos acc
+			$query = $this->db->query('SELECT acc.*, c.nombre as nom_ubi_prod, ca.nombre as nom_uni_medida, m.nombre as nom_marca, fa.nombre as nom_familia, bo.nombre as nom_bodega, ag.nombre as nom_agrupacion, sb.nombre as nom_subfamilia, ca.nombre as nom_medida, ca.cantidad as cantidad_medida FROM productos acc
 			left join mae_ubica c on (acc.id_ubi_prod = c.id)
+			left join marcas m on (acc.id_marca = m.id)
 			left join mae_medida ca on (acc.id_uni_medida = ca.id)
 			left join familias fa on (acc.id_familia = fa.id)
 			left join agrupacion ag on (acc.id_agrupacion = ag.id)
@@ -122,9 +122,9 @@ class Productosfact extends CI_Controller {
 			
 
 		}else{
-			$query = $this->db->query('SELECT acc.*, c.nombre as nom_ubi_prod, ca.nombre as nom_uni_medida,
-			fa.nombre as nom_familia, bo.nombre as nom_bodega, ag.nombre as nom_agrupacion, sb.nombre as nom_subfamilia FROM productos acc
+			$query = $this->db->query('SELECT acc.*, c.nombre as nom_ubi_prod, ca.nombre as nom_uni_medida, m.nombre as nom_marca, fa.nombre as nom_familia, bo.nombre as nom_bodega, ag.nombre as nom_agrupacion, sb.nombre as nom_subfamilia, ca.nombre as nom_medida, ca.cantidad as cantidad_medida FROM productos acc
 			left join mae_ubica c on (acc.id_ubi_prod = c.id)
+			left join marcas m on (acc.id_marca = m.id)
 			left join mae_medida ca on (acc.id_uni_medida = ca.id)
 			left join familias fa on (acc.id_familia = fa.id)
 			left join agrupacion ag on (acc.id_agrupacion = ag.id)

@@ -7,7 +7,7 @@ Ext.define('Infosys_web.view.ordencompra.Recepcionfinal', {
     title : 'Recepcionar Orden de Compra',
     layout: 'fit',
     autoShow: true,
-    width: 940,
+    width: 1150,
     height: 550,
     modal: true,
     iconCls: 'icon-sheet',
@@ -151,10 +151,24 @@ Ext.define('Infosys_web.view.ordencompra.Recepcionfinal', {
                                     xtype: 'datefield',
                                     fieldCls: 'required',
                                     maxHeight: 25,
-                                    width: 230,
+                                    width: 200,
+                                    labelWidth: 60,
                                     fieldLabel: '<b>FECHA</b>',
                                     itemId: 'fechaordenId',
                                     name: 'fecha',
+                                    value: new Date()
+                                },{
+                                    xtype: 'displayfield',
+                                    width: 20                                          
+                                },{
+                                    xtype: 'datefield',
+                                    fieldCls: 'required',
+                                    maxHeight: 25,
+                                    labelWidth: 90,
+                                    width: 210,
+                                    fieldLabel: '<b>RECEPCION</b>',
+                                    itemId: 'fecharecepcionId',
+                                    name: 'fecha_recepcion',
                                     value: new Date()
                                 }
                                 ]

@@ -3,7 +3,7 @@ Ext.define('Infosys_web.view.guiasdespacho.BuscarFacturas' ,{
     alias : 'widget.buscarfacturasdespacho',
     
     requires: ['Ext.toolbar.Paging'],
-    title : '<b>Factura</b>',
+    title : '<b>Despacha Facturas</b>',
     layout: 'fit',
     autoShow: true,
     width: 680,
@@ -86,7 +86,7 @@ Ext.define('Infosys_web.view.guiasdespacho.BuscarFacturas' ,{
             {
                 xtype: 'button',
                 iconCls: 'icon-search',
-                action: 'buscar',
+                action: 'encuentrafactura',
                 text : 'Buscar'
             }
             ]      

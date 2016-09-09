@@ -43,7 +43,7 @@ class Sii
     const IVA = 19; ///< Tasa de IVA
 
     private static $retry = 10; ///< Veces que se reintentará conectar a SII al usar el servicio web
-    private static $verificar_ssl = false; ///< Indica si se deberá verificar o no el certificado SSL del SII
+    private static $verificar_ssl = true; ///< Indica si se deberá verificar o no el certificado SSL del SII
 
     /**
      * Método que permite asignar el nombre del servidor del SII que se

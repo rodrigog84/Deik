@@ -11,6 +11,249 @@ class Cotizaciones extends CI_Controller {
 		$this->load->database();
 	}
 
+	public function exportPDF2(){
+		$idcotizacion = $this->input->get('idcotizacion');
+
+		$query = $this->db->query('SELECT 
+			ctz.id, ctz.iva, ctz.neto, ctz.afecto, ctz.descuento, ctz.total, ctz.num_cotiza, ctz.telefono_contacto, ctz.email_contacto, ctz.nombre_contacto, cli.nombres as empresa , cli.rut as rut_empresa, cli.direccion as direccion_empresa, cli.fono as fono_empresa, ctz.observaciones, cae.nombre as giro_empresa, c.nombre as ciudad_empresa, v.nombre as nom_vendedor, pa.nombre as conpago FROM cotiza_cotizaciones ctz
+			INNER JOIN clientes cli on (ctz.id_cliente = cli.id)
+			LEFT JOIN cod_activ_econ cae on cli.id_giro = cae.id
+			LEFT JOIN cond_pago pa on cli.id_pago = pa.id
+			LEFT JOIN ciudad c on cli.id_ciudad = c.id
+			LEFT JOIN vendedores v on ctz.id_vendedor = v.id
+			WHERE ctz.id = '.$idcotizacion.'
+		');
+
+		//cotizacion header
+		$row = $query->result();
+		$row = $row[0];
+		//items
+		$items = $this->db->get_where('cotiza_cotizaciones_items', array('id_cotizacion' => $row->id));
+		//variables generales
+		$codigo = $row->num_cotiza;
+		$nombre_contacto = $row->nombre_contacto;
+		$observacion = $row->observaciones;
+		$vendedor = $row->nom_vendedor;
+		$condpago = $row->conpago;
+						
+
+		$html = '
+		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+		<html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Cotizacion Especial</title>
+		<style type="text/css">
+		td {
+			font-size: 16px;
+		}
+		p {
+		}
+		</style>
+		</head>
+
+		<body>
+		<table width="987px" height="602" border="0">
+		  <tr>
+		   <tr>
+		    <td width="150px"><img src="http://localhost/vibrados_web/Infosys_web/resources/images/logomuni.jpg" width="300" height="200" /></td>
+		    <td width="193px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
+		    <p></p>
+		    <p></p>
+		    <p></p>
+		    <p></p>
+		    <p></p>
+		    </td>
+		    </td>
+		    <td width="210px" style="font-size: 20px;text-align:left;vertical-align:text-top"	>
+		          <p>COTIZACION N°: '.$codigo.'</p>
+		          <!--p>&nbsp;</p-->
+		          <p>FECHA EMISION : '.date('d/m/Y').'</p>
+		          <!--p>&nbsp;</p-->
+		          <p>VALIDEZ DE COTIZACION : 3 DIAS</p>
+		          <!--p>&nbsp;</p-->
+			</td>
+		  </tr>
+		  <tr>
+			<td style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:center;" colspan="3"><h1>COTIZACION DE COMPRA Y/O SERVICIO</h1></td>
+		  </tr>
+		  <tr>
+		    <td colspan="3" width="987px" >
+		    	<table width="987px" border="0">
+		    		<tr>
+		    			<td width="197px">DE :</td>
+		    			<td width="395px">SOCIEDAD VIBRADOS CHILE LTDA.</td>
+		    			<td width="197px"></td>
+		    			<td width="197px"></td>
+		    		</tr>
+		    		<tr>
+		    			<td width="197px">a:</td>
+		    			<td width="395px">I. MUNICIPALIDAD DE SAN JAVIER</td>
+		    		</tr>		    		
+		    				
+		    	</table>
+			</td>
+		  </tr>
+		  <tr>
+		    <td colspan="3" >
+		    	<table width="987px" cellspacing="0" cellpadding="0" >
+		      <tr>
+		        <td width="80px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Nro. Linea</td>
+		        <td width="20px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >&nbsp;</td>
+		        <td width="495px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:center;" >Descripci&oacute;n</td>
+		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Cantidad</td>
+		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Precio/Unitario</td>
+		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Total</td>
+		      </tr>';
+		$descripciones = '';
+		$i = 0;
+		$linea=0;
+		$neto=0;
+		foreach($items->result() as $v){
+			//$i = 0;
+			//while($i < 30){
+			$this->db->where('id', $v->id_producto);
+			$producto = $this->db->get("productos");	
+			$producto = $producto->result();
+			$producto = $producto[0];
+			$linea= $linea +1;
+			$subtotal = (($v->neto - $v->descuento) / ($v->cantidad));
+			
+			$neto = $neto + ($v->neto - $v->descuento);
+			$iva = (($neto * 19)/100);
+			//$total = $total + (($v->neto - $v->descuento) + $iva);
+			
+			$html .= '<tr>
+			<td style="text-align:right">'.$linea.'</td>	
+			<td style="text-align:right">&nbsp;&nbsp;</td>			
+			<td style="text-align:left">'.$producto->nombre.'</td>
+			<td style="text-align:right">'.number_format($v->cantidad,0,',','.').'&nbsp;&nbsp;</td>			
+			<td align="right">$ '.number_format($subtotal, 0, ',', '.').'</td>
+			<td align="right">$ '.number_format($v->neto, 0, ',', '.').'</td>
+			</tr>';
+			
+			//}
+			$i++;
+		}
+
+		// RELLENA ESPACIO
+		while($i < 30){
+			$html .= '<tr><td colspan="5">&nbsp;</td></tr>';
+			$i++;
+		}
+
+		$html .= '<tr><td colspan="5">&nbsp;</td></tr></table></td>
+		  </tr>
+		   
+		  <tr>
+		  	<td colspan="2" rowspan="6" style="font-size: 12px;border-bottom:0pt solid black;border-top:0pt solid black;border-left:0pt solid black;border-right:0pt solid black;text-align:left;"></td>
+		  	<td>
+				<table width="296px" border="0">
+					<tr>
+						<td width="150px" style="font-size: 20px;text-align:left;">Neto</td>
+						<td width="146px" style="text-align:right;">$ '. number_format($neto, 0, ',', '.') .'</td>
+					</tr>
+				</table>
+		  	</td>
+		  </tr>	
+		  <tr>
+		  	<td>
+				<table width="296px" border="0">
+					<tr>
+						<td width="150px" style="font-size: 20px;text-align:left;">IVA</td>
+						<td width="146px" style="text-align:right;">$ '. number_format($iva, 0, ',', '.') .'</td>
+					</tr>
+				</table>
+		  	</td>		  
+		  </tr>
+		  <tr>
+		  	<td>
+				<table width="296px" border="0">
+					<tr>
+						<td width="150px" style="font-size: 20px;text-align:left;">Descuento</td>
+						<td width="146px" style="text-align:right;">$ '. number_format($row->descuento, 0, ',', '.') .'</td>
+					</tr>
+				</table>
+		  	</td>		  
+		  </tr>	
+		  <tr>
+		  	<td>
+				<table width="296px" border="1">
+					<tr>
+						<td width="150px" style="font-size: 20px;text-align:left;">Total</td>
+						<td width="146px" style="text-align:right;">$ '. number_format($neto + $iva, 0, ',', '.') .'</td>
+					</tr>
+				</table>
+		  	</td>		  
+		  </tr>
+		  <tr>
+		   	<td>&nbsp;</td>		  
+		  </tr>
+		  <tr>
+		  	<td>&nbsp;</td>		  
+		  </tr>		  		  		  	  
+		 
+		</table>		
+		 <tr>
+		  	<td colspan="2" style="border-top:1pt font-size: 8px;text-align:left;"><p><b>VALOR TOTAL IMPUESTO INCLUIDO</b></p></td>
+		  </tr>
+		  <table border="0">
+		  <tr>
+		  	<td border="0" width="400px" style="font-size: 16px;text-align:left;"><p><b>NOMBRE: SOCIEDAD VIBRADOS CHILE LTDA.</b></p></td>
+		  </tr>
+		   <tr>
+		  	<td border="0" width="350px" style="font-size: 16px;text-align:left;"><p><b>DIRECCION: CIENFUEGOS 1595 SAN JAVIER</b></p></td>
+		  </tr>
+		  <tr>
+		  	<td  border="0" width="400px" style="font-size: 16px;text-align:left;"><p><b>RUT: 77.748.100-2</b></p></td>
+		  </tr>
+		  <tr>
+		  	<td  border="0" width="400px" style="font-size: 16px;text-align:left;"><p><b>FONO: 073-2-321100 073-2-761800</b></p></td>
+		  </tr>
+		 <tr>
+		 <td  border="0" width="400px" style="font-size: 16px;text-align:left;"><p><b>email: vibradoschile@tie.cl</b></p></td>
+		 <td  border="0" width="400px" style="font-size: 16px;text-align:left;"><p><b></b></p></td>
+		 <td  border="0" width="400px" style="font-size: 16px;text-align:left;">'.$vendedor.'</td>
+		 <td  border="0" colspan="3" style="text-align:left;"></td>
+		  </tr>
+		  <tr>
+		 <td width="300px" style="font-size: 16px;text-align:left;"><p><b></b></p></td>
+		 <td width="300px" style="font-size: 16px;text-align:left;"><p><b></b></p></td>
+		 <td width="300px" style="font-size: 16px;text-align:left;">FIRMA Y TIMBRE</td>
+		 <td border="0" colspan="3" style="text-align:left;"></td>
+		  </tr>
+		 <tr>
+		 </table>
+		  
+		</body>
+		</html>
+		';
+		//==============================================================
+		//==============================================================
+		//==============================================================
+
+		include(dirname(__FILE__)."/../libraries/mpdf60/mpdf.php");
+
+		$mpdf= new mPDF(
+			'',    // mode - default ''
+			'',    // format - A4, for example, default ''
+			0,     // font size - default 0
+			'',    // default font family
+			15,    // margin_left
+			15,    // margin right
+			16,    // margin top
+			16,    // margin bottom
+			9,     // margin header
+			9,     // margin footer
+			'L'    // L - landscape, P - portrait
+			);  
+
+		$mpdf->WriteHTML($html);
+		$mpdf->Output("CF_{$codigo}.pdf", "I");
+		
+		exit;
+	}
+
 	public function getAll(){
 
 		$resp = array();
@@ -386,7 +629,7 @@ class Cotizaciones extends CI_Controller {
 		<html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>Untitled Document</title>
+		<title>Cotizacion Normal</title>
 		<style type="text/css">
 		td {
 			font-size: 16px;
@@ -399,7 +642,8 @@ class Cotizaciones extends CI_Controller {
 		<body>
 		<table width="987px" height="602" border="0">
 		  <tr>
-		    <td width="197px"><img src="http://angus.agricultorestalca.cl/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		   <tr>
+		    <td width="197px"><img src="http://localhost/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
@@ -412,7 +656,7 @@ class Cotizaciones extends CI_Controller {
 		          <!--p>&nbsp;</p-->
 		          <p>FECHA EMISION : '.date('d/m/Y').'</p>
 		          <!--p>&nbsp;</p-->
-		          <p>VALIDEZ DE COTIZACION : 15 DIAS</p>
+		          <p>VALIDEZ DE COTIZACION : 3 DIAS</p>
 		          <!--p>&nbsp;</p-->
 		          <p>ESTADO : Pendiente</p>
 			</td>
@@ -438,8 +682,8 @@ class Cotizaciones extends CI_Controller {
 		    		<tr>
 		    			<td width="197px">Giro:</td>
 		    			<td width="395px">'. $row->giro_empresa .'</td>
-		    			<td width="197px">Fax:</td>
-		    			<td width="197px">&nbsp;</td>
+		    			<td width="197px">Vendedor:</td>
+		    			<td width="197px">'. $vendedor .'</td>
 		    		</tr>		    				    		
 		    		<tr>
 		    			<td width="197px">Ciudad:</td>
@@ -460,10 +704,11 @@ class Cotizaciones extends CI_Controller {
 		    <td colspan="3" >
 		    	<table width="987px" cellspacing="0" cellpadding="0" >
 		      <tr>
-		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Cantidad</td>
+		        <td width="80px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Nro. Linea</td>
+		        <td width="20px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >&nbsp;</td>
 		        <td width="395px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:center;" >Descripci&oacute;n</td>
-		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Precio/Unidad</td>
-		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Precio/Oferta</td>
+		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Cantidad</td>
+		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Precio/Unitario</td>
 		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Total</td>
 		      </tr>';
 		$descripciones = '';
@@ -475,21 +720,25 @@ class Cotizaciones extends CI_Controller {
 			$producto = $this->db->get("productos");	
 			$producto = $producto->result();
 			$producto = $producto[0];
-			$totaliva = 
-
+			$linea= $linea +1;
+			$subtotal = (($v->neto - $v->descuento) / ($v->cantidad));
+			
+			$neto = $neto + ($v->neto - $v->descuento);
+			$iva = (($neto * 19)/100);
+			//$total = $total + (($v->neto - $v->descuento) + $iva);
+			
 			$html .= '<tr>
+			<td style="text-align:right">'.$linea.'</td>	
+			<td style="text-align:right">&nbsp;&nbsp;</td>			
+			<td style="text-align:left">'.$producto->nombre.'</td>
 			<td style="text-align:right">'.number_format($v->cantidad,0,'.',',').'&nbsp;&nbsp;</td>			
-			<td style="text-align:left">'.$producto->nombre.'</td>			
+			<td align="right">$ '.number_format($subtotal, 2, '.', ',').'</td>
 			<td align="right">$ '.number_format($v->neto, 0, '.', ',').'</td>
-			<td align="right">$ '.number_format($v->neto - ($v->descuento/$v->cantidad), 0, '.', ',').'</td>
-
-			<td align="right">$ '.number_format($v->total, 0, '.', ',').'</td>
-			</tr>';
+			</tr>';			
 			
 			//}
 			$i++;
 		}
-
 		// RELLENA ESPACIO
 		while($i < 30){
 			$html .= '<tr><td colspan="5">&nbsp;</td></tr>';
@@ -564,7 +813,7 @@ class Cotizaciones extends CI_Controller {
 		//==============================================================
 		//==============================================================
 
-		include(dirname(__FILE__)."/../libraries/MPDF54/mpdf.php");
+		include(dirname(__FILE__)."/../libraries/mpdf60/mpdf.php");
 
 		$mpdf= new mPDF(
 			'',    // mode - default ''
@@ -589,6 +838,7 @@ class Cotizaciones extends CI_Controller {
 	public function enviarMail(){
 
 		$idcotizacion = $this->input->post('idcotiza');
+		$tipo = $this->input->post('tipo');
 		$mensaje = $this->input->post('mensaje') != '' ? $this->input->post('mensaje') : "Envio de Cotizacion Pdf";
 		$email = $this->input->post('email');
 
@@ -612,6 +862,8 @@ class Cotizaciones extends CI_Controller {
 		$observacion = $row->observaciones;
 		$vendedor = $row->nom_vendedor;
 		$condpago = $row->conpago;
+
+		if ($tipo=="1"){
 				
 
 		$html = '
@@ -632,7 +884,8 @@ class Cotizaciones extends CI_Controller {
 		<body>
 		<table width="987px" height="602" border="0">
 		  <tr>
-		   <td width="197px"><img src="http://angus.agricultorestalca.cl/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		   <tr>
+		    <td width="197px"><img src="http://localhost/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
@@ -868,6 +1121,276 @@ class Cotizaciones extends CI_Controller {
 		    }
 		    
 		exit;
+	    }else{
+
+	    $html = '
+		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+		<html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Cotizacion Especial</title>
+		<style type="text/css">
+		td {
+			font-size: 16px;
+		}
+		p {
+		}
+		</style>
+		</head>
+
+		<body>
+		<table width="987px" height="602" border="0">
+		  <tr>
+		   <tr>
+		    <td width="150px"><img src="http://localhost/vibrados_web/Infosys_web/resources/images/logomuni.jpg" width="300" height="200" /></td>
+		    <td width="193px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
+		    <p></p>
+		    <p></p>
+		    <p></p>
+		    <p></p>
+		    <p></p>
+		    </td>
+		    </td>
+		    <td width="210px" style="font-size: 20px;text-align:left;vertical-align:text-top"	>
+		          <p>COTIZACION N°: '.$codigo.'</p>
+		          <!--p>&nbsp;</p-->
+		          <p>FECHA EMISION : '.date('d/m/Y').'</p>
+		          <!--p>&nbsp;</p-->
+		          <p>VALIDEZ DE COTIZACION : 3 DIAS</p>
+		          <!--p>&nbsp;</p-->
+			</td>
+		  </tr>
+		  <tr>
+			<td style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:center;" colspan="3"><h1>COTIZACION DE COMPRA Y/O SERVICIO</h1></td>
+		  </tr>
+		  <tr>
+		    <td colspan="3" width="987px" >
+		    	<table width="987px" border="0">
+		    		<tr>
+		    			<td width="197px">DE :</td>
+		    			<td width="395px">SOCIEDAD VIBRADOS CHILE LTDA.</td>
+		    			<td width="197px"></td>
+		    			<td width="197px"></td>
+		    		</tr>
+		    		<tr>
+		    			<td width="197px">a:</td>
+		    			<td width="395px">I. MUNICIPALIDAD DE SAN JAVIER</td>
+		    		</tr>		    		
+		    				
+		    	</table>
+			</td>
+		  </tr>
+		  <tr>
+		    <td colspan="3" >
+		    	<table width="987px" cellspacing="0" cellpadding="0" >
+		      <tr>
+		        <td width="80px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Nro. Linea</td>
+		        <td width="20px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >&nbsp;</td>
+		        <td width="495px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:center;" >Descripci&oacute;n</td>
+		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Cantidad</td>
+		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Precio/Unitario</td>
+		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Total</td>
+		      </tr>';
+		$descripciones = '';
+		$i = 0;
+		$linea=0;
+		$neto=0;
+		foreach($items->result() as $v){
+			//$i = 0;
+			//while($i < 30){
+			$this->db->where('id', $v->id_producto);
+			$producto = $this->db->get("productos");	
+			$producto = $producto->result();
+			$producto = $producto[0];
+			$linea= $linea +1;
+			$subtotal = (($v->neto - $v->descuento) / ($v->cantidad));
+			
+			$neto = $neto + ($v->neto - $v->descuento);
+			$iva = (($neto * 19)/100);
+			//$total = $total + (($v->neto - $v->descuento) + $iva);
+			
+			$html .= '<tr>
+			<td style="text-align:right">'.$linea.'</td>	
+			<td style="text-align:right">&nbsp;&nbsp;</td>			
+			<td style="text-align:left">'.$producto->nombre.'</td>
+			<td style="text-align:right">'.number_format($v->cantidad,0,',','.').'&nbsp;&nbsp;</td>			
+			<td align="right">$ '.number_format($subtotal, 0, ',', '.').'</td>
+			<td align="right">$ '.number_format($v->neto, 0, ',', '.').'</td>
+			</tr>';
+			
+			//}
+			$i++;
+		}
+
+		// RELLENA ESPACIO
+		while($i < 30){
+			$html .= '<tr><td colspan="5">&nbsp;</td></tr>';
+			$i++;
+		}
+
+		$html .= '<tr><td colspan="5">&nbsp;</td></tr></table></td>
+		  </tr>
+		   
+		  <tr>
+		  	<td colspan="2" rowspan="6" style="font-size: 12px;border-bottom:0pt solid black;border-top:0pt solid black;border-left:0pt solid black;border-right:0pt solid black;text-align:left;"></td>
+		  	<td>
+				<table width="296px" border="0">
+					<tr>
+						<td width="150px" style="font-size: 20px;text-align:left;">Neto</td>
+						<td width="146px" style="text-align:right;">$ '. number_format($neto, 0, ',', '.') .'</td>
+					</tr>
+				</table>
+		  	</td>
+		  </tr>	
+		  <tr>
+		  	<td>
+				<table width="296px" border="0">
+					<tr>
+						<td width="150px" style="font-size: 20px;text-align:left;">IVA</td>
+						<td width="146px" style="text-align:right;">$ '. number_format($iva, 0, ',', '.') .'</td>
+					</tr>
+				</table>
+		  	</td>		  
+		  </tr>
+		  <tr>
+		  	<td>
+				<table width="296px" border="0">
+					<tr>
+						<td width="150px" style="font-size: 20px;text-align:left;">Descuento</td>
+						<td width="146px" style="text-align:right;">$ '. number_format($row->descuento, 0, ',', '.') .'</td>
+					</tr>
+				</table>
+		  	</td>		  
+		  </tr>	
+		  <tr>
+		  	<td>
+				<table width="296px" border="1">
+					<tr>
+						<td width="150px" style="font-size: 20px;text-align:left;">Total</td>
+						<td width="146px" style="text-align:right;">$ '. number_format($neto + $iva, 0, ',', '.') .'</td>
+					</tr>
+				</table>
+		  	</td>		  
+		  </tr>
+		  <tr>
+		   	<td>&nbsp;</td>		  
+		  </tr>
+		  <tr>
+		  	<td>&nbsp;</td>		  
+		  </tr>		  		  		  	  
+		 
+		</table>		
+		 <tr>
+		  	<td colspan="2" style="border-top:1pt font-size: 8px;text-align:left;"><p><b>VALOR TOTAL IMPUESTO INCLUIDO</b></p></td>
+		  </tr>
+		  <table border="0">
+		  <tr>
+		  	<td border="0" width="400px" style="font-size: 16px;text-align:left;"><p><b>NOMBRE: SOCIEDAD VIBRADOS CHILE LTDA.</b></p></td>
+		  </tr>
+		   <tr>
+		  	<td border="0" width="400px" style="font-size: 16px;text-align:left;"><p><b>DIRECCION: CIENFUEGOS 1595 SAN JAVIER</b></p></td>
+		  </tr>
+		  <tr>
+		  	<td  border="0" width="400px" style="font-size: 16px;text-align:left;"><p><b>RUT: 77.748.100-2</b></p></td>
+		  </tr>
+		  <tr>
+		  	<td  border="0" width="400px" style="font-size: 16px;text-align:left;"><p><b>FONO: 073-2-321100 073-2-761800</b></p></td>
+		  </tr>
+		 <tr>
+		 <td  border="0" width="400px" style="font-size: 16px;text-align:left;"><p><b>email: vibradoschile@tie.cl</b></p></td>
+		 <td  border="0" width="400px" style="font-size: 16px;text-align:left;"><p><b></b></p></td>
+		 <td  border="0" width="400px" style="font-size: 16px;text-align:left;">'.$vendedor.'</td>
+		 <td  border="0" colspan="3" style="text-align:left;"></td>
+		  </tr>
+		  <tr>
+		 <td width="300px" style="font-size: 14px;text-align:left;"><p><b></b></p></td>
+		 <td width="300px" style="font-size: 14px;text-align:left;"><p><b></b></p></td>
+		 <td width="300px" style="font-size: 14px;text-align:left;">FIRMA Y TIMBRE</td>
+		 <td border="0" colspan="3" style="text-align:left;"></td>
+		  </tr>
+		 <tr>
+		 </table>
+		  
+		</body>
+		</html>
+		';
+
+		//==============================================================
+		//==============================================================
+		//==============================================================
+        //$html = $header.$header2.$body_data; 
+		$this->load->library("mpdf");
+
+			//include(defined('BASEPATH')."/libraries/MPDF54/mpdf.php");
+			//include(dirname(__FILE__)."/../libraries/MPDF54/mpdf.php");
+
+			$this->mpdf->mPDF(
+				'',    // mode - default ''
+				'',    // format - A4, for example, default ''
+				8,     // font size - default 0
+				'',    // default font family
+				10,    // margin_left
+				5,    // margin right
+				16,    // margin top
+				16,    // margin bottom
+				9,     // margin header
+				9,     // margin footer
+				'L'    // L - landscape, P - portrait
+				);  
+
+			//echo $html; exit;
+
+			$this->mpdf->WriteHTML($html);
+			$file = date("YmdHis").".pdf";
+			$this->mpdf->Output('./tmp/'.$file, 'F');
+
+
+			$this->load->model('facturaelectronica');
+			$email_data = $this->facturaelectronica->get_email();
+
+			if(count($email_data) > 0){
+				$this->load->library('email');
+				$config['protocol']    = $email_data->tserver_intercambio;
+				$config['smtp_host']    = $email_data->host_intercambio;
+				$config['smtp_port']    = $email_data->port_intercambio;
+				$config['smtp_timeout'] = '7';
+				$config['smtp_user']    = $email_data->email_intercambio;
+				$config['smtp_pass']    = $email_data->pass_intercambio;
+				$config['charset']    = 'utf-8';
+				$config['newline']    = "\r\n";
+				$config['mailtype'] = 'html'; // or html
+				$config['validation'] = TRUE; // bool whether to validate email or not      			
+
+				$this->email->initialize($config);		  		
+
+			    $this->email->from($email_data->email_intercambio, NOMBRE_EMPRESA);
+			    $this->email->to($email);
+
+			    //$this->email->bcc(array('rodrigo.gonzalez@info-sys.cl','cesar.moraga@info-sys.cl','sergio.arriagada@info-sys.cl','rene.gonzalez@info-sys.cl')); 
+			    $this->email->subject('Envio de Cotizacion');
+			    $this->email->message($mensaje);
+
+			    $this->email->attach('./tmp/'.$file,'attachment', 'Cotizacion.pdf');			
+
+
+			    try {
+			      $this->email->send();
+			      //var_dump($this->email->print_debugger()); exit;
+			      unlink('./tmp/'.$file);
+			      	        exit;
+			    } catch (Exception $e) {
+			      echo $e->getMessage() . '<br />';
+			      echo $e->getCode() . '<br />';
+			      echo $e->getFile() . '<br />';
+			      echo $e->getTraceAsString() . '<br />';
+			      echo "no";
+
+			    }
+		    }
+		    
+		exit;
+	    	
+	    }
 	}
 }
 

@@ -4,8 +4,11 @@ Ext.define('Infosys_web.model.Orden_compra', {
     fields: [
     	{name: 'id'},
         {name: 'num_orden'},
+        {name: 'num_recepcion'},
         {name: 'nombre'},
-        {name: 'stock'},
+        {name: 'id_vendedor'},
+        {name: 'nom_vendedor'},        
+        {name: 'stock', decimalPrecision:3},
         {name: 'nombre_contacto'},
         {name: 'ciudad'},
         {name: 'comuna'},
@@ -18,16 +21,18 @@ Ext.define('Infosys_web.model.Orden_compra', {
         {name: 'semicumplida'},
         {name: 'emitida'},
         {name: 'giro'},
-        {name: 'valor'},
+        {name: 'valor', decimalPrecision: 3},
         {name: 'direccion'},
         {name: 'empresa'},
         {name: 'descuento'},
-        {name: 'pretotal'},
+        {name: 'pretotal', decimalPrecision: 3},
         {name: 'iva'},
         {name: 'neto'},
         {name: 'afecto'},
         {name: 'total'},
-        {name: 'fecha', type:'date',dateFormat:"Y-m-d"}
+        {name: 'estado'},
+        {name: 'fecha', type:'date',dateFormat:"Y-m-d"},
+        {name: 'fecha_recepcion', type:'date',dateFormat:"Y-m-d"}
 
     ]
 });

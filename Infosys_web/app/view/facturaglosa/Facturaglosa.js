@@ -327,7 +327,6 @@ Ext.define('Infosys_web.view.facturaglosa.Facturaglosa', {
                                 width: 550,
                                 height: 25,
                                 fieldLabel: 'Glosa',
-                                maxLength : 70,
                                 itemId: 'glosaId',
                                 style: 'font-weight: bold;'
                             },

@@ -224,16 +224,10 @@ Ext.define('Infosys_web.view.Pago_caja.Facturas', {
                                             value: 0,
                                             hidden: true
                                         },{
-                                            xtype: 'textareafield',
+                                            xtype: 'textfield',
                                             itemId: 'obsId',
                                             name : 'idobserva',
                                             fieldLabel: 'Id Observacion',
-                                            hidden: true
-                                        },{
-                                            xtype: 'textareafield',
-                                            itemId: 'observaId',
-                                            name : 'observacion',
-                                            fieldLabel: 'Observacion',
                                             hidden: true
                                         },{
                                             xtype: 'textfield',
@@ -487,7 +481,8 @@ Ext.define('Infosys_web.view.Pago_caja.Facturas', {
                             //iconCls: 'icono',
                             scale: 'large',
                             action: 'observaciones',
-                            text: 'OBSERVACIONES'
+                            text: 'OBSERVACIONES',
+                            hidden: true
                         },{
                             xtype: 'button',
                             //iconCls: 'icono',

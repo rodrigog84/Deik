@@ -82,9 +82,8 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                 select: this.selectcondpago
             },
             'generapagoingresar button[action=visualizar]': {
-                click: this.visualizar
+                click: this.grabarfactura                
             },
-
             'facturasvizualizar button[action=salir]': {
                 click: this.salir
             },
@@ -136,9 +135,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
             },
             'observacionesfacturas #rutId': {
                 specialkey: this.special6
-            },
-
-
+            }
 
         });
     },
@@ -237,7 +234,6 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                          view.down("#carroId").setValue(observa.pat_carro);
                          view.down("#fonoId").setValue(observa.fono);
                          view.down("#validaId").setValue(okey);
-                         console.log(okey);
                          view.down("#observaId").focus();
                     }             
                     };
@@ -277,121 +273,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
         if (e.getKey() == e.ENTER) {
             this.generaticket()
         }
-    },
-
-    generaticket: function(){
-
-        var view = this.getPagocajaprincipal();
-        var idcaja = view.down('#cajaId').getValue();
-        var nomcaja = view.down('#nomcajaId').getValue();
-        var comprobante = view.down('#comprobanteId').getValue();
-        var condventa = view.down('#comprobanteId').getValue();
-        var contado = view.down('#efectivonId').getValue();
-        var cheques = view.down('#totchequesnId').getValue();
-        var otros = view.down('#otrosmontosnId').getValue();
-        var idcajero = view.down('#cajeroId').getValue();
-        var nomcajero = view.down('#nomcajeroId').getValue();
-        var recauda = view.down('#recaudaId').getValue();
-        var ticket = view.down('#nombresId').getValue();
-        
-        
-        Ext.Ajax.request({
-            url: preurl + 'preventa/edita3?idpreventa='+ticket,
-            params: {
-                id: 1,
-            },
-            success: function(response){
-                var resp = Ext.JSON.decode(response.responseText);
-                if (resp.success == true) {                     
-                    
-                    if(resp.cliente){
-
-                        var view = Ext.create('Infosys_web.view.Pago_caja.Genera_pago').show();                   
-                        var cliente= resp.cliente;
-                        var tipo_docu = (cliente.id_tip_docu);
-                        var nombre = tipo_docu;
-                        
-                        var idticket = (cliente.id);
-                        var idcliente = (cliente.id_cliente);
-                        if (idcliente == 0){                
-                            var idcliente = 30992;
-                        };
-                        
-                        var id_vendedor = (cliente.id_vendedor);
-                        var neto = (cliente.neto);
-                        var desc = (cliente.desc);
-                        var total = (cliente.total);
-                        var afecto = (neto-desc);
-                        var iva = (total-afecto);
-
-                        Ext.Ajax.request({
-
-                            url: preurl + 'correlativos/generafact?valida='+nombre,
-                            params: {
-                                id: 1
-                            },
-                            success: function(response){
-
-                                var resp = Ext.JSON.decode(response.responseText);
-
-                                if (resp.success == true) {
-                                    var cliente = resp.cliente;
-                                    var correlanue = cliente.correlativo;
-                                    correlanue = (parseInt(correlanue)+1);
-                                    var correlanue = correlanue;
-                                    view.down("#numfacturaId").setValue(correlanue);                    
-                                    
-                                }else{
-                                    Ext.Msg.alert('Correlativo YA Existe');
-                                    return;
-                                }
-
-                            }            
-                        });
-
-                        view.down("#ticketId").setValue(ticket);
-                        view.down("#idticketId").setValue(idticket);
-                        view.down("#netoId").setValue(neto);
-                        view.down("#descuentoId").setValue(desc);
-                        view.down("#tipoDocumentoId").setValue(tipo_docu);
-                        view.down("#ivaId").setValue(iva);                       
-                        view.down("#afectoId").setValue(afecto);
-                        view.down("#totalId").setValue(total);
-                        view.down("#valorpagoId").setValue(total);
-                        view.down("#tipocondpagoId").setValue(cliente.id_pago);
-                        view.down("#recaudaId").setValue(recauda);
-                        view.down("#comprobanteId").setValue(comprobante);
-                        view.down("#netoaId").setValue(Ext.util.Format.number(neto, '0,000'));
-                        view.down("#descuentoaId").setValue(Ext.util.Format.number(desc, '0,000'));
-                        view.down("#ivaaId").setValue(Ext.util.Format.number(iva, '0,000'));
-                        view.down("#afectoaId").setValue(Ext.util.Format.number(afecto, '0,000'));
-                        view.down("#totalaId").setValue(Ext.util.Format.number(total, '0,000'));
-                        view.down("#finaltotalUnformat").setValue(total);                        
-                        view.down("#cajaId").setValue(idcaja);
-                        view.down("#nomcajaId").setValue(nomcaja);
-                        view.down("#cajeroId").setValue(idcajero);
-                        view.down("#nomcajeroId").setValue(nomcajero);
-                        view.down("#contadoId").setValue(contado);
-                        view.down("#chequesId").setValue(cheques);
-                        view.down("#otrosId").setValue(otros);
-                        view.down("#nombre_id").setValue(cliente.nom_cliente);
-                        view.down("#id_cliente").setValue(cliente.id_cliente);
-                        view.down("#tipoCiudadId").setValue(cliente.ciudad);
-                        view.down("#tipoComunaId").setValue(cliente.comuna);
-                        view.down("#giroId").setValue(cliente.giro);
-                        view.down("#direccionId").setValue(cliente.direccion);
-                        view.down("#rutId").setValue(cliente.rut_cliente);
-                        view.down("#idVendedorId").setValue(cliente.id_vendedor);
-                        view.down("#VendedorId").setValue(cliente.nom_vendedor);
-                    } 
-                    }
-                    }
-
-        });   
-       
-              
-       
-    },
+    },    
 
     aperturacaja: function(){
 
@@ -471,76 +353,80 @@ Ext.define('Infosys_web.controller.Pago_caja', {
 
     grabarfactura: function() {
 
-        var viewIngresa = this.getFacturasvizualizar();
+        //var viewIngresa = this.getFacturasvizualizar();
         var view = this.getGenerapagoingresar();
         var fpago = view.down('#fpagoId').getValue();
         var ticketid =  view.down('#idticketId').getValue();
-        var view = this.getGenerapagoingresar();
-        var idcliente = viewIngresa.down('#id_cliente').getValue();
-        var tipo_documento= viewIngresa.down('#tipodocumentoId');
-        var idsucursal= viewIngresa.down('#id_sucursalID').getValue();
-        var vendedor = viewIngresa.down('#vendedorId').getValue();
-        var idvendedor = viewIngresa.down('#idvendedorId').getValue();
-        var numfactura = viewIngresa.down('#numfacturaId').getValue();
-        var fechafactura = viewIngresa.down('#fechafacturaId').getValue();
-        var fechavenc = viewIngresa.down('#fechavencId').getValue();
-        var permite = viewIngresa.down('#permiteId').getValue();
-        var observa = viewIngresa.down('#observaId').getValue();
-        var idobserva = viewIngresa.down('#obsId').getValue();        
-        var stItem = this.getPreventa_detalleStore();
+        var idcliente = view.down('#id_cliente').getValue();
+        var tipo_documento= view.down('#tipoDocumentoId');
+        var tipodoc= view.down('#tipoDocumentoId').getValue();
+        var idsucursal= view.down('#id_sucursalID').getValue();
+        var vendedor = view.down('#VendedorId').getValue();
+        var idvendedor = view.down('#idVendedorId').getValue();
+        var numfactura = view.down('#numfacturaId').getValue();
+        var fechafactura = view.down('#fechafacturaId').getValue(); 
+        var permite = "SI";                    
+
+        var fechavenc = view.down('#fechavencId').getValue();
+        var permite = view.down('#permiteId').getValue();
+        //var observa = viewIngresa.down('#observaId').getValue();
+        var idobserva = view.down('#obsId').getValue();        
         var stPreventa = this.getPreventaStore();
-        var formapago = viewIngresa.down('#tipocondpagoId').getValue();
-        var numcheque = viewIngresa.down('#numchequeId').getValue()
-        var preventa = viewIngresa.down('#preventaId').getValue();
-        var valida2 = "SI";
-        view.down('#valida2Id').setValue(valida2);
+        var formapago = view.down('#tipocondpagoId').getValue();
+        var numcheque = view.down('#numchequeId').getValue()
+        var preventa = view.down('#idticketId').getValue();
+        var idobserva = view.down('#obsId').getValue();        
         var recItem = this.getRecaudacionItemsStore();
+        var valida = view.down('#permiteId').getValue();
+        var valida2 = view.down('#valida2Id').getValue();
+        if (valida == "SI"){
+           Ext.Msg.alert('Alerta', 'Documento ya Generado');
+           return;       
+        }
 
-        console.log(fpago);
+        if (tipodoc == 2 & valida2 == "NO"){
 
+            Ext.Msg.alert('Alerta', 'Debe Cancelar Documento');
+            return; 
+            
+
+        }
+       
         if (!formapago){            
             var formapago = 1;
         }
 
-        if (tipo_documento.getValue()== "BOLETA"){
-            
+        if (tipo_documento.getValue()== 2){            
             permite = "SI";
-        }
+        };
 
-        if (permite == "NO"){
-
-            Ext.Msg.alert('Debe Ingresar Observaciones');
-            return;   
-            
-           
-        }
-
-        if (tipo_documento.getValue()== "FACTURA"){
+       
+        if (tipo_documento.getValue()== 1){
             
             var tipodocumento = 1;
         }
 
-        if (tipo_documento.getValue()== "BOLETA"){
+        if (tipo_documento.getValue()== 2){
             
             var tipodocumento = 2;
         }
 
-        if (tipo_documento.getValue()== "GUIA DESPACHO"){
+        if (tipo_documento.getValue()== 3){
             
             var tipodocumento = 3;
         }
       
-        if (tipo_documento.getValue()== "FACTURA ELECTRONICA"){
+        if (tipo_documento.getValue()== 101){
             
             var tipodocumento = 101;
         }
 
-        if (tipo_documento.getValue()== "FACTURA EXENTA ELECTRONICA"){
+        if (tipo_documento.getValue()== 103){
             
             var tipodocumento = 103;
         }
 
-        if (tipo_documento.getValue()== "GUIA DE DESPACHO ELECTRONICA"){
+        if (tipo_documento.getValue()== 105){
             
             var tipodocumento = 105;
         }
@@ -556,26 +442,28 @@ Ext.define('Infosys_web.controller.Pago_caja', {
             return;   
         }
 
+        var st = this.getPreventa_detalleStore();
+        var ticket = view.down('#idticketId').getValue();
+        st.proxy.extraParams = {ticket : ticket}
+        st.load();
+      
+        var stItem = this.getPreventa_detalleStore();
         var dataItems = new Array();
         stItem.each(function(r){
             dataItems.push(r.data)
         });
-
-        var recItems = new Array();
-        recItem.each(function(r){
-            recItems.push(r.data)
-        });
-
-        Ext.Ajax.request({
+        var myMask = new Ext.LoadMask(Ext.getBody(), {msg:"Grabando..."});
+        myMask.show();   
+        Ext.Ajax.request({            
             url: preurl + 'facturasvizualiza/save',
             params: {
                 idcliente: idcliente,
                 idticket: ticketid,
                 idsucursal: idsucursal,
                 items: Ext.JSON.encode(dataItems),
-                recitems: Ext.JSON.encode(recItems),
+                //recitems: Ext.JSON.encode(recItems),
                 idvendedor : idvendedor,
-                observacion: observa,
+                //observacion: observa,
                 idobserva: idobserva,
                 preventa: preventa,
                 fpago : fpago,
@@ -583,19 +471,22 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                 fechafactura : fechafactura,
                 fechavenc : fechavenc, 
                 tipodocumento : tipodocumento,
-                netofactura: viewIngresa.down('#finaltotalnetonId').getValue(),
-                ivafactura: viewIngresa.down('#finaltotalivanId').getValue(),
-                afectofactura: viewIngresa.down('#finalafectonId').getValue(),
-                totalfacturas: viewIngresa.down('#finaltotalpostId').getValue(),
-                totalfacturasUnformat: viewIngresa.down('#finaltotalUnformat').getValue(),
+                netofactura: view.down('#netoId').getValue(),
+                ivafactura: view.down('#ivaId').getValue(),
+                afectofactura: view.down('#afectoId').getValue(),
+                totalfacturas: view.down('#totalId').getValue(),
+                totalfacturasUnformat: view.down('#finaltotalUnformat').getValue(),
                 formapago: formapago,
                 numcheque: numcheque
             },
             success: function(response){
                 var resp = Ext.JSON.decode(response.responseText);
                 var idfactura= resp.idfactura;
-                view.down('#facturaId').setValue(idfactura);       
-                viewIngresa.close();
+                myMask.hide();
+                view.down('#facturaId').setValue(idfactura);
+                var valida2 = "SI";
+                view.down('#valida2Id').setValue(valida2);
+                       
                 stPreventa.load();
                 window.open(preurl + 'facturas/exportPDF/?idfactura='+idfactura);
 
@@ -648,10 +539,8 @@ Ext.define('Infosys_web.controller.Pago_caja', {
         var recauda =  view.down('#recaudaId').getValue();
         var vali = view.down('#validapagoId').getValue();
         var valor1 =  view.down('#valortotalId').getValue();
-        var valor2 =  view.down('#totalId').getValue();       
-        
-        var viewedit = this.getPagocajaprincipal();
-             
+        var valor2 =  view.down('#totalId').getValue();
+        var viewedit = this.getPagocajaprincipal();             
         viewedit.down('#efectivonId').setValue(contado);
         viewedit.down('#efectivoId').setValue(Ext.util.Format.number(contado, '0,00'));        
         viewedit.down('#totchequesId').setValue(Ext.util.Format.number(cheques, '0,00'));
@@ -713,12 +602,12 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                             var text = response.responseText;
                             var resp = Ext.JSON.decode(response.responseText);
                             var idrecauda= resp.idrecauda;
+                            var numrecauda= resp.numrecauda;
+                            viewedit.down('#comprobanteId').setValue(numrecauda);
                             Ext.Msg.alert('Informacion', 'Creada Exitosamente.');
                             preventa.load();
                             view.close();
-                            if (!vali){
-                            window.open(preurl +'recaudacion/exportRecaudacionPDF/?idrecaudacion='+idrecauda);
-                            };
+                            
                         }
                     });                               
                                                                        
@@ -755,8 +644,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
         var otros = view.down('#otrosId').getValue();
         var banco = view.down('#bancoId').getValue();
         var vali = "SI";
-
-
+        
         if (!contado){
             
             var contado = 0;
@@ -794,7 +682,36 @@ Ext.define('Infosys_web.controller.Pago_caja', {
 
         }
 
-        if (record.nombre == "PAGO CHEQUE ") {
+        if (record.nombre == "CHEQUE AL DIA") {
+
+            if (!banco){
+
+                Ext.Msg.alert('Alerta', 'Debe Seleccionar Banco');
+                return;
+
+            }else{
+
+                var banco = view.down('#bancoId');
+                var stCombo = banco.getStore();
+                var nombrebanco = stCombo.findRecord('id', banco.getValue()).data;
+                var nombrebanco = nombrebanco.nombre;
+                var id_banco = nombrebanco.id;          
+            
+            } 
+
+            var valortotal = ((valorcancela));
+            var valort = (valorcancela);
+            var cheques = (cheques) + (valortotal); 
+                       
+            if (!numcheque){
+
+             Ext.Msg.alert('Alerta', 'Ingrese Numero de Cheque');
+             return; 
+            };
+
+        }
+        
+        if (record.nombre == "CHEQUE A FECHA") {
 
             if (!banco){
 
@@ -860,7 +777,9 @@ Ext.define('Infosys_web.controller.Pago_caja', {
             var otros = (otros) + (valortotal);
             var nombrebanco = "";
             var id_banco = "";
-            var numcheque = 0;                       
+            var numcheque = 0;
+            var valortotal = (valorcancela);
+            var valort = (valorcancela);                     
 
         }
 
@@ -887,7 +806,9 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                 var stCombo = banco.getStore();
                 var nombrebanco = stCombo.findRecord('id', banco.getValue()).data;
                 var nombrebanco = nombrebanco.nombre;
-                var id_banco = nombrebanco.id;          
+                var id_banco = nombrebanco.id;
+                var valortotal = (valorcancela);
+                var valort = (valorcancela);         
             
             }                 
 
@@ -915,19 +836,24 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                 var stCombo = banco.getStore();
                 var nombrebanco = stCombo.findRecord('id', banco.getValue()).data;
                 var nombrebanco = nombrebanco.nombre;
-                var id_banco = nombrebanco.id;          
+                var id_banco = nombrebanco.id;
+                var valortotal = (valorcancela);
+                var valort = (valorcancela);        
             
             }
             
                                                
 
-        }      
-                
+        }
+        
+               
         if (valortotal > valorpago ) {
 
             Ext.Msg.alert('Alerta', 'Valor Mayor a lo  Cancelado');
              return;
         }
+
+       
         
         
         if (!valorcancela){
@@ -949,9 +875,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
              return; 
         };
 
-        var exists = 0;
-
-        
+        var exists = 0;        
         stItem.each(function(r){
             if (r.data.nom_forma == "PAGO CHEQUE "){
             if(r.data.id_record == record.id & r.data.num_cheque == numcheque ){
@@ -959,14 +883,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                 exists = 1;
                 return; 
             }
-            }else{
-
-                if(r.data.id_pago == record.id){
-                Ext.Msg.alert('Alerta', 'El registro ya existe.');
-                exists = 1;
-                return;
-            }
-            }
+            }           
         });
 
         if(exists == 1)
@@ -989,13 +906,21 @@ Ext.define('Infosys_web.controller.Pago_caja', {
             valor_vuelto: valorvuelto
         }));
 
+        var valortotal = view.down('#valortotalId').getValue();
+        var valortotal = valortotal + (valorcancela - valorvuelto);
+        if (valorcancela<valorpago){            
+            var valorsaldo = valorpago - valorcancela;
+            view.down('#valorpagoId').setValue(valorsaldo);
+        }else{
+
+            view.down('#valorpagoId').setValue(cero);
+                       
+        };
+
         view.down('#valorvueltoId').setValue(cero);
         view.down('#valorcancelaId').setValue(cero);
-        var valortotal = ((valorpago) - (valorcancela) - (valorvuelto));
-        view.down('#valorpagoId').setValue(valortotal);
-        var valortotal = valortotal + valorpago;
         view.down('#valortotalId').setValue(valortotal);
-        view.down('#validaId').setValue(valida);
+        view.down('#validaId').setValue(valida);       
         view.down('#contadoId').setValue(contado);
         view.down('#chequesId').setValue(cheques);
         view.down('#otrosId').setValue(otros);
@@ -1119,10 +1044,10 @@ Ext.define('Infosys_web.controller.Pago_caja', {
         var tipodoc = view.down('#tipoDocumentoId').getValue();
         var condicion = view.down('#tipocondpagoId');
         var fechafactura = view.down('#fechafacturaId').getValue();
+        var idobserva = view.down('#obsId').getValue();
         var stCombo = condicion.getStore();
         var record = stCombo.findRecord('id', condicion.getValue()).data;
         dias = record.dias;
-
          var st = this.getPreventa_detalleStore()
          var ticket = view.down('#idId').getValue();
          st.proxy.extraParams = {ticket : ticket}
@@ -1207,10 +1132,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                        newview.down("#finaltotalpostId").setValue(total);
                        newview.down("#finaltotalUnformat").setValue(total_unformat);
                        newview.down("#tipocondpagoId").setValue(pago);
-                       newview.down("#numchequeId").setValue(numcheque);
-
-
-                       
+                       newview.down("#numchequeId").setValue(numcheque);                      
                                    
                     }
               });
@@ -1482,8 +1404,10 @@ Ext.define('Infosys_web.controller.Pago_caja', {
         viewedit.down('#otrosmontosnId').setValue(otros);
         viewedit.down('#otrosmontosId').setValue(Ext.util.Format.number(otros, '0,00'));
         viewedit.down('#fechaaperturaId').setValue(fecha);
-
+        var myMask = new Ext.LoadMask(Ext.getBody(), {msg:"Grabando..."});
+        myMask.show();        
         Ext.Ajax.request({
+            
             url: preurl + 'genera_pagos/grabar',
             params: {
                 cajero: caje,
@@ -1495,6 +1419,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
             },
             success: function(response){
                 var resp = Ext.JSON.decode(response.responseText);
+                myMask.hide();
                 recauda = (resp.recauda);
                 viewedit.down('#recaudaId').setValue(recauda);
                 view.close();
@@ -1505,6 +1430,161 @@ Ext.define('Infosys_web.controller.Pago_caja', {
         viewedit.down("#nombresId").focus() 
 
         
+    },
+
+    generaticket: function(){
+
+        var view = this.getPagocajaprincipal();
+        var idcaja = view.down('#cajaId').getValue();
+        var nomcaja = view.down('#nomcajaId').getValue();
+        var comprobante = view.down('#comprobanteId').getValue();
+        var condventa = view.down('#comprobanteId').getValue();
+        var contado = view.down('#efectivonId').getValue();
+        var cheques = view.down('#totchequesnId').getValue();
+        var otros = view.down('#otrosmontosnId').getValue();
+        var idcajero = view.down('#cajeroId').getValue();
+        var nomcajero = view.down('#nomcajeroId').getValue();
+        var recauda = view.down('#recaudaId').getValue();
+        var ticket = view.down('#nombresId').getValue();
+
+        var comprobante = comprobante +1;
+            
+        
+        Ext.Ajax.request({
+            url: preurl + 'preventa/edita3?idpreventa='+ticket,
+            params: {
+                id: 1,
+            },
+            success: function(response){
+                var resp = Ext.JSON.decode(response.responseText);
+                if (resp.success == true) {                     
+                    
+                    if(resp.cliente){
+
+                        var view = Ext.create('Infosys_web.view.Pago_caja.Genera_pago').show();                   
+                        var cliente= resp.cliente;
+                        var tipo_docu = (cliente.id_tip_docu);
+                        var nombre = tipo_docu;
+                        var idticket = (cliente.id);
+                        var idcliente = (cliente.id_cliente);
+                        if (idcliente == 0){                
+                            var idcliente = 30992;
+                        };
+                        
+                        var id_vendedor = (cliente.id_vendedor);
+                        var neto = (cliente.neto);
+                        var desc = (cliente.desc);
+                        var total = (cliente.total);
+                        var afecto = (neto-desc);
+                        var iva = (total-afecto);
+
+                        if(nombre == 101 || nombre == 103 || nombre == 105){ // FACTURA ELECTRONICA o FACTURA EXENTA
+
+                        // se valida que exista certificado
+                        response_certificado = Ext.Ajax.request({
+                        async: false,
+                        url: preurl + 'facturas/existe_certificado/'});
+
+                        var obj_certificado = Ext.decode(response_certificado.responseText);
+
+                        if(obj_certificado.existe == true){
+
+                            //buscar folio factura electronica
+                            // se buscan folios pendientes, o ocupados hace más de 4 horas
+
+                            response_folio = Ext.Ajax.request({
+                            async: false,
+                            url: preurl + 'facturas/folio_documento_electronico/'+nombre});  
+                            var obj_folio = Ext.decode(response_folio.responseText);
+                            //console.log(obj_folio); 
+                            nuevo_folio = obj_folio.folio;
+                            if(nuevo_folio != 0){
+                                view.down('#numfacturaId').setValue(nuevo_folio);  
+                                habilita = true;
+                            }else{
+                                Ext.Msg.alert('Atención','No existen folios disponibles');
+                                view.down('#numfacturaId').setValue('');  
+
+                                //return
+                            }
+
+                        }else{
+                                Ext.Msg.alert('Atención','No se ha cargado certificado');
+                                view.down('#numfacturaId').setValue('');
+                        }
+                        
+                        }else{        
+
+                        Ext.Ajax.request({
+
+                            url: preurl + 'correlativos/generafact?valida='+nombre,
+                            params: {
+                                id: 1
+                            },
+                            success: function(response){
+
+                                var resp = Ext.JSON.decode(response.responseText);
+
+                                if (resp.success == true) {
+                                    var cliente = resp.cliente;
+                                    var correlanue = cliente.correlativo;
+                                    correlanue = (parseInt(correlanue)+1);
+                                    var correlanue = correlanue;
+                                    view.down("#numfacturaId").setValue(correlanue);                    
+                                    
+                                }else{
+                                    Ext.Msg.alert('Correlativo YA Existe');
+                                    return;
+                                }
+
+                            }            
+                        });
+                    }
+
+                        view.down("#ticketId").setValue(ticket);
+                        view.down("#idticketId").setValue(idticket);
+                        view.down("#netoId").setValue(neto);
+                        view.down("#descuentoId").setValue(desc);
+                        view.down("#tipoDocumentoId").setValue(tipo_docu);
+                        view.down("#ivaId").setValue(iva);                       
+                        view.down("#afectoId").setValue(afecto);
+                        view.down("#totalId").setValue(total);
+                        view.down("#valorpagoId").setValue(total);
+                        view.down("#tipocondpagoId").setValue(cliente.id_pago);
+                        view.down("#recaudaId").setValue(recauda);
+                        view.down("#comprobanteId").setValue(comprobante);
+                        view.down("#netoaId").setValue(Ext.util.Format.number(neto, '0,000'));
+                        view.down("#descuentoaId").setValue(Ext.util.Format.number(desc, '0,000'));
+                        view.down("#ivaaId").setValue(Ext.util.Format.number(iva, '0,000'));
+                        view.down("#afectoaId").setValue(Ext.util.Format.number(afecto, '0,000'));
+                        view.down("#totalaId").setValue(Ext.util.Format.number(total, '0,000'));
+                        view.down("#finaltotalUnformat").setValue(total);                        
+                        view.down("#cajaId").setValue(idcaja);
+                        view.down("#nomcajaId").setValue(nomcaja);
+                        view.down("#cajeroId").setValue(idcajero);
+                        view.down("#nomcajeroId").setValue(nomcajero);
+                        view.down("#contadoId").setValue(contado);
+                        view.down("#chequesId").setValue(cheques);
+                        view.down("#otrosId").setValue(otros);
+                        view.down("#nombre_id").setValue(cliente.nom_cliente);
+                        view.down("#id_cliente").setValue(cliente.id_cliente);
+                        view.down("#tipoCiudadId").setValue(cliente.ciudad);
+                        view.down("#tipoComunaId").setValue(cliente.comuna);
+                        view.down("#giroId").setValue(cliente.giro);
+                        view.down("#direccionId").setValue(cliente.direccion);
+                        view.down("#rutId").setValue(cliente.rut_cliente);
+                        view.down("#idVendedorId").setValue(cliente.id_vendedor);
+                        view.down("#VendedorId").setValue(cliente.nom_vendedor);
+                        view.down("#obsId").setValue(cliente.id_observa);
+                          
+                    } 
+                    }
+                    }
+
+        });   
+       
+              
+       
     },
 
     generarpago: function(){
@@ -1520,13 +1600,23 @@ Ext.define('Infosys_web.controller.Pago_caja', {
         var idcajero = view.down('#cajeroId').getValue();
         var nomcajero = view.down('#nomcajeroId').getValue();
         var recauda = view.down('#recaudaId').getValue();
+
+        var comprobante = (comprobante +1);
        
         if (view.getSelectionModel().hasSelection()) {
             var row = view.getSelectionModel().getSelection()[0];
             var ticket = (row.get('num_ticket'));
             var idticket = (row.get('id'));
             var preventa = (row.get('id_documento'));
+            if (preventa>0){                
+                vali="SI";
+            }else{
+                vali="NO";
+            }
             var idcliente = (row.get('id_cliente'));
+            var observaciones = (row.get('observaciones'));
+            var sucursal = (row.get('id_sucursal'));           
+            
             if (idcliente == 0){                
                 var idcliente = 30992;
             };
@@ -1539,7 +1629,31 @@ Ext.define('Infosys_web.controller.Pago_caja', {
             var total = (row.get('total'));
             var afecto = (neto-desc);
             var iva = (total-afecto);
-                        
+            var fechafactura = (row.get('fecha_venta'))
+            var view = Ext.create('Infosys_web.view.Pago_caja.Genera_pago').show();
+            Ext.Ajax.request({
+                    url: preurl + 'cond_pago/calculodias',
+                    params: {
+                        idpago: id_pago
+                    },
+                    success: function(response){
+                       var resp = Ext.JSON.decode(response.responseText);
+                       var dias = resp.dias;
+                       Ext.Ajax.request({
+                            url: preurl + 'facturas/calculofechas',
+                            params: {
+                                dias: dias,
+                                fechafactura : fechafactura
+                            },
+                            success: function(response){
+                               var resp = Ext.JSON.decode(response.responseText);
+                               var fecha_final = resp.fecha_final;
+                               view.down("#fechavencId").setValue(fecha_final);                                  
+                            }
+                      });                                
+                    }
+            });
+                     
             Ext.Ajax.request({
             url: preurl + 'clientes/getallc?idcliente='+idcliente,
             params: {
@@ -1548,12 +1662,12 @@ Ext.define('Infosys_web.controller.Pago_caja', {
             },
             success: function(response){
                 var resp = Ext.JSON.decode(response.responseText);
+
                 if (resp.success == true) {                     
                     
                     if(resp.cliente){
 
-                        var view = Ext.create('Infosys_web.view.Pago_caja.Genera_pago').show();                   
-                        var nombre = tipo_docu;
+                       var nombre = tipo_docu;
 
                     if(nombre == 101 || nombre == 103 || nombre == 105){ // FACTURA ELECTRONICA o FACTURA EXENTA
 
@@ -1606,8 +1720,13 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                                 if (resp.success == true) {
                                     var cliente = resp.cliente;
                                     var correlanue = cliente.correlativo;
-                                    correlanue = (parseInt(correlanue)+1);
-                                    var correlanue = correlanue;
+                                    correlanue = (parseInt(correlanue)+1);                                    
+                                    if (preventa>0){                
+                                        var correlanue = preventa;
+                                    }else{
+                                        var correlanue = correlanue;
+                                    }
+
                                     view.down("#numfacturaId").setValue(correlanue);                    
                                     
                                 }else{
@@ -1645,7 +1764,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                         view.down("#contadoId").setValue(contado);
                         view.down("#chequesId").setValue(cheques);
                         view.down("#otrosId").setValue(otros);
-
+                        view.down("#id_sucursalID").setValue(sucursal);
                         var cliente = resp.cliente;
                         view.down("#nombre_id").setValue(cliente.nombres);
                         view.down("#id_cliente").setValue(cliente.id);
@@ -1656,6 +1775,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                         view.down("#rutId").setValue(cliente.rut);
                         view.down("#idVendedorId").setValue(id_vendedor);
                         view.down("#VendedorId").setValue(nom_vendedor);
+                        view.down('#permiteId').setValue(vali);
                                                                    
                     }
                     

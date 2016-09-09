@@ -15,12 +15,12 @@
         <!-- </x-bootstrap> -->
         <script src="app.js"></script>
  <script>
+
     var response = Ext.Ajax.request({
         async: false,
         url: preurl + 'login/getDataSesion'
     });
     var data_sess = Ext.decode(response.responseText);
-
     Ext.onReady(function () {
        // _myAppGlobal.getController('Main').modules_security(data_sess.modules);
     });

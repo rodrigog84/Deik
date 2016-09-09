@@ -13,8 +13,6 @@ class Notacredito extends CI_Controller {
 
 	public function save2(){
 		
-		$resp = array();
-
 		$numfactura_asoc = $this->input->post('numfactura_asoc'); //ID OBTENIDO PARA REBAJAR EN CUENTA CORRIENTE
 
 		$idcliente = $this->input->post('idcliente');
@@ -28,6 +26,7 @@ class Notacredito extends CI_Controller {
 		$items = json_decode($this->input->post('items'));
 		$neto = $this->input->post('netofactura');
 		$fiva = $this->input->post('ivafactura');
+		$idtipo = $this->input->post('idtipo');
         $relacionado = $this->input->post('docurelacionado');
 		$fafecto = $this->input->post('afectofactura');
 		$ftotal = $this->input->post('totalfacturas');
@@ -47,11 +46,12 @@ class Notacredito extends CI_Controller {
 	        'num_factura' => $numdocuemnto,
 	        'id_vendedor' => $vendedor,
 	        'sub_total' => $neto,
+	        'id_cond_venta' => $idtipo,
 	        'neto' => $neto,
 	        'iva' => $fiva,
 	        'totalfactura' => $ftotal,
 	        'fecha_factura' => $fechafactura,
-	        'id_factura' => $numfactura,
+	        'id_factura' => $numfactura_asoc,
 	        'fecha_venc' => $fechavenc,
 	        'forma' => 1,
 	          
@@ -71,18 +71,8 @@ class Notacredito extends CI_Controller {
 
 		$this->db->insert('detalle_factura_glosa', $factura_clientes_item);
     	
-		}
-
-		$data3 = array(
-	         'id_factura' => $relacionado,
-		    );
-
-		   
-		    $this->db->where('id', $idfactura);
-		  
-		    $this->db->update('factura_clientes', $data3);
-		
-
+		}			  
+	    
 		/******* CUENTAS CORRIENTES ****/
 
 		 $query = $this->db->query("SELECT cc.id as idcuentacontable FROM cuenta_contable cc WHERE cc.nombre = 'FACTURAS POR COBRAR'");
@@ -95,12 +85,13 @@ class Notacredito extends CI_Controller {
 		 $query = $this->db->query("SELECT co.idcliente, co.id as idcuentacorriente  FROM cuenta_corriente co
 		 							WHERE co.idcuentacontable = '$idcuentacontable' and co.idcliente = '" . $idcliente . "' limit 1");
     	 $row = $query->row();
-		 $idcuentacorriente =  $row->idcuentacorriente;	
+		 
 
 
 
 		if($query->num_rows() > 0){ //sólo se realiza el aumento de cuenta corriente, en caso que exista la cuenta corriente
 
+			$idcuentacorriente =  $row->idcuentacorriente;	
 			// se rebaja detalle
 			$query = $this->db->query("UPDATE detalle_cuenta_corriente SET saldo = saldo - " . $ftotal . " where idctacte = " .  $row->idcuentacorriente . " and numdocumento = " . $numfactura_asoc);			
 			//$idcuentacorriente =  $row->idcuentacorriente;
@@ -158,6 +149,7 @@ class Notacredito extends CI_Controller {
 
             //$detalle_factura = $this->facturaelectronica->get_detalle_factura($idfactura);
             $detalle_factura = $this->facturaelectronica->get_detalle_factura_glosa($idfactura);
+            $datos_factura = $this->facturaelectronica->get_factura($idfactura);
 
             $lista_detalle = array();
             $i = 0;
@@ -171,6 +163,7 @@ class Notacredito extends CI_Controller {
             }
 
 
+            $TpoDocRef = $numfactura_asoc >= 100000 ? 30 : 33;
 
             // datos
             $nota_credito = [
@@ -178,6 +171,7 @@ class Notacredito extends CI_Controller {
                     'IdDoc' => [
                         'TipoDTE' => 61,
                         'Folio' => $numdocuemnto,
+                        'FchEmis' => substr($fechafactura,0,10)
                     ],
                     'Emisor' => [
                         'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
@@ -194,23 +188,25 @@ class Notacredito extends CI_Controller {
                         'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
                         'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
                     ],
-                    'Totales' => [
-                        // estos valores serán calculados automáticamente
-                        'MntNeto' => 0,
-                        'TasaIVA' => \sasco\LibreDTE\Sii::getIVA(),
-                        'IVA' => 0,
-                        'MntTotal' => 0,
-                    ],                  
+					'Totales' => [
+		                // estos valores serán calculados automáticamente
+		                'MntNeto' => isset($datos_factura->neto) ? $datos_factura->neto : 0,
+		                'TasaIVA' => \sasco\LibreDTE\Sii::getIVA(),
+		                'IVA' => isset($datos_factura->iva) ? $datos_factura->iva : 0,
+		                'MntTotal' => isset($datos_factura->totalfactura) ? $datos_factura->totalfactura : 0,
+		            ],                
                 ],
                 'Detalle' => $lista_detalle,
                 'Referencia' => [
-                    'TpoDocRef' => 33,
-                    'FolioRef' => $numfactura,
+                    'TpoDocRef' => $TpoDocRef,
+                    'FolioRef' => $numfactura_asoc,
                     'CodRef' => $tipo_nota_credito,
                     'RazonRef' => $glosa,
                 ]               
             ];          
 
+
+		    // var_dump($nota_credito); exit;
 
             //FchResol y NroResol deben cambiar con los datos reales de producción
             $caratula = [
@@ -333,11 +329,12 @@ class Notacredito extends CI_Controller {
 	        'fecha_venc' => $fechavenc
 	          
 		);
-
 		$this->db->insert('factura_clientes', $factura_cliente); 
 		$idfactura = $this->db->insert_id();
-
+		$neto_total = 0;
 		foreach($items as $v){
+
+			$neto_producto = ($v->totaliva - $v->iva);
 			$factura_clientes_item = array(
 		        'id_producto' => $v->id_producto,
 		        'id_factura' => $idfactura,
@@ -351,6 +348,7 @@ class Notacredito extends CI_Controller {
 		        'fecha' => $fechafactura
 			);
 
+		$neto_total += $neto_producto;
 		$producto = $v->id;
 
 		$this->db->insert('detalle_factura_cliente', $factura_clientes_item);
@@ -435,6 +433,18 @@ class Notacredito extends CI_Controller {
     	
 		}
 
+		$iva_total = $neto_total*(0.19);
+		$total_factura = $neto_total - ($neto - $fafecto) + $iva_total;
+
+		$data_factura = array(
+						'neto' => $neto_total,
+						'iva' => $iva_total,
+						'totalfactura' => $total_factura
+						);
+
+    	$this->db->where('id', $idfactura);
+    	$this->db->update('factura_clientes', $data_factura);    
+
 
 		/******* CUENTAS CORRIENTES ****/
 
@@ -495,6 +505,7 @@ class Notacredito extends CI_Controller {
 			$datos_empresa_factura = $this->facturaelectronica->get_empresa_factura($idfactura);
 
 			$detalle_factura = $this->facturaelectronica->get_detalle_factura($idfactura);
+			$datos_factura = $this->facturaelectronica->get_factura($idfactura);
 
 			$lista_detalle = array();
 			$i = 0;
@@ -502,7 +513,8 @@ class Notacredito extends CI_Controller {
 				$lista_detalle[$i]['NmbItem'] = $detalle->nombre;
 				$lista_detalle[$i]['QtyItem'] = $detalle->cantidad;
 				//$lista_detalle[$i]['PrcItem'] = floor($detalle->precio/1.19);
-				$lista_detalle[$i]['PrcItem'] = round($detalle->precio/1.19,0);
+				$lista_detalle[$i]['PrcItem'] = round($detalle->precio/1.19,3);
+				$lista_detalle[$i]['MontoItem'] = $detalle->neto;
 
 				if($detalle->descuento != 0){
 					//$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
@@ -517,13 +529,14 @@ class Notacredito extends CI_Controller {
 			}
 
 
-
+			$TpoDocRef = $numfactura >= 100000 ? 30 : 33;
 			// datos
 			$nota_credito = [
 			    'Encabezado' => [
 			        'IdDoc' => [
 			            'TipoDTE' => 61,
 			            'Folio' => $numdocuemnto,
+			            'FchEmis' => substr($fechafactura,0,10)
 			        ],
 			        'Emisor' => [
 			            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
@@ -536,28 +549,27 @@ class Notacredito extends CI_Controller {
 			        'Receptor' => [
 			            'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
 			            'RznSocRecep' => substr($datos_empresa_factura->nombre_cliente,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
-			            'GiroRecep' => substr($datos_empresa_factura->giro,0,40), //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+			            'GiroRecep' => substr($datos_empresa_factura->giro,0,30), //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
 			            'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
 			            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
 			        ],
 		            'Totales' => [
 		                // estos valores serán calculados automáticamente
-		                'MntNeto' => 0,
+		                'MntNeto' => isset($datos_factura->neto) ? $datos_factura->neto : 0,
 		                'TasaIVA' => \sasco\LibreDTE\Sii::getIVA(),
-		                'IVA' => 0,
-		                'MntTotal' => 0,
+		                'IVA' => isset($datos_factura->iva) ? $datos_factura->iva : 0,
+		                'MntTotal' => isset($datos_factura->totalfactura) ? $datos_factura->totalfactura : 0,
 		            ],			        
 			    ],
 				'Detalle' => $lista_detalle,
 		        'Referencia' => [
-		            'TpoDocRef' => 33,
-		            'FolioRef' => $numfactura,
+		            'TpoDocRef' => $TpoDocRef,
+		            'FolioRef' => $numfactura_asoc,
 		            'CodRef' => $tipo_nota_credito,
 		            'RazonRef' => $glosa,
 		        ]				
 			];			
-
-
+			//var_dump($nota_credito); exit;
 			//FchResol y NroResol deben cambiar con los datos reales de producción
 			$caratula = [
 			    //'RutEnvia' => '11222333-4', // se obtiene de la firma
@@ -582,6 +594,7 @@ class Notacredito extends CI_Controller {
 			$EnvioDTE->setFirma($Firma);
 			$EnvioDTE->setCaratula($caratula);
 			$EnvioDTE->generar();
+
 			if ($EnvioDTE->schemaValidate()) { // REVISAR PORQUÉ SE CAE CON ESTA VALIDACION
 				
 				$track_id = 0;
@@ -634,8 +647,6 @@ class Notacredito extends CI_Controller {
 
         echo json_encode($resp);
 	}
-
-
 	
 	public function getAllnc(){
 		
@@ -647,22 +658,51 @@ class Notacredito extends CI_Controller {
         $tipo = "11";
         $tipo2 = "102";
 
-
-		$countAll = $this->db->count_all_results("factura_clientes");
+		//$countAll = $this->db->count_all_results("factura_clientes");
 		$data = array();
 		$total = 0;
 
-		if($opcion == "Rut"){
+		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, co.nombre as nombre_docu, v.nombre as nom_vendedor, acc.tipo_documento as id_tip_docu, td.descripcion as tipo_doc	FROM factura_clientes acc
+		left join clientes c on (acc.id_cliente = c.id)
+		left join vendedores v on (acc.id_vendedor = v.id)
+		left join correlativos co on (acc.tipo_documento = co.id)
+		left join tipo_documento td on (acc.tipo_documento = td.id)
+		WHERE acc.tipo_documento in ( '.$tipo.','.$tipo2.')');
+
+		$total = 0;
 		
-			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc	FROM factura_clientes acc
+		foreach ($query->result() as $row)
+			{
+				$total = $total +1;
+			
+			};
+
+		$countAll = $total;
+
+		if($opcion == "Rut"){
+
+			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
 			left join tipo_documento td on (acc.tipo_documento = td.id)
-			WHERE acc.tipo_documento in ('.$tipo.','.$tipo2.') and c.rut = '.$nombres.'
-			order by acc.id desc		
-			limit '.$start.', '.$limit.''		 
+			WHERE acc.tipo_documento in ( '.$tipo.','.$tipo2.') and c.rut = "'.$nombres.'"
+			order by acc.id desc');
+			$total = 0;
+		
+		    foreach ($query->result() as $row)
+			{
+				$total = $total +1;
+			
+			};
 
-		);
+		    $countAll = $total;
+		
+			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc FROM factura_clientes acc
+			left join clientes c on (acc.id_cliente = c.id)
+			left join vendedores v on (acc.id_vendedor = v.id)
+			left join tipo_documento td on (acc.tipo_documento = td.id)
+			WHERE acc.tipo_documento in ( '.$tipo.','.$tipo2.') and c.rut = "'.$nombres.'"
+			order by acc.id desc');
 
 	    }else if($opcion == "Nombre"){
 
@@ -673,8 +713,25 @@ class Notacredito extends CI_Controller {
 	        foreach ($arrayNombre as $nombre) {
 	        	$sql_nombre .= "and c.nombres like '%".$nombre."%' ";
 	        }
+
+
+			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc	FROM factura_clientes acc
+			left join clientes c on (acc.id_cliente = c.id)
+			left join vendedores v on (acc.id_vendedor = v.id)
+			left join tipo_documento td on (acc.tipo_documento = td.id)
+			WHERE acc.tipo_documento in ('.$tipo.','.$tipo2.') ' . $sql_nombre . ''		
+			);
+			$total = 0;
+		
+		    foreach ($query->result() as $row)
+			{
+				$total = $total +1;
+			
+			};
+
+		    $countAll = $total;
 	        	    	
-			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc FROM factura_clientes acc
+			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
 			left join tipo_documento td on (acc.tipo_documento = td.id)
@@ -685,7 +742,6 @@ class Notacredito extends CI_Controller {
 			);
 	 
 		}else if($opcion == "Todos"){
-
 			
 			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
@@ -698,19 +754,42 @@ class Notacredito extends CI_Controller {
 			);
 	
 
-		}else{
-
-			
-		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc FROM factura_clientes acc
+		}else if($opcion == "Numero"){
+		
+			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
+			left join vendedores v on (acc.id_vendedor = v.id)
+			left join tipo_documento td on (acc.tipo_documento = td.id)
+			WHERE acc.num_factura = "'.$nombres.'" AND acc.tipo_documento in ( '.$tipo.','.$tipo2.')');
+
+			$total = 0;
+
+		 	 foreach ($query->result() as $row)
+			{
+				$total = $total +1;
+			
+			}
+
+			$countAll = $total;
+
+			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc	FROM factura_clientes acc
+			left join clientes c on (acc.id_cliente = c.id)
+			left join vendedores v on (acc.id_vendedor = v.id)
+			left join tipo_documento td on (acc.tipo_documento = td.id)
+			WHERE acc.num_factura = "'.$nombres.'" AND acc.tipo_documento in ( '.$tipo.','.$tipo2.')
+			order by acc.id desc
+			limit '.$start.', '.$limit.'');
+
+	    }else{
+			
+			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, td.descripcion as tipo_doc	FROM factura_clientes acc
+				left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
 			left join tipo_documento td on (acc.tipo_documento = td.id)
 			WHERE acc.tipo_documento in ('.$tipo.','.$tipo2.')
 			order by acc.id desc		
-			limit '.$start.', '.$limit.''	
-
+			limit '.$start.', '.$limit.''
 			);
-
 
 		}
 				
@@ -737,12 +816,8 @@ class Notacredito extends CI_Controller {
 		      $ruta2 = substr($rutautoriza, -4, 1);
 		      $row->rut_cliente = ($ruta2."-".$ruta1);
 		     
-		    };
-		    $total = $total +1;
-			
-		 
+		    };		    
 			$data[] = $row;
-			$countAll = $total;
 		}
 
         $resp['success'] = true;

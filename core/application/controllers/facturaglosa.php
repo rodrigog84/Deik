@@ -153,21 +153,10 @@ class Facturaglosa extends CI_Controller {
 			$detalle_factura = $this->facturaelectronica->get_detalle_factura_glosa($idfactura);
 			$datos_factura = $this->facturaelectronica->get_factura($idfactura);
 
-
-			$referencia = array();
-			if($datos_empresa_factura->tipodocref != 0){
-				$referencia['NroLinRef'] = 1;
-				$referencia['TpoDocRef'] = $datos_empresa_factura->tipodocref;
-				$referencia['FolioRef'] = $numfactura;
-				$referencia['FchRef'] = substr($fechafactura,0,10);
-
-			}
-
-
 			$lista_detalle = array();
 			$i = 0;
 			foreach ($detalle_factura as $detalle) {
-				$lista_detalle[$i]['NmbItem'] = substr($detalle->glosa,0,70);
+				$lista_detalle[$i]['NmbItem'] = $detalle->glosa;
 				$lista_detalle[$i]['QtyItem'] = 1;
 				//$lista_detalle[$i]['PrcItem'] = $detalle->precio;
 				//$lista_detalle[$i]['PrcItem'] = round((($detalle->precio*$detalle->cantidad)/1.19)/$detalle->cantidad,0);
@@ -175,7 +164,7 @@ class Facturaglosa extends CI_Controller {
 				//$neto = round($total/1.19,2);
 
 				//$lista_detalle[$i]['PrcItem'] = round($neto/$detalle->cantidad,2);
-				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 || $tipo_caf == 52 ? floor($detalle->neto) : floor($detalle->total);
+				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 ? $detalle->neto : $detalle->total;
 
 				/*if($detalle->descuento != 0){
 					$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
@@ -218,8 +207,7 @@ class Facturaglosa extends CI_Controller {
 		                'MntTotal' => isset($datos_factura->totalfactura) ? $datos_factura->totalfactura : 0,
 		            ],				        
 			    ],
-				'Detalle' => $lista_detalle,
-				'Referencia' => $referencia,
+				'Detalle' => $lista_detalle
 			];
 
 			//FchResol y NroResol deben cambiar con los datos reales de producción

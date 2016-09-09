@@ -1,10 +1,12 @@
-
 Ext.define('Infosys_web.model.Cotizacion', {
     extend: 'Ext.data.Model',
     fields: [
     	{name: 'id'},
         {name: 'id_producto'},
+        {name: 'id_cliente'},
         {name: 'id_descuento'},
+        {name: 'descuento'},
+        {name: 'num_cotiza'},
         {name: 'nombre'},
     	{name: 'codigo'},
     	{name: 'precio_base'},

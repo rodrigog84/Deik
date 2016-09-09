@@ -708,6 +708,9 @@ Ext.define('Infosys_web.controller.General', {
             'cajasprincipal button[action=editarcajas]': {
                 click: this.editarcajas
             },
+            'cajerosprincipal button[action=editarcajeros]': {
+                click: this.editarcajeros
+            },
             'cajasprincipal button[action=cerrarcajas]': {
                 click: this.cerrarcajas
             },

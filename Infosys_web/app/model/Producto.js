@@ -1,9 +1,12 @@
 Ext.define('Infosys_web.model.Producto', {
     extend: 'Ext.data.Model',
     fields: [
-        {name: 'id'},
+       {name: 'id'},
+        {name: 'id_producto'},
         {name: 'nombre'},
+        {name: 'descripcion'},
         {name: 'codigo'},
+        {name: 'codigo_barra'},
         {name: 'p_ult_compra'},
         {name: 'p_may_compra'},
         {name: 'p_venta'},
@@ -13,20 +16,22 @@ Ext.define('Infosys_web.model.Producto', {
         {name: 'id_marca'},
         {name: 'nom_marca'},
         {name: 'id_uni_medida'},
+        {name: 'nom_medida'},
+        {name: 'cantidad_medida', decimalPrecision:3},
         {name: 'nom_ubi_prod'},
         {name: 'id_ubi_prod'},
         {name: 'p_promedio'},
         {name: 'nom_familia'},
         {name: 'id_familia'},
         {name: 'id_bodega'},
+        {name: 'nom_bodega'},
         {name: 'id_agrupacion'},
         {name: 'id_subfamilia'},
         {name: 'foto'},
         {name: 'nom_agrupacion'},
         {name: 'nom_subfamilia'},
         {name: 'stock'},
-        {name: 'nom_bodega'},
-
-        
+        {name: 'valor', decimalPrecision:3},
+        {name: 'valor_lista', decimalPrecision:3}        
     ]
 });

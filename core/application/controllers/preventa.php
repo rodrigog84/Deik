@@ -9,6 +9,240 @@ class Preventa extends CI_Controller {
 		$this->load->database();
 	}
 
+	public function elimina2(){
+
+	    $resp = array();
+	    $idcliente = $this->input->post('idcliente');
+
+	     $query = $this->db->query('SELECT * FROM preventa WHERE id = "'.$idcliente.'" AND estado = ""');
+
+	   	 if($query->num_rows()>0){
+
+	   	 	$query = $this->db->query('DELETE FROM preventa WHERE id = "'.$idcliente.'"');
+	    	$query = $this->db->query('DELETE FROM preventa_detalle WHERE id_ticket = "'.$idcliente.'"');
+
+	    	$resp['success'] = true;
+
+	   	 }else{
+
+	   	 	$resp['success'] = false;
+	   	 	
+
+	   	 };	  
+	   
+	    
+	    echo json_encode($resp);	   
+
+	}
+
+
+	public function getObserva(){
+
+		$resp = array();
+		$idobserva = $this->input->post('idobserva');
+
+		$query = $this->db->query('SELECT * FROM observacion_preventa 
+	   	WHERE id like "'.$idobserva.'"');
+	   	$data = array();
+	   	if($query->num_rows()>0){			   
+		   foreach ($query->result() as $row)
+			{
+			$rutautoriza = $row->rut;
+		   	if (strlen($rutautoriza) == 8){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 3);
+		      $ruta3 = substr($rutautoriza, -7, 3);
+		      $ruta4 = substr($rutautoriza, -8, 1);
+		      $row->rut = ($ruta4.".".$ruta3.".".$ruta2."-".$ruta1);
+		    };
+		    if (strlen($rutautoriza) == 9){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 3);
+		      $ruta3 = substr($rutautoriza, -7, 3);
+		      $ruta4 = substr($rutautoriza, -9, 2);
+		      $row->rut = ($ruta4.".".$ruta3.".".$ruta2."-".$ruta1);		   
+		    };
+		     if (strlen($rutautoriza) == 2){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 1);
+		      $row->rut = ($ruta2."-".$ruta1);		     
+		    };
+		     $row->rutm = $rutautoriza;
+		     $data[] = $row;
+		     $resp['observar'] = $row;
+		     $resp['success'] = true;
+		     $resp['data'] = $data;
+	   		 $resp['existe'] = true;
+			 
+			}	   			
+
+	   		}else{
+	   			$resp['success'] = false;	
+	   		};
+
+	  ;
+	  
+	   echo json_encode($resp);
+	}
+
+	public function validaRut(){
+
+		
+		$resp = array();
+		$rut = $this->input->get('valida');
+        $iddocu = 1;
+		
+		if(strpos($rut,"-")==false){
+	        $RUT[0] = substr($rut, 0, -1);
+	        $RUT[1] = substr($rut, -1);
+	    }else{
+	        $RUT = explode("-", trim($rut));
+	    }
+	    $elRut = str_replace(".", "", trim($RUT[0]));
+	    $factor = 2;
+	    $suma=0;
+	    for($i = strlen($elRut)-1; $i >= 0; $i--):
+	        $factor = $factor > 7 ? 2 : $factor;
+	        $suma += $elRut{$i}*$factor++;
+	    endfor;
+	    $resto = $suma % 11;
+	    $dv = 11 - $resto;
+	    if($dv == 11){
+	        $dv=0;
+	    }else if($dv == 10){
+	        $dv="k";
+	    }else{
+	        $dv=$dv;
+	    }
+
+	   if($dv == trim(strtolower($RUT[1]))){
+
+	   	    $query = $this->db->query('SELECT * FROM observacion_preventa 
+	   	    WHERE rut like "'.$rut.'"');
+
+	   	    if($query->num_rows()>0){
+
+			   $data = array();
+			   foreach ($query->result() as $row)
+				{
+				$rutautoriza = $row->rut;
+			   	if (strlen($rutautoriza) == 8){
+			      $ruta1 = substr($rutautoriza, -1);
+			      $ruta2 = substr($rutautoriza, -4, 3);
+			      $ruta3 = substr($rutautoriza, -7, 3);
+			      $ruta4 = substr($rutautoriza, -8, 1);
+			      $row->rut = ($ruta4.".".$ruta3.".".$ruta2."-".$ruta1);
+			    };
+			    if (strlen($rutautoriza) == 9){
+			      $ruta1 = substr($rutautoriza, -1);
+			      $ruta2 = substr($rutautoriza, -4, 3);
+			      $ruta3 = substr($rutautoriza, -7, 3);
+			      $ruta4 = substr($rutautoriza, -9, 2);
+			      $row->rut = ($ruta4.".".$ruta3.".".$ruta2."-".$ruta1);		   
+			    };
+			     if (strlen($rutautoriza) == 2){
+			      $ruta1 = substr($rutautoriza, -1);
+			      $ruta2 = substr($rutautoriza, -4, 1);
+			      $row->rut = ($ruta2."-".$ruta1);		     
+			    };	   
+				$data[] = $row;
+				}
+	   			$resp['observa'] = $row;
+	   			$resp['existe'] = true;
+	   			$resp['success'] = true;
+	   			echo json_encode($resp);
+	        	return false;
+
+	   		}else{
+	   			$rutautoriza = $rut;
+		   	if (strlen($rutautoriza) == 8){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 3);
+		      $ruta3 = substr($rutautoriza, -7, 3);
+		      $ruta4 = substr($rutautoriza, -8, 1);
+		      $rut = ($ruta4.".".$ruta3.".".$ruta2."-".$ruta1);
+		    };
+		    if (strlen($rutautoriza) == 9){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 3);
+		      $ruta3 = substr($rutautoriza, -7, 3);
+		      $ruta4 = substr($rutautoriza, -9, 2);
+		      $rut = ($ruta4.".".$ruta3.".".$ruta2."-".$ruta1);		   
+		    };
+		     if (strlen($rutautoriza) == 2){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 1);
+		      $rut = ($ruta2."-".$ruta1);		     
+		    };		  
+			
+	        $resp['rut'] = $rut;
+	        $resp['existe'] = false;
+	        $resp['success'] = true;
+	        echo json_encode($resp);
+	        return false;
+
+	   		};
+
+	   		
+	   }else{
+	   	    $resp['success'] = false;
+	   	    echo json_encode($resp);
+	        return false;
+	   }
+	
+	}
+
+	public function saveobserva(){
+
+		$resp = array();
+		$rut = $this->input->post('rut');
+		$nombre = $this->input->post('nombre');
+		$camion = $this->input->post('camion');
+		$carro = $this->input->post('carro');
+		$fono = $this->input->post('fono');
+		$numero = $this->input->post('numero');
+		$observa = $this->input->post('observa');
+		$id = $this->input->post('id');
+
+		if(!$id){
+
+		$observa = array(
+			'rut' => $rut,
+			'nombre' => $nombre,
+	        'id_documento' => $numero,
+	        'fono' => $fono,
+	        'pat_camion' => $camion,
+	        'pat_carro' => $carro,
+	        'observacion' => $observa	          
+		);
+
+		$this->db->insert('observacion_preventa', $observa);
+		$idobserva = $this->db->insert_id();
+
+	    }else{
+
+	    	$observa = array(
+			'rut' => $rut,
+			'nombre' => $nombre,
+	        'id_documento' => $numero,
+	        'fono' => $fono,
+	        'pat_camion' => $camion,
+	        'pat_carro' => $carro,
+	        'observacion' => $observa	          
+			);
+
+			$this->db->where('id', $id);
+		  
+		    $this->db->update('observacion_preventa', $observa);
+		    $idobserva = $id;
+	    	
+
+	    }
+		$resp['success'] = true;
+		$resp['idobserva'] = $idobserva;
+		echo json_encode($resp);
+	}
+
 	public function elimina(){
 
 		$resp = array();
@@ -259,9 +493,11 @@ class Preventa extends CI_Controller {
 	public function exportPDF(){
 		$idpreventa = $this->input->get('idpreventa');
 		$query = $this->db->query('SELECT acc.*, c.nombres as nom_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, v.id as id_vendedor, c.direccion as direccion,
-		c.id_pago as id_pago, suc.direccion as direccion_sucursal, ciu.nombre as ciudad, com.nombre as comuna, cor.nombre as nom_documento, cod.nombre as nom_giro FROM preventa acc
+		c.id_pago as id_pago, suc.direccion as direccion_sucursal, ciu.nombre as ciudad, com.nombre as comuna, cor.nombre as nom_documento, cod.nombre as nom_giro, pag.nombre as nom_pago, ob.rut as rut_observa, ob.nombre as nom_observa, ob.observacion as observacion FROM preventa acc
 		left join correlativos cor on (acc.id_tip_docu = cor.id)
 		left join clientes c on (acc.id_cliente = c.id)
+		left join observacion_preventa ob on (acc.id_observa = ob.id)
+		left join cond_pago pag on (c.id_pago = pag.id)
 		left join vendedores v on (acc.id_vendedor = v.id)
 		left join clientes_sucursales suc on (acc.id_sucursal = suc.id)
 		left join comuna com on (suc.id_comuna = com.id)
@@ -278,7 +514,9 @@ class Preventa extends CI_Controller {
 		$codigo = $row->num_ticket;
 		$nombre_contacto = $row->nom_cliente;
 		$vendedor = $row->nom_vendedor;
-		$observacion = $row->observaciones;
+		$observacion = $row->observacion;
+		$rutobserva = $row->rut_observa;
+		$nom_observa = $row->nom_observa;
 		$fecha = $row->fecha_venta;
 		$datetime = DateTime::createFromFormat('Y-m-d', $fecha);
 		$fecha = $datetime->format('d/m/Y');
@@ -314,8 +552,9 @@ class Preventa extends CI_Controller {
 
 		<body>
 		<table width="987px" height="602" border="0">
+		    </td>
 		  <tr>
-		   <td width="197px"><img src="http://angus.agricultorestalca.cl/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		  <td width="197px"><img src="http://localhost/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
@@ -335,14 +574,21 @@ class Preventa extends CI_Controller {
 		  </tr>
 		  <tr>
 		    <td colspan="3" width="987px" >
-		    	<table width="987px" border="0">
-		    		<tr>
-		    			<td width="197px">Sr.(es):</td>
-		    			<td width="395px">'. $row->nom_cliente.'</td>
-		    			<td width="197px">Rut:</td>
-		    			<td width="197px">'. number_format(substr($row->rut_cliente, 0, strlen($row->rut_cliente) - 1),0,".",".")."-".substr($row->rut_cliente,-1).'</td>
-		    		</tr>
-		    		
+		    <table width="987px" border="0">
+    		<tr>
+			<td width="50px">Sr.(es):</td>
+			<td width="395px">'. $row->nom_cliente.'</td>
+			<td width="100px">Rut:</td>
+			<td width="197px">'. number_format(substr($row->rut_cliente, 0, strlen($row->rut_cliente) - 1),0,".",".")."-".substr($row->rut_cliente,-1).'</td>
+		    </tr>
+		    <tr>
+		    <td width="60px">Vendedor:</td>
+			<td width="195px">'. $row->nom_vendedor.'</td>
+			<td width="50px">Cond. Pago:</td>
+			<td width="100px">'.$row->nom_pago.'</td>
+			<td width="60px">Tipo Doc.:</td>
+			<td width="100px">'.$row->nom_documento.'</td>
+		    </tr>		    	
 		    	</table>
 			</td>
 		  </tr>
@@ -353,7 +599,7 @@ class Preventa extends CI_Controller {
 		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Cantidad</td>
 		        <td width="395px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:center;" >Descripci&oacute;n</td>
 		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Precio/Unidad</td>
-		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Precio/Oferta</td>
+		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Neto</td>
 		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Total</td>
 		      </tr>';
 		$descripciones = '';
@@ -369,7 +615,7 @@ class Preventa extends CI_Controller {
 			$html .= '<tr>
 			<td style="text-align:right">'.$v->cantidad.'&nbsp;&nbsp;</td>			
 			<td style="text-align:left">'.$producto->nombre.'</td>			
-			<td align="right">$ '.number_format($v->neto, 0, '.', ',').'</td>
+			<td align="right">$ '.number_format($v->valor_unit, 0, '.', ',').'</td>
 			<td align="right">$ '.number_format($v->neto - $v->desc, 0, '.', ',').'</td>
 			<td align="right">$ '.number_format($v->total, 0, '.', ',').'</td>
 			</tr>';
@@ -392,13 +638,24 @@ class Preventa extends CI_Controller {
 		  </tr>
 		  
 		  <tr>
-		  	<td colspan="2" rowspan="6" style="font-size: 12px;border-bottom:1pt solid black;border-top:1pt solid black;border-left:1pt solid black;border-right:1pt solid black;text-align:left;">'.$observacion.'</td>
+		  	<td colspan="2" rowspan="6" style="font-size: 20px;border-bottom:1pt solid black;border-top:1pt solid black;border-left:1pt solid black;border-right:1pt solid black;text-align:left;">
+
+		  	<p>Observacion: '.$observacion.'</p>
+		     <!--p>&nbsp;</p-->
+		     <!--p>&nbsp;</p-->
+		     <!--p>&nbsp;</p-->
+		     <p>Rut: '. number_format(substr($row->rut_observa, 0, strlen($row->rut_observa) - 1),0,".",".")."-".substr($row->rut_observa,-1).'</p>
+		     <!--p>&nbsp;</p-->
+		     <p>Nombre: '.$nom_observa.'</p>
+		     <!--p>&nbsp;</p-->
+		    </td>
+
 		  	<td>
 				<table width="296px" border="0">
-					<tr>
-						<td width="150px" style="font-size: 20px;text-align:left;">Pretotal</td>
-						<td width="146px" style="text-align:right;">$ '. number_format($subtotal, 0, '.', ',') .'</td>
-					</tr>
+				<tr>
+					<td width="150px" style="font-size: 20px;text-align:left;">Pretotal</td>
+					<td width="146px" style="text-align:right;">$ '. number_format($subtotal, 0, '.', ',') .'</td>
+				</tr>
 				</table>
 		  	</td>
 		  </tr>
@@ -460,7 +717,9 @@ class Preventa extends CI_Controller {
 		//==============================================================
 		//==============================================================
 
-		include(dirname(__FILE__)."/../libraries/mpdf60/mpdf.php");
+		//include(dirname(__FILE__)."/../libraries/mpdf60/mpdf.php");
+
+		$this->load->library("mpdf");
 
 		$mpdf= new mPDF(
 			'',    // mode - default ''
@@ -525,9 +784,10 @@ class Preventa extends CI_Controller {
 	        'id_vendedor' => $vendedor,
 	        'neto' => $neto,
 	        'id_tip_docu' => $idtipo,
+	        'id_pago' => $idpago,
 	        'desc' => $desc,
 	        'total' => $ftotal,
-	        'observaciones' => $observa
+	        'id_observa' => $observa
 		);
 
 		$this->db->insert('preventa', $preventa); 
@@ -536,16 +796,15 @@ class Preventa extends CI_Controller {
 		$secuencia = 0;
 
 		foreach($items as $v){
+
 			$secuencia = $secuencia + 1;
 			$preventa_detalle = array(
 		        'id_producto' => $v->id_producto,
 		        'id_ticket' => $idpreventa,
-		        'id_descuento' => $v->id_descuento,
 		        'valor_unit' => $v->precio,
 		        'neto' => $v->neto,
 		        'cantidad' => $v->cantidad,
 		        'neto' => $v->neto,
-		        'desc' => $v->dcto,
 		        'iva' => $v->iva,
 		        'total' => $v->total,
 		        'fecha' => $fechapreventa,
@@ -558,13 +817,12 @@ class Preventa extends CI_Controller {
 
 		$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto.'"');
 		 
-		 if($query->num_rows()>0){
+		if($query->num_rows()>0){
 
-		 	$row = $query->first_row();
+		$row = $query->first_row();
+	 	$saldo = ($row->stock)-($v->cantidad); 
 
-		 	$saldo = ($row->stock)-($v->cantidad); 
-
-		 };
+        };
 
 		$datos = array(
          'stock' => $saldo,
@@ -650,12 +908,10 @@ class Preventa extends CI_Controller {
 			$preventa_detalle = array(
 		       'id_producto' => $v->id_producto,
 		        'id_ticket' => $idpreventa,
-		        'id_descuento' => $v->id_descuento,
 		        'valor_unit' => $v->precio_base,
 		        'neto' => $v->neto,
 		        'cantidad' => $v->cantidad,
 		        'neto' => $v->neto,
-		        'desc' => $v->dcto,
 		        'iva' => $v->iva,
 		        'total' => $v->total,
 		        'fecha' => $fechapreventa,
@@ -699,7 +955,6 @@ class Preventa extends CI_Controller {
 	public function save2(){
 
 		$resp = array();
-
 		$idcliente = $this->input->post('idcliente');
 		$numticket = $this->input->post('numeroticket');
 		$idticket = $this->input->post('idticket');
@@ -730,12 +985,10 @@ class Preventa extends CI_Controller {
 			$preventa_detalle = array(
 		        'id_producto' => $v->id_producto,
 		        'id_ticket' => $idpreventa,
-		        'id_descuento' => $v->id_descuento,
 		        'valor_unit' => $v->precio,
 		        'neto' => $v->neto,
 		        'cantidad' => $v->cantidad,
 		        'neto' => $v->neto,
-		        'desc' => $v->dcto,
 		        'iva' => $v->iva,
 		        'total' => $v->total,
 		        'fecha' => $fechapreventa,
@@ -819,7 +1072,7 @@ class Preventa extends CI_Controller {
 	        'id_tip_docu' => $idtipo,
 	        'desc' => $desc,
 	        'total' => $ftotal,
-	        'observaciones' => $observa
+	        'id_observa' => $observa
 		);
 
 		$this->db->where('id', $idticket);
@@ -876,10 +1129,10 @@ class Preventa extends CI_Controller {
 
         if (!$tipo){
 	        $tipo = 1;
+	        $tipo5 = 2;
 	        $tipo2 = 101; // FACTURA ELECTRONICA
 	        $tipo3 = 103; // FACTURA EXENTA ELECTRONICA        
 	        $tipo4 = 105; // GUIA DE DESPACHO ELECTRONICA
-	        $tipo5 = 2; // FACTURA ELECTRONICA
 
 	    };
 
@@ -893,7 +1146,7 @@ class Preventa extends CI_Controller {
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
 			left join correlativos co on (acc.id_tip_docu = co.id)
-			WHERE acc.id_tip_docu in ('.$tipo.',' .$tipo2.',' .$tipo3.',' .$tipo4.',' .$tipo5.') and c.rut = "'.$nombres.'" and acc.estado = "'.$estado.'"
+			WHERE acc.id_tip_docu in ('.$tipo5.','.$tipo.',' .$tipo2.',' .$tipo3.',' .$tipo4.') and c.rut = "'.$nombres.'" and acc.estado = "'.$estado.'"
 			order by acc.id desc'		 
 
 		);
@@ -923,7 +1176,7 @@ class Preventa extends CI_Controller {
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
 			left join correlativos co on (acc.id_tip_docu = co.id)
-			WHERE acc.id_tip_docu in ( '.$tipo.',' .$tipo2.',' .$tipo3.',' .$tipo4.',' .$tipo5.') ' . $sql_nombre . ' and acc.estado = "'.$estado.'"
+			WHERE acc.id_tip_docu in ('.$tipo5.','.$tipo.',' .$tipo2.',' .$tipo3.',' .$tipo4.') ' . $sql_nombre . ' and acc.estado = "'.$estado.'"
 			order by acc.id desc'
 						
 			);
@@ -946,7 +1199,7 @@ class Preventa extends CI_Controller {
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
 			left join correlativos co on (acc.id_tip_docu = co.id)
-			WHERE acc.id_tip_docu in ( '.$tipo.',' .$tipo2.',' .$tipo3.',' .$tipo4.',' .$tipo5.') and acc.estado = "'.$estado.'"
+			WHERE acc.id_tip_docu in ('.$tipo5.','.$tipo.',' .$tipo2.',' .$tipo3.',' .$tipo4.') and acc.estado = "'.$estado.'"
 			order by acc.id desc
 			limit '.$start.', '.$limit.''	
 			
@@ -972,7 +1225,7 @@ class Preventa extends CI_Controller {
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
 			left join correlativos co on (acc.id_tip_docu = co.id)
-			WHERE acc.id_tip_docu in ('.$tipo.',' .$tipo2.',' .$tipo3.',' .$tipo4.',' .$tipo5.') and acc.num_ticket = "'.$nombres.'"
+			WHERE acc.id_tip_docu in ('.$tipo5.','.$tipo.',' .$tipo2.',' .$tipo3.',' .$tipo4.') and acc.num_ticket = "'.$nombres.'"
 			and acc.estado = "'.$estado.'"
 			order by acc.id desc'	
 			
@@ -998,7 +1251,7 @@ class Preventa extends CI_Controller {
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
 			left join correlativos co on (acc.id_tip_docu = co.id)
-			WHERE acc.id_tip_docu in ('.$tipo.',' .$tipo2.',' .$tipo3.',' .$tipo4.',' .$tipo5.') and acc.estado = "'.$estado.'" 
+			WHERE acc.id_tip_docu in ('.$tipo5.','.$tipo.',' .$tipo2.',' .$tipo3.',' .$tipo4.') and acc.estado = "'.$estado.'" 
 			order by acc.id desc'	
 
 			);

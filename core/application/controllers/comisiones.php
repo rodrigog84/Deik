@@ -14,11 +14,22 @@ class Comisiones extends CI_Controller {
 		$resp = array();
         $start = $this->input->post('start');
         $limit = $this->input->post('limit');
-        $nombres = $this->input->post('nombre');
-
-		$countAll = $this->db->count_all_results("vendedores");
+        $nombres = $this->input->post('nombre');		
 		$tipo=1;
 		$tipo2=2;
+		$tipo3=3;
+
+		$query = $this->db->query('SELECT * FROM vendedores	WHERE estado in ( '.$tipo.','.$tipo2.','.$tipo3.') ');
+
+		$total = 0;
+
+	  	foreach ($query->result() as $row)		    
+		{
+			$total = $total +1;			
+		}
+
+		$countAll = $total;
+
 
 		if($nombres){
 			$sql_nombre = "";
@@ -28,7 +39,7 @@ class Comisiones extends CI_Controller {
 	        	$sql_nombre .= "and nombre like '%".$nombre."%' ";
 	        }
 	        
-			$query = $this->db->query('SELECT * FROM vendedores	WHERE estado in ( '.$tipo.','.$tipo2.') ' . $sql_nombre . '');
+			$query = $this->db->query('SELECT * FROM vendedores	WHERE estado in ( '.$tipo.','.$tipo2.','.$tipo3.') ' . $sql_nombre . '');
 
 			$total = 0;
 
@@ -41,8 +52,9 @@ class Comisiones extends CI_Controller {
 			
 		}else{
 			
-			$query = $this->db->query('SELECT * FROM vendedores	WHERE estado = 1');
-			
+			$query = $this->db->query('SELECT * FROM vendedores	WHERE estado in ( '.$tipo.','.$tipo2.','.$tipo3.')
+			order by id desc		
+			limit '.$start.', '.$limit.'');
 		}
 
 		$data = array();
@@ -79,7 +91,7 @@ class Comisiones extends CI_Controller {
 	
 	public function exportarExcelcomision(){
 
-          header("Content-type: application/vnd.ms-excel"); 
+            header("Content-type: application/vnd.ms-excel"); 
           
           	$columnas = json_decode($this->input->get('cols'));
             $fecha = $this->input->get('fecha');
@@ -89,8 +101,9 @@ class Comisiones extends CI_Controller {
             $fecha2 = $this->input->get('fecha2');
             list($dia, $mes, $anio) = explode("/",$fecha2);
             $fecha4 = $anio ."-". $mes ."-". $dia;
-            $tipo=1;
-            $tipo2=2;
+            $tipo=101;
+            $tipo1=2;
+            $tipo2=105;
 
           if($id){
 
@@ -113,8 +126,8 @@ class Comisiones extends CI_Controller {
                 $query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor  FROM factura_clientes acc
                 left join clientes c on (acc.id_cliente = c.id)
                 left join vendedores v on (acc.id_vendedor = v.id)
-                WHERE acc.tipo_documento in ( '.$tipo.','.$tipo2.') and acc.id_vendedor = "'.$id.'" and acc.fecha_factura between "'.$fecha3.'"  AND "'.$fecha4.'"
-                order by acc.tipo_documento');
+                WHERE acc.tipo_documento in ( '.$tipo.','.$tipo1.','.$tipo2.') and acc.id_vendedor = "'.$id.'" and acc.fecha_factura between "'.$fecha3.'"  AND "'.$fecha4.'"
+                order by acc.tipo_documento, acc.num_factura');
             };            
 
             $users = $query->result_array();
@@ -132,6 +145,7 @@ class Comisiones extends CI_Controller {
             echo "</tr>";                  
             echo "<tr>";
             echo "<td>FACTURA</td>";
+            echo "<td>TIPO</td>";
             echo "<td>FECHA</td>";
             echo "<td>VENCIMIENTO</td>";
             echo "<td>RUT</td>";
@@ -141,8 +155,20 @@ class Comisiones extends CI_Controller {
               
             foreach($users as $v){
 
+              if ($v['tipo_documento']==101){
+            	$tip = "FAC";
+              };
+              if ($v['tipo_documento']==105){
+            	$tip = "G/D";
+              };
+              if ($v['tipo_documento']==2){
+            	$tip = "BOL";
+              };
+              if ($v['tipo_documento']==105 and ($v['id_factura'] == 0)){
+            	
               echo "<tr>";
               echo "<td>".$v['num_factura']."</td>";
+              echo "<td>".$tip."</td>";
               echo "<td>".$v['fecha_factura']."</td>";
               echo "<td>".$v['fecha_venc']."</td>";
               echo "<td>".$v['rut_cliente']."</td>";
@@ -150,6 +176,20 @@ class Comisiones extends CI_Controller {
               echo "<td>".$v['sub_total']."</td>";
               $comisiona = (round(($v['sub_total'] * $comision)/100));
               echo "<td>".$comisiona."</td>";
+              }else{
+              	
+              echo "<tr>";
+              echo "<td>".$v['num_factura']."</td>";
+              echo "<td>".$tip."</td>";
+              echo "<td>".$v['fecha_factura']."</td>";
+              echo "<td>".$v['fecha_venc']."</td>";
+              echo "<td>".$v['rut_cliente']."</td>";
+              echo "<td>".$v['nombre_cliente']."</td>";
+              echo "<td>".$v['sub_total']."</td>";
+              $comisiona = (round(($v['sub_total'] * $comision)/100));
+              echo "<td>".$comisiona."</td>";
+              };
+
             }
         
               echo '</table>';
@@ -215,7 +255,7 @@ class Comisiones extends CI_Controller {
 		<body>
 		<table width="987px" height="602" border="0">
 		  <tr>
-		    <td width="197px"><img src="http://angus.agricultorestalca.cl/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		   <td width="197px"><img src="http://localhost/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>

@@ -420,24 +420,29 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
                                                             var cantidad = obj.total
                                                             var detalle_factura = obj.data;
                                                             var total = 0;
+                                                            var neto = 0;
                                                             for(i=0;i<cantidad;i++){
                                                                 stItms.add(new Infosys_web.model.Productos.Item({
                                                                     id: detalle_factura[i].id_producto,
-                                                                    idproducto: detalle_factura[i].id_producto,
+                                                                    id_producto: detalle_factura[i].id_producto,
                                                                     nombre: detalle_factura[i].nombre,
                                                                     precio: detalle_factura[i].precio,
                                                                     cantidad: detalle_factura[i].cantidad,
-                                                                    neto: (parseInt(detalle_factura[i].neto/ 1.19)),
+                                                                    //neto: (parseInt(detalle_factura[i].neto/ 1.19)),
+                                                                    neto: (parseInt(detalle_factura[i].totalproducto/ 1.19)),
                                                                     dcto: detalle_factura[i].descuento,
-                                                                    totaliva: detalle_factura[i].neto,
+                                                                    totaliva: detalle_factura[i].totalproducto,
                                                                     iva: detalle_factura[i].iva          
                                                                 }));
 
-                                                                total += parseInt(detalle_factura[i].neto);
+                                                                //total += parseInt(detalle_factura[i].neto);
+                                                                total += parseInt(detalle_factura[i].totalproducto);
+                                                                neto += parseInt(detalle_factura[i].totalproducto/ 1.19);
+
 
                                                             }
 
-                                                            var neto = parseInt(total/1.19);
+                                                            //var neto = parseInt(total/1.19);
                                                             var iva = total - neto;
                                                             me.down('#finaltotalId').setValue(total);
                                                             me.down('#finaltotalnetoId').setValue(neto);
@@ -593,11 +598,12 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
                             height: 210,
                             columns: [
                                     { text: 'Producto',  dataIndex: 'nombre', width: 250 },
-                                    { text: 'IdProducto',  dataIndex: 'id_producto', width: 250,hidden: true },
-                                    { text: 'Precio Unitario',  dataIndex: 'precio', flex:1, renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,000")} },
-                                    { text: 'Cantidad',  dataIndex: 'cantidad', width: 100, renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,000")} },
-                                    { text: 'Descuento',  dataIndex: 'dcto', width: 100, renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,000")} },
-                                    { text: 'Total',  dataIndex: 'totaliva', flex:1, renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,000")} }
+                                    { text: 'IdProducto',  dataIndex: 'id_producto', width: 350,hidden: true },
+                                    { text: 'Cantidad',  dataIndex: 'cantidad', flex:1 },
+                                    { text: 'Precio Unitario',  dataIndex: 'precio', flex:1, align: 'right', decimalPrecision:2},
+                                    { text: 'Neto',  dataIndex: 'neto', flex:1, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")}, hidden: true },
+                                    { text: 'Iva',  dataIndex: 'iva', flex:1, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")}, hidden: true },
+                                    { text: 'Total',  dataIndex: 'totaliva', flex:1, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} }
                                 ]
                             },{
                         xtype: 'fieldset',
@@ -615,7 +621,7 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
                             width: 200,
                             name : 'neto',
                             itemId: 'finaltotalnetoId',
-                            readOnly: true,
+                            //readOnly: true,
                             fieldLabel: '<b>VALOR NETO</b>',
                             labelAlign: 'top'
                         },
@@ -626,7 +632,7 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
                             width: 200,
                             name : 'afecto',
                             itemId: 'finalafectoId',
-                            readOnly: true,
+                            //readOnly: true,
                             fieldLabel: '<b>AFECTO</b>',
                             labelAlign: 'top'
                         },{xtype: 'splitter'},
@@ -636,7 +642,7 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
                             fieldCls: 'required',
                             name : 'iva',
                             itemId: 'finaltotalivaId',
-                            readOnly: true,
+                            //readOnly: true,
                             fieldLabel: '<b>IVA</b>',
                             labelAlign: 'top'
                             //renderer: function(valor){return Ext.util.Format.number(parseInt(iva),"0.000")} 
@@ -646,7 +652,7 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
                             width: 300,
                             name : 'total',
                             itemId: 'finaltotalId',
-                            readOnly: true,
+                            //readOnly: true,
                             fieldLabel: '<b>TOTAL DOCUMENTO</b>',
                             labelAlign: 'top'
                         },{

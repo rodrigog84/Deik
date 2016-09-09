@@ -2,7 +2,7 @@ Ext.define('Infosys_web.store.Guiasdespachopendientes', {
     extend: 'Ext.data.Store',
     model: 'Infosys_web.model.Guiasdespacho',
     autoLoad: true,
-    pageSize: 14,
+    pageSize: 21,
     
     proxy: {
         type: 'ajax',

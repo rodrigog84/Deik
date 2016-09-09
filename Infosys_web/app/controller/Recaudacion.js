@@ -36,10 +36,6 @@ Ext.define('Infosys_web.controller.Recaudacion', {
         selector: 'editapagos'
     }
 
-
-
-
-
     ],
     //init es lo primero que se ejecuta en el controller
     //especia de constructor
@@ -84,9 +80,37 @@ Ext.define('Infosys_web.controller.Recaudacion', {
             },
             'recaudacionprincipal button[action=Editapago]': {
                 click: this.Editapago
+            },
+            'recaudacionprincipal button[action=actualizar]': {
+                click: this.actualizar
             }
            
         });
+    },
+
+    actualizar: function(){
+
+        var myMask = new Ext.LoadMask(Ext.getBody(), {msg:"Actualizando..."});
+        myMask.show();
+        Ext.Ajax.request({
+            url: preurl + 'recaudacion/actualizar',
+
+            params: {
+                id: 1
+            },
+            success: function(response){
+
+                var resp = Ext.JSON.decode(response.responseText);
+                if (resp.success == true) {
+                    myMask.hide();
+                    Ext.Msg.alert('Alerta', 'Actualizacion Exitosa');
+                    return;
+                    
+                }
+            }
+
+        });       
+
     },
     
     Editapago: function(){

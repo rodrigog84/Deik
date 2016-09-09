@@ -30,8 +30,7 @@ Ext.define('Infosys_web.view.recaudacion.Principal' ,{
         header: "Caja",
         flex: 1,
         align: 'right',
-        dataIndex: 'nom_caja'
-               
+        dataIndex: 'nom_caja'               
     },{
         header: "Id_cajero",
         flex: 1,
@@ -132,6 +131,12 @@ Ext.define('Infosys_web.view.recaudacion.Principal' ,{
                 iconCls : 'icon-pdf',
                 text: 'Libro Recaudacion PDF',
                 action:'exportarlibrorecaudacion'
+            },{
+                xtype: 'button',
+                iconCls : 'icon-pdf',
+                text: 'Actualizar',
+                action:'actualizar',
+                hidden: true
             },'->',{
                 width: 250,
                 xtype: 'textfield',

@@ -2,7 +2,7 @@ Ext.define('Infosys_web.store.Factura2', {
     extend: 'Ext.data.Store',
     model: 'Infosys_web.model.Factura',
     autoLoad: true,
-    pageSize: 14,
+    //pageSize: 14,
     
     proxy: {
         type: 'ajax',

@@ -109,7 +109,6 @@ class Login extends CI_Controller {
 
 	}
 	public function getDataSesion(){
-
 		if($this->session->userdata('is_ok')){
 			$data = array(
 				"nombre"=> $this->session->userdata('nombre'),

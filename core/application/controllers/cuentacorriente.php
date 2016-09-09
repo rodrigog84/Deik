@@ -949,14 +949,13 @@ class Cuentacorriente extends CI_Controller {
 		</head>
 
 		<body>
-		<td width="197px"><img src="http://angus.agricultorestalca.cl/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		 <td width="197px"><img src="http://92.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
 		    <p>8 ORIENTE 1378 - Talca - Chile</p>
 		    <p>Fonos: (71)2 233369</p>
 		    <p>http://</p>
-		    </td>
 		    </td>
 		    <td width="296px" style="font-size: 16px;text-align:left;vertical-align:text-top"	>
 		          <p>FECHA EMISION : '.date('d/m/Y').'</p>
@@ -1095,7 +1094,7 @@ $header = '
 		<body>
 		<table width="987px" height="602" border="0">
 		  <tr>
-		    <td width="197px"><img src="http://angus.agricultorestalca.cl/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		    <td width="197px"><img src="http://92.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
@@ -1374,14 +1373,14 @@ $header = '
 		</head>
 
 		<body>
-		<td width="197px"><img src="http://angus.agricultorestalca.cl/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		 <td width="197px"><img src="http://92.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
 		    <p>8 ORIENTE 1378 - Talca - Chile</p>
 		    <p>Fonos: (71)2 233369</p>
 		    <p>http://</p>
-		   
+		    </td>
 		    <td width="296px" style="font-size: 16px;text-align:left;vertical-align:text-top"	>
 		          <p>FECHA EMISION : '.date('d/m/Y').'</p>
 			</td>
@@ -1581,7 +1580,7 @@ $header = '
 		</head>
 
 		<body>
-		<td width="197px"><img src="http://angus.agricultorestalca.cl/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		 <td width="197px"><img src="http://92.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
@@ -1815,14 +1814,14 @@ $header = '
 		</head>
 
 		<body>
-		<td width="197px"><img src="http://angus.agricultorestalca.cl/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		 <td width="197px"><img src="http://92.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
 		    <p>8 ORIENTE 1378 - Talca - Chile</p>
 		    <p>Fonos: (71)2 233369</p>
 		    <p>http://</p>
-		   
+		    </td>
 		    <td width="296px" style="font-size: 16px;text-align:left;vertical-align:text-top"	>
 		          <p>COMPROBANTE N°: '.$datas_encabezado['numcomprobante'].'</p>
 		          <!--p>&nbsp;</p-->
@@ -2001,13 +2000,14 @@ $body_header = '<tr>
 		<body>
 		<table width="987px" height="602" border="0">
 		  <tr>
-		  <td width="197px"><img src="http://angus.agricultorestalca.cl/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		   <td width="197px"><img src="http://92.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
 		    <p>8 ORIENTE 1378 - Talca - Chile</p>
 		    <p>Fonos: (71)2 233369</p>
 		    <p>http://</p>
+		    </td>
 		   
 		    <td width="296px" style="font-size: 16px;text-align:left;vertical-align:text-top"	>
 		          <p>FECHA EMISION : '.date('d/m/Y').'</p>

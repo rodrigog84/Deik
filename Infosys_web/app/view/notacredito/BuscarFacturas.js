@@ -3,7 +3,7 @@ Ext.define('Infosys_web.view.notacredito.BuscarFacturas' ,{
     alias : 'widget.buscarfacturas',
     
     requires: ['Ext.toolbar.Paging'],
-    title : '<b>Factura</b>',
+    title : '<b>Facturas</b>',
     layout: 'fit',
     autoShow: true,
     width: 680,
@@ -78,7 +78,7 @@ Ext.define('Infosys_web.view.notacredito.BuscarFacturas' ,{
             {
                 xtype: 'button',
                 iconCls: 'icon-search',
-                action: 'buscar',
+                action: 'buscarfac',
                 text : 'Buscar'
             }
             ]      

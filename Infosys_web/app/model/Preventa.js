@@ -23,7 +23,9 @@ Ext.define('Infosys_web.model.Preventa', {
     	{name: 'neto'},
     	{name: 'desc'},
     	{name: 'total'},
-        {name: 'id_documento'}
+        {name: 'id_documento'},
+        {name: 'id_observa'},
+        
         
     	
     ]

@@ -71,28 +71,7 @@ Ext.define('Infosys_web.view.notacredito.Notacreditoglosa', {
                                             store: 'Tipo_documento.Selectornc',
                                             valueField: 'id',
                                             displayField: 'nombre'
-                                        },/*{
-                                            xtype: 'textfield',
-                                            name: 'id_documento',
-                                            itemId: 'tipodocumentoId',
-                                            hidden: true
-                                          
                                         },{
-                                            xtype: 'textfield',
-                                            name: 'id_factura',
-                                            itemId: 'facturaId',
-                                            hidden: true
-                                          
-                                        },{
-                                            xtype: 'textfield',
-                                            width: 450,
-                                            fieldLabel: '<b>DOCUMENTO</b>',
-                                            name: 'nom_documento',
-                                            itemId: 'nomdocumentoId',
-                                            value: 12,
-                                            readOnly: true
-                                          
-                                        },*/{
                                             xtype: 'displayfield',
                                             width: 40                                          
                                         },{
@@ -144,8 +123,7 @@ Ext.define('Infosys_web.view.notacredito.Notacreditoglosa', {
 
                                         }
                                     ]
-                                },
-                                {
+                                },{
                                     xtype: 'fieldcontainer',
                                     height: 35,
                                     width: 462,
@@ -467,9 +445,9 @@ Ext.define('Infosys_web.view.notacredito.Notacreditoglosa', {
                             height: 210,
                             columns: [
                                     { text: 'Glosa',  dataIndex: 'glosa', width: 780 },
-                                    { text: 'Neto',  dataIndex: 'neto', width: 120, renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,000")} },
-                                    { text: 'Iva',  dataIndex: 'iva', width: 120, renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,000")} },
-                                    { text: 'Total',  dataIndex: 'total', width: 120, renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,000")} }
+                                    { text: 'Neto',  dataIndex: 'neto', width: 120, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} },
+                                    { text: 'Iva',  dataIndex: 'iva', width: 120, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} },
+                                    { text: 'Total',  dataIndex: 'total', width: 120, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} }
                                 ]
                             },{
                         xtype: 'fieldset',
@@ -487,7 +465,7 @@ Ext.define('Infosys_web.view.notacredito.Notacreditoglosa', {
                             width: 200,
                             name : 'neto',
                             itemId: 'finaltotalnetoId',
-                            readOnly: true,
+                            //readOnly: true,
                             fieldLabel: '<b>VALOR NETO</b>',
                             labelAlign: 'top'
                         },
@@ -498,7 +476,7 @@ Ext.define('Infosys_web.view.notacredito.Notacreditoglosa', {
                             width: 200,
                             name : 'afecto',
                             itemId: 'finalafectoId',
-                            readOnly: true,
+                            //readOnly: true,
                             fieldLabel: '<b>AFECTO</b>',
                             labelAlign: 'top'
                         },{xtype: 'splitter'},
@@ -508,7 +486,7 @@ Ext.define('Infosys_web.view.notacredito.Notacreditoglosa', {
                             fieldCls: 'required',
                             name : 'iva',
                             itemId: 'finaltotalivaId',
-                            readOnly: true,
+                            //readOnly: true,
                             fieldLabel: '<b>IVA</b>',
                             labelAlign: 'top'
                             //renderer: function(valor){return Ext.util.Format.number(parseInt(iva),"0.000")} 
@@ -518,7 +496,7 @@ Ext.define('Infosys_web.view.notacredito.Notacreditoglosa', {
                             width: 300,
                             name : 'total',
                             itemId: 'finaltotalId',
-                            readOnly: true,
+                            //readOnly: true,
                             fieldLabel: '<b>TOTAL DOCUMENTO</b>',
                             labelAlign: 'top'
                         },{

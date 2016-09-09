@@ -9,6 +9,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
              'Notacreditop',
              'Clientes',
              'Factura2',
+             'Factura4',
              'Productosf',
              'Productos',
              'Tipo_documento',
@@ -114,11 +115,9 @@ Ext.define('Infosys_web.controller.Notacredito', {
             'notacreditoingresar #tipodocumentoId': {
                 select: this.selectItemdocuemento
             },
-
-
             'notacreditoglosa #tipodocumentoId': {
                 select: this.selectItemdocuementoglosa
-            },            
+            },      
 
             'notacreditoingresar button[action=buscarvendedor]': {
                 click: this.buscarvendedor
@@ -172,6 +171,12 @@ Ext.define('Infosys_web.controller.Notacredito', {
             'buscarfacturas button[action=seleccionarfactura]': {
                 click: this.seleccionarfactura
             },
+            'buscarfacturas button[action=buscarfac]': {
+                click: this.buscarfac
+            },
+            'buscarfacturas2 button[action=buscarfac2]': {
+                click: this.buscarfac2
+            },
             'notacreditoprincipal button[action=exportarexcelnotacredito]': {
                 click: this.exportarexcelnotacredito
             },
@@ -220,7 +225,11 @@ Ext.define('Infosys_web.controller.Notacredito', {
         var numdocumento = viewIngresa.down('#numfacturaId').getValue();
         var fechafactura = viewIngresa.down('#fechafacturaId').getValue();
         var numfactura_asoc = viewIngresa.down('#numfactId').getValue();
-        var docurelacionado = viewIngresa.down('#factId').getValue();       
+        var docurelacionado = viewIngresa.down('#factId').getValue();
+        var valorneto = viewIngresa.down('#finaltotalnetoId').getValue();
+        var valoriva = viewIngresa.down('#finaltotalivaId').getValue();
+        var totalfactura= valorneto + valoriva;
+     
         
         var fechavenc = viewIngresa.down('#fechavencId').getValue();
         var stItem = this.getNotacreditoItemsStore();
@@ -229,7 +238,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
         if(numdocumento==0){
             Ext.Msg.alert('Ingrese Datos a La Factura');
             return;   
-            }
+        }
 
         var dataItems = new Array();
         stItem.each(function(r){
@@ -255,7 +264,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
                 netofactura: viewIngresa.down('#finaltotalnetoId').getValue(),
                 ivafactura: viewIngresa.down('#finaltotalivaId').getValue(),
                 afectofactura: viewIngresa.down('#finalafectoId').getValue(),
-                totalfacturas: viewIngresa.down('#finaltotalpostId').getValue()
+                totalfacturas: totalfactura
             },
              success: function(response){
                 var resp = Ext.JSON.decode(response.responseText);
@@ -335,19 +344,13 @@ Ext.define('Infosys_web.controller.Notacredito', {
       
 
         
-
-        if(totalfin>totfactura ){  // se validan los datos sólo si es factura
-            Ext.Msg.alert('Alerta', 'Valor no Puedes Ser Superior a Factura.');
-            return false;
-        }else{
-
             stItem.add(new Infosys_web.model.Nota.Item2({
                     glosa: glosa,
                     neto: neto,
                     iva: iva,
                     total: total             
             }));
-        }; 
+       
        
         cero="";
         cero2=0;
@@ -403,7 +406,8 @@ Ext.define('Infosys_web.controller.Notacredito', {
        if (nombre){
           var edit =  Ext.create('Infosys_web.view.notacredito.BuscarFacturas2').show();
           var st = this.getFactura2Store();
-          st.proxy.extraParams = {nombre : nombre};
+          st.proxy.extraParams = {nombre : nombre,
+                                  opcion: "Cliente"};
           st.load();
        }else {
           Ext.Msg.alert('Alerta', 'Debe seleccionar Cliente.');
@@ -469,41 +473,8 @@ Ext.define('Infosys_web.controller.Notacredito', {
         if(numero==0){
             var edit = Ext.create('Infosys_web.view.notacredito.BuscarClientes2');            
                   
-        }else{
-       
-        if (numero == 10){
-            var dig = (Ext.util.Format.substr(rut,8,1));
-        };
-
-        if (numero == 9){
-            var dig = (Ext.util.Format.substr(rut,7,1));          
-
-        };
-
-        if (numero == 8){
-            var dig = (Ext.util.Format.substr(rut,6,1));          
-
-        };
-
-        if (numero == 7){
-            var dig = (Ext.util.Format.substr(rut,5,1));          
-
-        };
-
-        if (numero == 3){
-            var dig = (Ext.util.Format.substr(rut,1,1));          
-
-        };
-
-        //console.log(dig);
-
-        if (dig != "-"){
-
-            Ext.Msg.alert('Rut Erroneo Ingrese Guion');
-            view.down("#rutId").setValue(cero);
-            return;           
-
-        };
+        }else{     
+        
 
         Ext.Ajax.request({
             url: preurl + 'clientes/validaRut?valida='+rut,
@@ -546,8 +517,6 @@ Ext.define('Infosys_web.controller.Notacredito', {
         });       
         }
     },
-
-
 
     mnotacreditoglosa: function(){
         var view = Ext.create('Infosys_web.view.notacredito.Notacreditoglosa').show();
@@ -775,6 +744,26 @@ Ext.define('Infosys_web.controller.Notacredito', {
         st.load();
     },
 
+    buscarfac: function(){
+        
+        var view = this.getBuscarfacturas();
+        var st = this.getFactura2Store()
+        var nombre = view.down('#nombreId').getValue()
+        st.proxy.extraParams = {nombre : nombre,
+                                opcion : "Numero"}
+        st.load();
+    },
+
+     buscarfac2: function(){
+        
+        var view = this.getBuscarfacturas2();
+        var st = this.getFactura2Store()
+        var nombre = view.down('#nombreId').getValue()
+        st.proxy.extraParams = {nombre : nombre,
+                                opcion : "Numero"}
+        st.load();
+    },
+
     exportarexcelnotacredito: function(){
               
            Ext.create('Infosys_web.view.notacredito.Exportar1').show();
@@ -802,7 +791,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
 
         if (fecha > fecha2) {
         
-               Ext.Msg.alert('Alerta', 'Fechas Incorrectas');
+            Ext.Msg.alert('Alerta', 'Fechas Incorrectas');
             return;          
 
         };
@@ -881,9 +870,9 @@ Ext.define('Infosys_web.controller.Notacredito', {
         var idfacturaval = view.down('#factactId').getValue();
         var numfactura = view.down('#numfactId').getValue();
         var precio = ((view.down('#precioId').getValue()));
-        var precioun = ((view.down('#precioId').getValue())/ 1.19);        
-        var neto = ((cantidad * precio));
-        var total = ((neto * 1.19));
+        var precioun = ((view.down('#precioId').getValue())/1.19);
+        var total = ((cantidad * precio));
+        var neto = ((total / 1.19));
         var exists = 0;
         var iva = (total - neto );
         var totaliva = (total);
@@ -913,8 +902,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
         if(rut.length==0 ){  // se validan los datos sólo si es factura
             Ext.Msg.alert('Alerta', 'Debe Ingresar Datos a la Factura.');
             return false;
-        };
-        
+        };      
              
 
         if(idfactura){
@@ -1027,7 +1015,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
                         id: producto,
                         id_producto: producto,
                         nombre: nomproducto,
-                        precio: precio,
+                        precio: precioun,
                         cantidad: cantidad,
                         neto: neto,
                         totaliva: totaliva,
@@ -1152,7 +1140,8 @@ Ext.define('Infosys_web.controller.Notacredito', {
        if (nombre){
           var edit =  Ext.create('Infosys_web.view.notacredito.BuscarFacturas').show();
           var st = this.getFactura2Store();
-          st.proxy.extraParams = {nombre : nombre};
+          st.proxy.extraParams = {nombre : nombre,
+                                  opcion: "Cliente"};
           st.load();
        }else {
           Ext.Msg.alert('Alerta', 'Debe seleccionar Cliente.');
@@ -1361,11 +1350,16 @@ Ext.define('Infosys_web.controller.Notacredito', {
         var stItem = this.getProductosItemsStore();
         var stNotacredito = this.getNotacreditoStore();
 
+        var netofactura = viewIngresa.down('#finaltotalnetoId').getValue();
+        var ivafactura =  viewIngresa.down('#finaltotalivaId').getValue();
+        var afectofactura = viewIngresa.down('#finalafectoId').getValue();
+        var totalfactura = ( netofactura + ivafactura );       
+
 
         if(numdocumento==0){
             Ext.Msg.alert('Ingrese Datos a La Factura');
             return;   
-            }
+        }
 
 
         var tipo_nota_credito = 0;
@@ -1402,7 +1396,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
                 netofactura: viewIngresa.down('#finaltotalnetoId').getValue(),
                 ivafactura: viewIngresa.down('#finaltotalivaId').getValue(),
                 afectofactura: viewIngresa.down('#finalafectoId').getValue(),
-                totalfacturas: viewIngresa.down('#finaltotalpostId').getValue(),
+                totalfacturas: totalfactura,
                 tipo_nota_credito : tipo_nota_credito
             },
              success: function(response){
@@ -1427,7 +1421,6 @@ Ext.define('Infosys_web.controller.Notacredito', {
         var viewport = this.getPanelprincipal();
         viewport.removeAll();
     },
-
    
 
     validarut: function(){
@@ -1441,40 +1434,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
             var edit = Ext.create('Infosys_web.view.notacredito.BuscarClientes');            
                   
         }else{
-       
-        if (numero == 10){
-            var dig = (Ext.util.Format.substr(rut,8,1));
-        };
-
-        if (numero == 9){
-            var dig = (Ext.util.Format.substr(rut,7,1));          
-
-        };
-
-        if (numero == 8){
-            var dig = (Ext.util.Format.substr(rut,6,1));          
-
-        };
-
-        if (numero == 7){
-            var dig = (Ext.util.Format.substr(rut,5,1));          
-
-        };
-
-        if (numero == 3){
-            var dig = (Ext.util.Format.substr(rut,1,1));          
-
-        };
-
         //console.log(dig);
-
-        if (dig != "-"){
-
-            Ext.Msg.alert('Rut Erroneo Ingrese Guion');
-            view.down("#rutId").setValue(cero);
-            return;           
-
-        };
 
         Ext.Ajax.request({
             url: preurl + 'clientes/validaRut?valida='+rut,
@@ -1583,6 +1543,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
             var idproducto = (row.data.id_producto);
             var nomproducto = (row.data.nombre);
             var idfactura = (row.data.id_factura);
+            var pventa = (row.data.p_venta);
 
             Ext.Ajax.request({
                     url: preurl + 'notacredito/validaproducto',
@@ -1600,7 +1561,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
                       viewIngresa.down('#productoId').setValue(idproducto);
                       viewIngresa.down('#nomproductoId').setValue(nomproducto);
                       viewIngresa.down('#codigoId').setValue(row.data.codigo);
-                      viewIngresa.down('#precioId').setValue(row.data.p_venta);
+                      viewIngresa.down('#precioId').setValue(pventa);
                       viewIngresa.down('#factactId').setValue(row.data.id_factura);
                       view.close();
                     }
