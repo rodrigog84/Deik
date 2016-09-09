@@ -983,7 +983,7 @@ Ext.define('Infosys_web.controller.Preventa', {
         var secuencia = secuencia + 1;
 
         if (!descuento){
-            this.recalculardescuentopro();  
+            this.recalculardescuentopro2();  
             var descuento = view.down('#totdescuentoId').getValue();   
 
         };
@@ -1516,7 +1516,7 @@ Ext.define('Infosys_web.controller.Preventa', {
         var dcto = view.down('#finaldescuentoId').getValue();
 
         stItem.each(function(r){
-            pretotal = ((pretotal) + (r.data.total))
+            pretotal = (pretotal) + (parseInt(r.data.total))
             //iva = (parseInt(iva) + parseInt(r.data.iva))
             //neto = (parseInt(neto) + parseInt(r.data.neto))
         });
@@ -1532,7 +1532,7 @@ Ext.define('Infosys_web.controller.Preventa', {
         view.down('#finaltotalnetoId').setValue(Ext.util.Format.number(neto, '0'));
         view.down('#finaltotalivaId').setValue(Ext.util.Format.number(iva, '0'));
         view.down('#finalafectoId').setValue(Ext.util.Format.number(afecto, '0'));
-        view.down('#finalpretotalId').setValue(Ext.util.Format.number(pretotalfinal, '0,000'));
+        //view.down('#finalpretotalId').setValue(Ext.util.Format.number(pretotalfinal, '0,000'));
     },
 
     
