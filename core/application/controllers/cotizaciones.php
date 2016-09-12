@@ -491,7 +491,7 @@ class Cotizaciones extends CI_Controller {
 
 		foreach($items as $v){
 			$cotiza_cotizaciones_items = array(
-		        'id_producto' => $v->id,
+		        'id_producto' => $v->id_producto,
 		        'id_cotizacion' => $idcotizacion,
 		        'subtotal' => $v->precio_base,
 		        'id_descuento' => $v->id_descuento,
@@ -577,7 +577,7 @@ class Cotizaciones extends CI_Controller {
 
 		foreach($items as $v){
 			$cotiza_cotizaciones_items = array(
-		       'id_producto' => $v->id,
+		       'id_producto' => $v->id_producto,
 		        'id_cotizacion' => $idcotiza,
 		        'subtotal' => $v->precio_base,
 		        'id_descuento' => $v->id_descuento,

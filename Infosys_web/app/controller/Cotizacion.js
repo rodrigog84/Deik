@@ -2035,7 +2035,6 @@ Ext.define('Infosys_web.controller.Cotizacion', {
                 idcontacto: idcontacto,
                 items: Ext.JSON.encode(dataItems),
                 datacliente: Ext.JSON.encode(datacliente),
-                items: Ext.JSON.encode(dataItems),
                 descuento: viewIngresa.down('#descuentovalorId').getValue(),
                 neto: viewIngresa.down('#finaltotalnetoId').getValue(),
                 iva: viewIngresa.down('#finaltotalivaId').getValue(),
