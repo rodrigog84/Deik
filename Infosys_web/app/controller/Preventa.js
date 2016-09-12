@@ -1003,11 +1003,11 @@ Ext.define('Infosys_web.controller.Preventa', {
         var cero2= 0;
         
         var tot = ((cantidad * precio) - descuento);
-        var neto = ((tot / 1.19));
+        var neto = (Math.round(tot / 1.19));
         var exists = 0;
         var iva = (tot - neto);
         var neto = (tot - iva);
-        var total = ((neto + iva ));
+        var total = (neto + iva );
 
         
         if(!producto){            
@@ -1709,11 +1709,11 @@ Ext.define('Infosys_web.controller.Preventa', {
         };
         
         var tot = ((cantidad * precio) - descuento);
-        var neto = ((tot / 1.19));
+        var neto = (Math.round(tot / 1.19));
         var exists = 0;
         var iva = (tot - neto);
         var neto = (tot - iva);
-        var total = ((neto + iva ));
+        var total = (neto + iva );
         
         if(!producto){            
             Ext.Msg.alert('Alerta', 'Debe Seleccionar un Producto');
