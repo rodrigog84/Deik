@@ -301,22 +301,25 @@ class Facturasvizualiza extends CI_Controller {
 	    $this->db->update('preventa', $preventa);
 
 	    $items = $this->db->get_where('preventa_detalle', array('id_ticket' => $idticket));
+	    $neto_total = 0;
 
-		foreach($items->result() as $v){
+	    		foreach($items->result() as $v){
 			
+			$neto_producto = round((round($v->total,0) - round($v->iva,0)),0);
 			$factura_clientes_item = array(
 		        'id_producto' => $v->id_producto,
 		        'id_factura' => $idfactura,
 		        'num_factura' => $numfactura,
 		        'precio' => $v->valor_unit,
 		        'cantidad' => $v->cantidad,
-		        'neto' => $v->total,
-		        'descuento' => $v->desc,
-		        'iva' => $v->iva,
+		        'neto' => $neto_producto,
+		        'descuento' => round($v->desc,0),
+		        'iva' => round($v->iva,0),
 		        'totalproducto' => $v->total,
 		        'fecha' => $fechafactura
 			);
 
+		$neto_total += $neto_producto;
 		$producto = $v->id_producto;
 		$this->db->insert('detalle_factura_cliente', $factura_clientes_item);
 
@@ -374,6 +377,19 @@ class Facturasvizualiza extends CI_Controller {
 		$this->db->insert('existencia_detalle', $datos2);
 		
 		}
+
+		$iva_total = round($neto_total*(0.19),0);
+		$total_factura = $neto_total + $iva_total;
+
+		$data_factura = array(
+						'neto' => $neto_total,
+						'iva' => $iva_total,
+						'totalfactura' => $total_factura
+						);
+
+    	$this->db->where('id', $idfactura);
+    	$this->db->update('factura_clientes', $data_factura);    			
+
 
 		$this->Bitacora->logger("I", 'factura_clientes', $idfactura);
 		$resp['success'] = true;
@@ -483,14 +499,15 @@ class Facturasvizualiza extends CI_Controller {
 				//$lista_detalle[$i]['PrcItem'] = round($neto/$detalle->cantidad,2);
 				//$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 ? floor($detalle->precio/1.19) : floor($detalle->precio);
 
-				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 || $tipo_caf == 52 ? floor(($detalle->totalproducto - $detalle->iva)/$detalle->cantidad) : floor($detalle->precio);
+				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 || $tipo_caf == 52 ? round($detalle->precio/1.19,3) : round($detalle->precio,3);
 				if($tipo_caf == 33){
-					$lista_detalle[$i]['MontoItem'] = ($detalle->totalproducto - $detalle->iva);
+					$lista_detalle[$i]['MontoItem'] = $detalle->neto;
 				}				
 
 				if($detalle->descuento != 0){
-					$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
-					$lista_detalle[$i]['DescuentoPct'] = $porc_descto;		
+					//$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
+					//$lista_detalle[$i]['DescuentoPct'] = $porc_descto;	
+					$lista_detalle[$i]['DescuentoMonto'] = round($detalle->descuento,0); //DESCUENTO DEBE SER ENTERO	
 					//$lista_detalle[$i]['PrcItem'] =- $lista_detalle[$i]['PrcItem']*$porc_descto;
 
 				}
