@@ -797,12 +797,16 @@ class Preventa extends CI_Controller {
 
 		foreach($items as $v){
 
+			if(!$v->dcto){
+				$v->dcto=0;
+			};
 			$secuencia = $secuencia + 1;
 			$preventa_detalle = array(
 		        'id_producto' => $v->id_producto,
 		        'id_ticket' => $idpreventa,
 		        'valor_unit' => $v->precio,
 		        'neto' => $v->neto,
+		        'desc' => $v->dcto,
 		        'cantidad' => $v->cantidad,
 		        'neto' => $v->neto,
 		        'iva' => $v->iva,
