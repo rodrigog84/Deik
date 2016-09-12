@@ -1,9 +1,9 @@
 Ext.util.Format.thousandSeparator = '.';
 //variables globales
 
-//var gbl_site = 'http://localhost/Deik/';
+var gbl_site = 'http://localhost/Deik/';
 
-var gbl_site = 'http://192.168.1.10/Deik/';
+//var gbl_site = 'http://192.168.1.10/Deik/';
 var preurl = gbl_site + 'core/index.php/';
 var preurl_img = gbl_site + 'core/archivos/';
 var preurl_js = gbl_site + 'Infosys_web/';

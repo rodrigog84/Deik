@@ -75,7 +75,7 @@ Ext.define('Infosys_web.view.cotizaciones.BuscarProductos2' ,{
             {
                 xtype: 'button',
                 iconCls: 'icon-search',
-                action: 'buscar',
+                action: 'buscarprocoti',
                 text : 'Buscar'
             }
             ]      
