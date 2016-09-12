@@ -352,20 +352,22 @@ Ext.define('Infosys_web.controller.Pago_caja', {
     },
 
     grabarfactura: function() {
-
         //var viewIngresa = this.getFacturasvizualizar();
+
         var view = this.getGenerapagoingresar();
+        var bolEnable = true;
+        view.down('#vizualiza').setDisabled(bolEnable);
         var fpago = view.down('#fpagoId').getValue();
         var ticketid =  view.down('#idticketId').getValue();
         var idcliente = view.down('#id_cliente').getValue();
-        var tipo_documento= view.down('#tipoDocumentoId');
-        var tipodoc= view.down('#tipoDocumentoId').getValue();
-        var idsucursal= view.down('#id_sucursalID').getValue();
+        var tipo_documento = view.down('#tipoDocumentoId');
+        var tipodoc = view.down('#tipoDocumentoId').getValue();
+        var idsucursal = view.down('#id_sucursalID').getValue();
         var vendedor = view.down('#VendedorId').getValue();
         var idvendedor = view.down('#idVendedorId').getValue();
         var numfactura = view.down('#numfacturaId').getValue();
         var fechafactura = view.down('#fechafacturaId').getValue(); 
-        var permite = "SI";                    
+        var permite = "SI";                
 
         var fechavenc = view.down('#fechavencId').getValue();
         var permite = view.down('#permiteId').getValue();

@@ -215,7 +215,6 @@ Ext.define('Infosys_web.view.Pago_caja.Genera_pago', {
                                     itemId: 'id_sucursalID',
                                     fieldLabel: '<b>Sucursal</b>',
                                     hidden: true
-
                                 },{
                                     xtype: 'numberfield',
                                     fieldCls: 'required',
@@ -810,6 +809,8 @@ Ext.define('Infosys_web.view.Pago_caja.Genera_pago', {
                             //labelWidth: 30,
                             maxHeight: 40,
                             action: 'visualizar',
+                            itemId: 'vizualiza',
+                            disabled : false,  
                             text: 'Genera Documento'
                         },{
                             xtype: 'tbseparator'
