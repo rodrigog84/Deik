@@ -2853,18 +2853,19 @@ public function cargacontribuyentes(){
 				//$neto = round($total/1.19,2);
 
 				//$lista_detalle[$i]['PrcItem'] = round($neto/$detalle->cantidad,2);
-				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 || $tipo_caf == 52 ? round($detalle->precio/1.19,3) : round($detalle->precio,3);
+				//$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 || $tipo_caf == 52 ? round(((($detalle->precio*$detalle->cantidad)-$detalle->descuento)/1.19)/$detalle->cantidad,3) : round($detalle->precio,3);
+				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 || $tipo_caf == 52 ? round($detalle->neto/$detalle->cantidad,3) : round($detalle->precio,3);
 				if($tipo_caf == 33){
 					//$lista_detalle[$i]['MontoItem'] = ($detalle->totalproducto - $detalle->iva);
 					$lista_detalle[$i]['MontoItem'] = $detalle->neto;
 				}
-				if($detalle->descuento != 0){
+				//if($detalle->descuento != 0){
 					//$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
 					//$lista_detalle[$i]['DescuentoPct'] = $porc_descto;		
-					$lista_detalle[$i]['DescuentoMonto'] = round($detalle->descuento,0); //DESCUENTO DEBE SER ENTERO
+					//$lista_detalle[$i]['DescuentoMonto'] = round($detalle->descuento,0); //DESCUENTO DEBE SER ENTERO
 					//$lista_detalle[$i]['PrcItem'] =- $lista_detalle[$i]['PrcItem']*$porc_descto;
 
-				}
+				//}
 
 				$i++;
 			}

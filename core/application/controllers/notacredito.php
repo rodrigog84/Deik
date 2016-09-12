@@ -513,18 +513,19 @@ class Notacredito extends CI_Controller {
 				$lista_detalle[$i]['NmbItem'] = $detalle->nombre;
 				$lista_detalle[$i]['QtyItem'] = $detalle->cantidad;
 				//$lista_detalle[$i]['PrcItem'] = floor($detalle->precio/1.19);
-				$lista_detalle[$i]['PrcItem'] = round($detalle->precio/1.19,3);
+				//$lista_detalle[$i]['PrcItem'] = round($detalle->precio/1.19,3);
+				$lista_detalle[$i]['PrcItem'] = round($detalle->neto/$detalle->cantidad,3);
 				$lista_detalle[$i]['MontoItem'] = $detalle->neto;
 
-				if($detalle->descuento != 0){
+				//if($detalle->descuento != 0){
 					//$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
 					//$lista_detalle[$i]['DescuentoPct'] = $porc_descto;		
 					//$lista_detalle[$i]['PrcItem'] =- $lista_detalle[$i]['PrcItem']*$porc_descto;
 					//$total_sin_iva = round($detalle->totalproducto/1.19,0);
 					//$descuento = abs(($lista_detalle[$i]['PrcItem']*$detalle->cantidad) - $total_sin_iva);
 					//$lista_detalle[$i]['DescuentoMonto'] = $descuento;
-					$lista_detalle[$i]['DescuentoMonto'] = round($detalle->descuento,0); //DESCUENTO DEBE SER ENTERO
-				}				
+				//	$lista_detalle[$i]['DescuentoMonto'] = round($detalle->descuento,0); //DESCUENTO DEBE SER ENTERO
+				//}				
 				//$lista_detalle[$i]['DescuentoMonto'] = $detalle->descuento;
 				$i++;
 			}
