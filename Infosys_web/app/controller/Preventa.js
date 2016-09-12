@@ -987,7 +987,6 @@ Ext.define('Infosys_web.controller.Preventa', {
             var descuento = view.down('#totdescuentoId').getValue();   
 
         };
-
               
         if (descuento == 1){            
             var descuento = 0;
@@ -1495,7 +1494,7 @@ Ext.define('Infosys_web.controller.Preventa', {
         var stCombo = descuento.getStore();
         var record = stCombo.findRecord('id', descuento.getValue()).data;
         var dcto = (record.porcentaje);
-        totaldescuento = (((total * dcto)  / 100));
+        totaldescuento = (Math.round((total * dcto)  / 100));
         view.down('#totdescuentoId').setValue(totaldescuento);
         };   
     },
@@ -1521,7 +1520,7 @@ Ext.define('Infosys_web.controller.Preventa', {
             //neto = (parseInt(neto) + parseInt(r.data.neto))
         });
 
-        neto = ((pretotal /1.19));
+        neto = (Math.round(pretotal /1.19));
         iva = ((pretotal - neto));
         afecto = neto;
         neto = neto;
@@ -1553,7 +1552,7 @@ Ext.define('Infosys_web.controller.Preventa', {
             //neto = neto + r.data.neto
         });
 
-        neto = ((pretotal /1.19));
+        neto = (Math.round(pretotal /1.19));
         iva = ((pretotal - neto));
         afecto = neto;
         neto = neto;
@@ -1579,10 +1578,10 @@ Ext.define('Infosys_web.controller.Preventa', {
         var record = stCombo.findRecord('id', descuento.getValue()).data;
         var dcto = (record.porcentaje);
 
-        afecto = (total / 1.19);
-        descuentopesos = ((neto * dcto) / 100);
+        afecto = (Math.round(total / 1.19));
+        descuentopesos = (Math.round(neto * dcto) / 100);
         afecto = neto - descuentopesos;
-        pretotal = (((afecto * 19) / 100) + afecto);
+        pretotal = (Math.round((afecto * 19) / 100) + afecto);
         iva = (pretotal - afecto);
         afecto = afecto;
         neto = neto;
@@ -1608,10 +1607,10 @@ Ext.define('Infosys_web.controller.Preventa', {
         var record = stCombo.findRecord('id', descuento.getValue()).data;
         var dcto = (record.porcentaje);
        
-        afecto = (total / 1.19);
-        descuentopesos = ((neto * dcto) / 100);
+        afecto = (Math.round(total / 1.19));
+        descuentopesos = (Math.round(neto * dcto) / 100);
         afecto = neto - descuentopesos;
-        pretotal = (((afecto * 19) / 100) + afecto);
+        pretotal = (Math.round((afecto * 19) / 100) + afecto);
         iva = (pretotal - afecto);
         afecto = afecto;
         neto = neto;
@@ -1642,7 +1641,7 @@ Ext.define('Infosys_web.controller.Preventa', {
             neto = neto + r.data.neto
         });
 
-        neto = ((pretotal /1.19));
+        neto = (Math.round(pretotal /1.19));
         iva = ((pretotal - neto));
         afecto = neto;
         neto = neto;
