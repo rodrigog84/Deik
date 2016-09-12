@@ -319,6 +319,12 @@ class Facturasvizualiza extends CI_Controller {
 
 		$producto = $v->id_producto;
 		$this->db->insert('detalle_factura_cliente', $factura_clientes_item);
+
+		$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto.'"');
+		 if($query->num_rows()>0){
+		 	$row = $query->first_row();
+		 	$saldo = ($row->stock)-($v->cantidad);
+		 };
 		
 		$query = $this->db->query('SELECT * FROM existencia WHERE id_producto='.$producto.' and id_bodega='.$idbodega.'');
 	    	 $row = $query->result();
