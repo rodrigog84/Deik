@@ -2637,22 +2637,27 @@ public function cargacontribuyentes(){
 		$this->db->where('id', $idpreventa);	  
 	    $this->db->update('preventa', $preventa);
 
+
 	    $secuencia = 0;
 
+	    $neto_total = 0;
 		foreach($items as $v){
+
+			$neto_producto = round((round($v->total,0) - round($v->iva,0)),0);
 			$factura_clientes_item = array(
 		        'id_producto' => $v->id,
 		        'id_factura' => $idfactura,
 		        'num_factura' => $numfactura,
 		        'precio' => $v->precio,
 		        'cantidad' => $v->cantidad,
-		        'neto' => $v->total,
-		        'descuento' => $v->dcto,
+		        'neto' => $neto_producto,
+		        'descuento' => round($v->dcto,0),
 		        'iva' => $v->iva,
-		        'totalproducto' => $v->total,
+		        'totalproducto' => $neto_producto + $v->iva,
 		        'fecha' => $fechafactura
 			);
 
+		$neto_total += $neto_producto;
 		$producto = $v->id;
 
 		$this->db->insert('detalle_factura_cliente', $factura_clientes_item);
@@ -2727,6 +2732,18 @@ public function cargacontribuyentes(){
 		$this->db->insert('existencia_detalle', $datos2);
 		
 		}
+
+		$iva_total = round($neto_total*(0.19),0);
+		$total_factura = $neto_total + $iva_total;
+
+		$data_factura = array(
+						'neto' => $neto_total,
+						'iva' => $iva_total,
+						'totalfactura' => $total_factura
+						);
+
+    	$this->db->where('id', $idfactura);
+    	$this->db->update('factura_clientes', $data_factura);    			
     	
         $resp['success'] = true;
 		$resp['idfactura'] = $idfactura;
@@ -2836,13 +2853,15 @@ public function cargacontribuyentes(){
 				//$neto = round($total/1.19,2);
 
 				//$lista_detalle[$i]['PrcItem'] = round($neto/$detalle->cantidad,2);
-				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 || $tipo_caf == 52 ? floor(($detalle->totalproducto - $detalle->iva)/$detalle->cantidad) : floor($detalle->precio);
+				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 || $tipo_caf == 52 ? round($detalle->precio/1.19,3) : round($detalle->precio,3);
 				if($tipo_caf == 33){
-					$lista_detalle[$i]['MontoItem'] = ($detalle->totalproducto - $detalle->iva);
+					//$lista_detalle[$i]['MontoItem'] = ($detalle->totalproducto - $detalle->iva);
+					$lista_detalle[$i]['MontoItem'] = $detalle->neto;
 				}
 				if($detalle->descuento != 0){
-					$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
-					$lista_detalle[$i]['DescuentoPct'] = $porc_descto;		
+					//$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
+					//$lista_detalle[$i]['DescuentoPct'] = $porc_descto;		
+					$lista_detalle[$i]['DescuentoMonto'] = round($detalle->descuento,0); //DESCUENTO DEBE SER ENTERO
 					//$lista_detalle[$i]['PrcItem'] =- $lista_detalle[$i]['PrcItem']*$porc_descto;
 
 				}
@@ -2884,6 +2903,8 @@ public function cargacontribuyentes(){
 			    ],
 				'Detalle' => $lista_detalle
 			];
+
+			//var_dump($factura); exit;
 
 			//FchResol y NroResol deben cambiar con los datos reales de producción
 			$caratula = [

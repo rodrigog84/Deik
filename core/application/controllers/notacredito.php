@@ -506,7 +506,7 @@ class Notacredito extends CI_Controller {
 
 			$detalle_factura = $this->facturaelectronica->get_detalle_factura($idfactura);
 			$datos_factura = $this->facturaelectronica->get_factura($idfactura);
-
+			
 			$lista_detalle = array();
 			$i = 0;
 			foreach ($detalle_factura as $detalle) {
@@ -520,9 +520,10 @@ class Notacredito extends CI_Controller {
 					//$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
 					//$lista_detalle[$i]['DescuentoPct'] = $porc_descto;		
 					//$lista_detalle[$i]['PrcItem'] =- $lista_detalle[$i]['PrcItem']*$porc_descto;
-					$total_sin_iva = round($detalle->totalproducto/1.19,0);
-					$descuento = abs(($lista_detalle[$i]['PrcItem']*$detalle->cantidad) - $total_sin_iva);
-					$lista_detalle[$i]['DescuentoMonto'] = $descuento;
+					//$total_sin_iva = round($detalle->totalproducto/1.19,0);
+					//$descuento = abs(($lista_detalle[$i]['PrcItem']*$detalle->cantidad) - $total_sin_iva);
+					//$lista_detalle[$i]['DescuentoMonto'] = $descuento;
+					$lista_detalle[$i]['DescuentoMonto'] = round($detalle->descuento,0); //DESCUENTO DEBE SER ENTERO
 				}				
 				//$lista_detalle[$i]['DescuentoMonto'] = $detalle->descuento;
 				$i++;
@@ -569,7 +570,7 @@ class Notacredito extends CI_Controller {
 		            'RazonRef' => $glosa,
 		        ]				
 			];			
-			//var_dump($nota_credito); exit;
+			
 			//FchResol y NroResol deben cambiar con los datos reales de producción
 			$caratula = [
 			    //'RutEnvia' => '11222333-4', // se obtiene de la firma
