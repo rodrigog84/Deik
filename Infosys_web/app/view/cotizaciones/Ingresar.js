@@ -327,7 +327,7 @@ Ext.define('Infosys_web.view.cotizaciones.Ingresar', {
                             store: 'Tabladescuento',
                             emptyText : "Seleccione",
                             valueField: 'id',
-                            disabled : true,
+                            //disabled : true,
                             displayField: 'nombre'
                             },
                             {xtype: 'splitter'},

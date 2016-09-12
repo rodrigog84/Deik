@@ -227,6 +227,12 @@ Ext.define('Infosys_web.controller.Cotizacion', {
             'cotizacioningresar #tipoDescuentoId': {
                 change: this.changedctofinal5
             },
+            'cotizacioningresar #tipoDescuentoId': {
+                change: this.changedctofinal7
+            },
+            'cotizacioneditar #DescuentoproId': {
+                change: this.changedctofinal6
+            },
             'cotizacionprincipal button[action=enviaremail]': {
                 click: this.enviaremail
             },
@@ -293,6 +299,43 @@ Ext.define('Infosys_web.controller.Cotizacion', {
         this.recalculardescuento();
     },
 
+    changedctofinal6: function(){
+        this.recalculardescuentopro2();
+    },
+    changedctofinal7: function(){
+        this.recalculardescuento2();
+    },
+
+    recalculardescuento2: function(){
+
+        var view = this.getCotizacioneditar();
+        var pretotal = view.down('#finalafectoId').getValue();
+        var total = view.down('#finaltotalpostId').getValue();
+        var iva = view.down('#finaltotalivaId').getValue();
+        var neto = view.down('#finaltotalnetoId').getValue();
+        var descuento = view.down('#tipoDescuentoId');
+        var stCombo = descuento.getStore();
+        var record = stCombo.findRecord('id', descuento.getValue()).data;
+        var dcto = (record.porcentaje);
+       
+        afecto = (Math.round(total / 1.19));
+        descuentopesos = (Math.round(neto * dcto) / 100);
+        afecto = neto - descuentopesos;
+        pretotal = (Math.round((afecto * 19) / 100) + afecto);
+        iva = (pretotal - afecto);
+        afecto = afecto;
+        neto = neto;
+        pretotalfinal = afecto + iva;
+
+
+        view.down('#finaltotalId').setValue(Ext.util.Format.number(pretotalfinal, '0,000'));
+        view.down('#finaltotalpostId').setValue(Ext.util.Format.number(pretotalfinal, '0'));
+        view.down('#finaltotalnetoId').setValue(Ext.util.Format.number(neto, '0'));
+        view.down('#finaltotalivaId').setValue(Ext.util.Format.number(iva, '0'));
+        view.down('#finalafectoId').setValue(Ext.util.Format.number(afecto, '0'));
+        view.down('#descuentovalorId').setValue(Ext.util.Format.number(descuentopesos, '0'));
+    },
+
     recalculardescuento: function(){
 
         var view = this.getCotizacioningresar();
@@ -339,7 +382,24 @@ Ext.define('Infosys_web.controller.Cotizacion', {
         var stCombo = descuento.getStore();
         var record = stCombo.findRecord('id', descuento.getValue()).data;
         var dcto = (record.porcentaje);
-        totaldescuento = (((total * dcto)  / 100));
+        totaldescuento = (Math.round((total * dcto)  / 100));
+        view.down('#totdescuentoId').setValue(totaldescuento);
+        };    
+    },
+
+    recalculardescuentopro2: function(){
+
+        var view = this.getCotizacioneditar();
+        var precio = view.down('#precioId').getValue();
+        var cantidad = view.down('#cantidadId').getValue();
+        var total = ((precio * cantidad));
+        var desc = view.down('#DescuentoproId').getValue();
+        if (desc){
+        var descuento = view.down('#DescuentoproId');
+        var stCombo = descuento.getStore();
+        var record = stCombo.findRecord('id', descuento.getValue()).data;
+        var dcto = (record.porcentaje);
+        totaldescuento = (Math.round((total * dcto)  / 100));
         view.down('#totdescuentoId').setValue(totaldescuento);
         };    
     },
@@ -1354,7 +1414,6 @@ Ext.define('Infosys_web.controller.Cotizacion', {
                 view.down('#precioId').setValue(cero);
                 view.down('#cantidadOriginalId').setValue(cero);
                 view.down('#totdescuentoId').setValue(cero1);
-                view.down('#DescuentoproId').setValue(cero);
                 return; 
             }
         });
@@ -1419,7 +1478,6 @@ Ext.define('Infosys_web.controller.Cotizacion', {
         view.down('#precioId').setValue(cero);
         view.down('#cantidadOriginalId').setValue(cero);
         view.down('#totdescuentoId').setValue(cero1);
-        view.down('#DescuentoproId').setValue(cero);
     },
 
     editarcotiza: function(){
@@ -1775,7 +1833,6 @@ Ext.define('Infosys_web.controller.Cotizacion', {
                 view.down('#precioId').setValue(cero);
                 view.down('#cantidadOriginalId').setValue(cero);
                 view.down('#totdescuentoId').setValue(cero1);
-                view.down('#DescuentoproId').setValue(cero);
                 return; 
             }
         });

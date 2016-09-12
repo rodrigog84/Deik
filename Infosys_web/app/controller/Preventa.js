@@ -1474,12 +1474,8 @@ Ext.define('Infosys_web.controller.Preventa', {
         var stCombo = descuento.getStore();
         var record = stCombo.findRecord('id', descuento.getValue()).data;
         var dcto = (record.porcentaje);
-        if (dcto>0){
         totaldescuento = (Math.round((total * dcto)  / 100));
-        view.down('#totdescuentoId').setValue(totaldescuento);
-        }else{
-            var totaldescuento = 0;
-        }
+        view.down('#totdescuentoId').setValue(totaldescuento);        
         };         
     },
 
@@ -1497,12 +1493,8 @@ Ext.define('Infosys_web.controller.Preventa', {
         var stCombo = descuento.getStore();
         var record = stCombo.findRecord('id', descuento.getValue()).data;
         var dcto = (record.porcentaje);
-        if (dcto>0){
         totaldescuento = (Math.round((total * dcto)  / 100));
         view.down('#totdescuentoId').setValue(totaldescuento);
-        }else{
-            var totaldescuento = 0;
-        };
         }; 
     },
 
