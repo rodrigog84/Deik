@@ -2854,7 +2854,7 @@ public function cargacontribuyentes(){
 
 				//$lista_detalle[$i]['PrcItem'] = round($neto/$detalle->cantidad,2);
 				//$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 || $tipo_caf == 52 ? round(((($detalle->precio*$detalle->cantidad)-$detalle->descuento)/1.19)/$detalle->cantidad,3) : round($detalle->precio,3);
-				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 || $tipo_caf == 52 ? round($detalle->neto/$detalle->cantidad,3) : round($detalle->precio,3);
+				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 || $tipo_caf == 52 ? round($detalle->neto/$detalle->cantidad,2) : round($detalle->precio,2);
 				if($tipo_caf == 33){
 					//$lista_detalle[$i]['MontoItem'] = ($detalle->totalproducto - $detalle->iva);
 					$lista_detalle[$i]['MontoItem'] = $detalle->neto;
@@ -2984,11 +2984,15 @@ public function cargacontribuyentes(){
 
 		$idfactura = $this->input->get('idfactura');
 		$numero = $this->input->get('numfactura');
-		$cabecera = $this->db->get_where('factura_clientes', array('id' => $idfactura));	
-		$tipodocumento = 1;
-		foreach($cabecera->result() as $v){  
+
+		$this->load->model('facturaelectronica');
+		$datos_factura = $this->facturaelectronica->get_factura($idfactura);
+
+		//$cabecera = $this->db->get_where('factura_clientes', array('id' => $idfactura));	
+		$tipodocumento = isset($datos_factura->tipo_documento) ? $datos_factura->tipo_documento : 1;
+		/*foreach($cabecera->result() as $v){  
 				$tipodocumento = $v->tipo_documento; 
-		}
+		}*/
 
 		if($tipodocumento == 1){
 				$this->exportFacturaPDF($idfactura,$numero);

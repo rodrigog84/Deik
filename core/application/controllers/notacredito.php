@@ -514,7 +514,7 @@ class Notacredito extends CI_Controller {
 				$lista_detalle[$i]['QtyItem'] = $detalle->cantidad;
 				//$lista_detalle[$i]['PrcItem'] = floor($detalle->precio/1.19);
 				//$lista_detalle[$i]['PrcItem'] = round($detalle->precio/1.19,3);
-				$lista_detalle[$i]['PrcItem'] = round($detalle->neto/$detalle->cantidad,3);
+				$lista_detalle[$i]['PrcItem'] = round($detalle->neto/$detalle->cantidad,2);
 				$lista_detalle[$i]['MontoItem'] = $detalle->neto;
 
 				//if($detalle->descuento != 0){
