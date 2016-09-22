@@ -31,7 +31,15 @@ class Notacredito extends CI_Controller {
 		$fafecto = $this->input->post('afectofactura');
 		$ftotal = $this->input->post('totalfacturas');
 		$tipodocumento = $this->input->post('tipodocumento');
+		$tiponc = $this->input->post('tiponc');
 		//$tipodocumento = 11;
+
+		if ($tiponc==3){
+			$neto=0;
+			$fiva=0;
+			$ftotal=0;
+			$fafecto=0;
+		};
 
 		$data3 = array(
 	         'correlativo' => $numdocuemnto
@@ -61,6 +69,11 @@ class Notacredito extends CI_Controller {
 		$idfactura = $this->db->insert_id();
 
 		foreach($items as $v){
+			if ($tiponc==3){
+				$v->neto=0;
+				$v->iva=0;
+				$v->total=0;
+			};
 			$factura_clientes_item = array(
 		        'id_factura' => $idfactura,
 		        'glosa' => $v->glosa,

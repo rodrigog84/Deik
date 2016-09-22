@@ -25,7 +25,14 @@ Ext.define('Infosys_web.view.notacredito.Notacreditoglosa', {
     title: 'Notas de Credito',
 
     initComponent: function() {
-        var me = this;
+         var me = this;
+         var tipoNotaCredito = Ext.create('Ext.data.Store', {
+            fields: ['value', 'nombre'],
+            data : [
+                {"value":1, "nombre":"NORMAL"},
+                {"value":3, "nombre":"GLOSA"}
+            ]
+        });  
         var stItms = Ext.getStore('notacredito.Items');
         stItms.removeAll();
         Ext.applyIf(me, {
@@ -355,7 +362,24 @@ Ext.define('Infosys_web.view.notacredito.Notacreditoglosa', {
                                             allowBlank: true,
                                             action: 'buscarfactura2'
                                             //,disabled : true  
-                                        }
+                                        },{xtype: 'splitter'},{
+                                            xtype: 'combobox',
+                                            width: 400,
+                                            store : tipoNotaCredito,
+                                            fieldLabel: 'TIPO NOTA DE CR&Eacute;DITO',
+                                            labelStyle: ' font-weight:bold',
+                                            labelWidth: 200,
+                                            maxHeight: 25,
+                                            emptyText : 'Seleccionar',
+                                            editable: false,
+                                            value: 1,
+                                            itemId : 'tipoNotaCredito' ,
+                                            name : 'tipoNotaCredito' ,
+                                            displayField : 'nombre',
+                                            valueField : 'value',
+                                            //disabled : true,
+                                            
+                                            }
                                     ]
                                     },{
                     xtype: 'fieldset',
