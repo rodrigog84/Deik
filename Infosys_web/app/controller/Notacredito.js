@@ -229,12 +229,11 @@ Ext.define('Infosys_web.controller.Notacredito', {
         var valorneto = viewIngresa.down('#finaltotalnetoId').getValue();
         var valoriva = viewIngresa.down('#finaltotalivaId').getValue();
         var totalfactura= valorneto + valoriva;
-        var tiponc = viewIngresa.down('#tipoNotaCredito').getValue();
-        
+        var tiponc = viewIngresa.down('#tipoNotaCredito').getValue();        
         var fechavenc = viewIngresa.down('#fechavencId').getValue();
         var stItem = this.getNotacreditoItemsStore();
         var stnotacredito = this.getNotacreditoStore();
-
+        var glosa= "";
         if(numdocumento==0){
             Ext.Msg.alert('Ingrese Datos a La Factura');
             return;   
@@ -242,8 +241,14 @@ Ext.define('Infosys_web.controller.Notacredito', {
 
         var dataItems = new Array();
         stItem.each(function(r){
-            dataItems.push(r.data)
+            dataItems.push(r.data),
+            glosa = r.data.glosa
         });
+
+        if (glosa==""){
+            Ext.Msg.alert('Debe Ingresar Descripcion a Nota de Credito');
+            return;  
+        };
 
         Ext.Ajax.request({
             url: preurl + 'notacredito/save2',
