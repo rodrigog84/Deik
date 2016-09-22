@@ -76,7 +76,7 @@ class Notacredito extends CI_Controller {
 			};
 			$factura_clientes_item = array(
 		        'id_factura' => $idfactura,
-		        'glosa' => $v->glosa,
+		        'glosa' => strtoupper($v->glosa),
 		        'neto' => $v->neto,
 		        'iva' => $v->iva,
 		        'total' => $v->total
