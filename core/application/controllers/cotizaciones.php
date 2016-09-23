@@ -121,6 +121,7 @@ class Cotizaciones extends CI_Controller {
 			
 			$neto = $neto + ($v->neto - $v->descuento);
 			$iva = (($neto * 19)/100);
+			$total = ($neto + $iva);
 			//$total = $total + (($v->neto - $v->descuento) + $iva);
 			
 			$html .= '<tr>
@@ -128,8 +129,8 @@ class Cotizaciones extends CI_Controller {
 			<td style="text-align:right">&nbsp;&nbsp;</td>			
 			<td style="text-align:left">'.$producto->nombre.'</td>
 			<td style="text-align:right">'.number_format($v->cantidad,0,',','.').'&nbsp;&nbsp;</td>			
-			<td align="right">$ '.number_format($subtotal, 0, ',', '.').'</td>
 			<td align="right">$ '.number_format($v->neto, 0, ',', '.').'</td>
+			<td align="right">$ '.number_format($total, 0, ',', '.').'</td>
 			</tr>';
 			
 			//}
@@ -708,7 +709,7 @@ class Cotizaciones extends CI_Controller {
 		        <td width="20px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >&nbsp;</td>
 		        <td width="395px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:center;" >Descripci&oacute;n</td>
 		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Cantidad</td>
-		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Precio/Unitario</td>
+		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Valor/Unitario</td>
 		        <td width="148px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Total</td>
 		      </tr>';
 		$descripciones = '';
@@ -722,18 +723,18 @@ class Cotizaciones extends CI_Controller {
 			$producto = $producto[0];
 			$linea= $linea +1;
 			$subtotal = (($v->neto - $v->descuento) / ($v->cantidad));
-			
+			$netop = ($v->neto - $v->descuento);
 			$neto = $neto + ($v->neto - $v->descuento);
 			$iva = (($neto * 19)/100);
-			//$total = $total + (($v->neto - $v->descuento) + $iva);
+			$total = ($netop + $iva);
 			
 			$html .= '<tr>
 			<td style="text-align:right">'.$linea.'</td>	
 			<td style="text-align:right">&nbsp;&nbsp;</td>			
 			<td style="text-align:left">'.$producto->nombre.'</td>
 			<td style="text-align:right">'.number_format($v->cantidad,0,'.',',').'&nbsp;&nbsp;</td>			
-			<td align="right">$ '.number_format($subtotal, 2, '.', ',').'</td>
-			<td align="right">$ '.number_format($v->neto, 0, '.', ',').'</td>
+			<td align="right">$ '.number_format($v->neto, 2, '.', ',').'</td>
+			<td align="right">$ '.number_format($v->total, 0, '.', ',').'</td>
 			</tr>';			
 			
 			//}
@@ -780,7 +781,7 @@ class Cotizaciones extends CI_Controller {
 				<table width="296px" border="0">
 					<tr>
 						<td width="150px" style="font-size: 20px;text-align:left;">Descuento</td>
-						<td width="146px" style="text-align:right;">$ '. number_format($row->descuento, 0, ',', '.') .'</td>
+						<td width="146px" style="text-align:right;">$ '. number_format($row->descuento, 0, '.', ',') .'</td>
 					</tr>
 				</table>
 		  	</td>		  

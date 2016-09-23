@@ -8,7 +8,7 @@ Ext.define('Infosys_web.model.cotizacion.Item', {
     	{name: 'codigo'},
     	{name: 'precio_base'},
         {name: 'total'},
-        {name: 'neto'},
+        {name: 'neto', decimalPrecision:2},
         {name: 'totaliva'},
         {name: 'iva'},
         {name: 'dcto'},
