@@ -85,7 +85,6 @@ class Notacredito extends CI_Controller {
 		$this->db->insert('detalle_factura_glosa', $factura_clientes_item);
     	
 		}			  
-	    
 		/******* CUENTAS CORRIENTES ****/
 
 		 $query = $this->db->query("SELECT cc.id as idcuentacontable FROM cuenta_contable cc WHERE cc.nombre = 'FACTURAS POR COBRAR'");
@@ -164,14 +163,17 @@ class Notacredito extends CI_Controller {
             $detalle_factura = $this->facturaelectronica->get_detalle_factura_glosa($idfactura);
             $datos_factura = $this->facturaelectronica->get_factura($idfactura);
 
+
             $lista_detalle = array();
             $i = 0;
             foreach ($detalle_factura as $detalle) {
 
 				$lista_detalle[$i]['NmbItem'] = $detalle->glosa;
-				$lista_detalle[$i]['QtyItem'] = 1;
-                $lista_detalle[$i]['PrcItem'] = floor($detalle->neto);
-            
+				$glosa = $tiponc == 3 ? $glosa . " . " . $detalle->glosa : $glosa;
+				if($tiponc!=3){
+					$lista_detalle[$i]['QtyItem'] = 1;
+	                $lista_detalle[$i]['PrcItem'] = floor($detalle->neto);
+            	}
                 $i++;
             }
 
@@ -204,7 +206,7 @@ class Notacredito extends CI_Controller {
 					'Totales' => [
 		                // estos valores serán calculados automáticamente
 		                'MntNeto' => isset($datos_factura->neto) ? $datos_factura->neto : 0,
-		                'TasaIVA' => \sasco\LibreDTE\Sii::getIVA(),
+		                'TasaIVA' => $tiponc == 3 ? 0 : \sasco\LibreDTE\Sii::getIVA(),
 		                'IVA' => isset($datos_factura->iva) ? $datos_factura->iva : 0,
 		                'MntTotal' => isset($datos_factura->totalfactura) ? $datos_factura->totalfactura : 0,
 		            ],                
@@ -219,7 +221,6 @@ class Notacredito extends CI_Controller {
             ];          
 
 
-		    // var_dump($nota_credito); exit;
 
             //FchResol y NroResol deben cambiar con los datos reales de producción
             $caratula = [

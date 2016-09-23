@@ -246,7 +246,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
         });
 
         if (glosa==""){
-            Ext.Msg.alert('Debe Ingresar Descripcion a Nota de Credito');
+            Ext.Msg.alert('Alerta','Debe Ingresar Descripcion a Nota de Credito');
             return;  
         };
 
