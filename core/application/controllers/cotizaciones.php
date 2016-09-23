@@ -722,7 +722,7 @@ class Cotizaciones extends CI_Controller {
 			$producto = $producto->result();
 			$producto = $producto[0];
 			$linea= $linea +1;
-			$subtotal = (($v->neto - $v->descuento) / ($v->cantidad));
+			$subtotal = (($v->neto ) / ($v->cantidad));
 			$netop = ($v->neto - $v->descuento);
 			$neto = $neto + ($v->neto - $v->descuento);
 			$iva = (($neto * 19)/100);
@@ -733,8 +733,8 @@ class Cotizaciones extends CI_Controller {
 			<td style="text-align:right">&nbsp;&nbsp;</td>			
 			<td style="text-align:left">'.$producto->nombre.'</td>
 			<td style="text-align:right">'.number_format($v->cantidad,0,'.',',').'&nbsp;&nbsp;</td>			
-			<td align="right">$ '.number_format($v->neto, 2, '.', ',').'</td>
-			<td align="right">$ '.number_format($v->total, 0, '.', ',').'</td>
+			<td align="right">$ '.number_format($subtotal, 2, '.', ',').'</td>
+			<td align="right">$ '.number_format($v->neto, 0, '.', ',').'</td>
 			</tr>';			
 			
 			//}
