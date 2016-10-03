@@ -982,6 +982,21 @@ Ext.define('Infosys_web.controller.Preventa', {
         var bolEnable = true;
         var secuencia = secuencia + 1;
 
+        if (secuencia > 21){
+
+           Ext.Msg.alert('Alerta', 'Ya sobrepaso el maximo de Registros');
+                exists = 1;
+                cero="";
+                view.down('#codigoId').setValue(cero);
+                view.down('#productoId').setValue(cero);
+                view.down('#nombreproductoId').setValue(cero);
+                view.down('#cantidadId').setValue(cero);
+                view.down('#cantidadOriginalId').setValue(cero);
+                view.down('#precioId').setValue(cero);
+                return;          
+
+        };
+
         if (!descuento){
             this.recalculardescuentopro2();  
             var descuento = view.down('#totdescuentoId').getValue();   
