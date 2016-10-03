@@ -621,12 +621,11 @@ class AdminServicesExcel extends CI_Controller {
             $fecha2 = $this->input->get('fecha2');
             list($dia, $mes, $anio) = explode("/",$fecha2);
             $fecha4 = $anio ."-". $mes ."-". $dia;
-            $tipo = 1;
+            $tipo = 102;
             $tipo2 = 19;
             $tipo3 = 101;
             $tipo4 = 103;
-                        
-
+            
             $data = array();
                                    
             $this->load->database();
@@ -1031,14 +1030,25 @@ class AdminServicesExcel extends CI_Controller {
             $fecha2 = $this->input->get('fecha2');
             list($dia, $mes, $anio) = explode("/",$fecha2);
             $fecha4 = $anio ."-". $mes ."-". $dia;
-            $tipo = 1;
-            $tipo2 = 11;
+            $tipo = 101;
+            $tipo2 = 102;
+            $totalnc = 0;
+            $totalafnc = 0;
+            $totalnetonc = 0;
+            $totaliva = 0;
+            $totalfa = 0;
+            $totalaffa = 0;
+            $totalnetofa = 0;
+            $totalivafa = 0;
+            $cantfac = 0;
+            $cantnc = 0;
+            $otros = 0;
+
             $data = array();
                                    
             $this->load->database();
             
-            if($fecha){
-            
+            if($fecha){            
                           
                 $data = array();
                 $query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor  FROM factura_clientes acc
@@ -1047,8 +1057,7 @@ class AdminServicesExcel extends CI_Controller {
                 WHERE acc.tipo_documento in ( '.$tipo.','.$tipo2.') and acc.fecha_factura between "'.$fecha3.'"  AND "'.$fecha4.'"
                 order by acc.fecha_factura, acc.tipo_documento, acc.num_factura' 
                 
-                );
-            
+                );           
 
               };
               
@@ -1058,9 +1067,10 @@ class AdminServicesExcel extends CI_Controller {
             echo '<table>';
             echo "<td></td>";
             echo "<td>LIBRO DE VENTAS</td>";
-            echo "<td>DESPACHO</td>";
+            echo "<td>FACTURAS</td>";
             echo "<tr>";
                 echo "<td>NUMERO</td>";
+                echo "<td>TIPO</td>";
                 echo "<td>FECHA</td>";
                 echo "<td>VENCIMIENTO</td>";
                 echo "<td>RUT</td>";
@@ -1073,19 +1083,105 @@ class AdminServicesExcel extends CI_Controller {
                 echo "<tr>";
               
               foreach($users as $v){
+                 $total = $v['totalfactura'];
+                 $afecto = $v['sub_total'];
+                 $neto = $v['neto'];
+                 $iva = $v['iva'];
+                 if ($v['tipo_documento']==102){
+                  $total = ($v['totalfactura']/-1);
+                  $afecto = ($v['sub_total']/-1);
+                  $neto = ($v['neto']/-1);
+                  $iva = $v['iva']/-1;
+                  $cantnc = $cantnc + 1;
+                  $totalnc = $totalnc + $total;
+                  $totalafnc = $totalafnc + $afecto;
+                  $totalnetonc = $totalnetonc + $neto;
+                  $totaliva = $totaliva + $iva;
+                  $tip="N/C";
+                 }else{
+                  $tip="FACT";
+                  $totalfa = $totalfa + $total;
+                  $totalaffa = $totalaffa + $afecto;
+                  $totalnetofa = $totalnetofa + $neto;
+                  $totalivafa = $totalivafa + $iva;
+                  $cantfac = $cantfac +1;                   
+                 }
+
                 echo "<tr>";
                    echo "<td>".$v['num_factura']."</td>";
+                   echo "<td>".$tip."</td>";
                    echo "<td>".$v['fecha_factura']."</td>";
                    echo "<td>".$v['fecha_venc']."</td>";
                    echo "<td>".$v['rut_cliente']."</td>";
                    echo "<td>".$v['nombre_cliente']."</td>";
-                   echo "<td>".$v['sub_total']."</td>";
+                   echo "<td>".$afecto."</td>";
                    echo "<td>".$v['descuento']."</td>";
-                   echo "<td>".$v['neto']."</td>";
-                   echo "<td>".$v['iva']."</td>";
-                   echo "<td>".$v['totalfactura']."</td>";
+                   echo "<td>".$neto."</td>";
+                   echo "<td>".$iva."</td>";
+                   echo "<td>".$total."</td>";
                 echo "</tr>";
             }
+            echo "<tr>";
+                echo "<td>TIPO</td>";
+                echo "<td>VIGENTES</td>";
+                echo "<td>NULOS</td>";
+                echo "<td>AFECTO</td>";
+                echo "<td>EXENTO</td>";
+                echo "<td>IMPUESTO IVA</td>";
+                echo "<td>OTROS IMP.</td>";
+                echo "<td>TOTAL FACTURAS</td>";
+            echo "<tr>";
+                echo "<td>-------------</td>";
+                echo "<td>-------------</td>";
+                echo "<td>-------------</td>";
+                echo "<td>-------------</td>";
+                echo "<td>-------------</td>";
+                echo "<td>-------------</td>";
+                echo "<td>-------------</td>";
+                echo "<td>-------------</td>";
+            echo "<tr>";
+                   echo "<td>FACTURAS</td>";
+                   echo "<td>".$cantfac."</td>";
+                   echo "<td>".$otros."</td>";
+                   echo "<td>".$totalaffa."</td>";
+                   echo "<td>".$otros."</td>";
+                   echo "<td>".$totalivafa."</td>";
+                   echo "<td>".$otros."</td>";
+                   echo "<td>".$totalfa."</td>";
+            echo "</tr>";
+            echo "<tr>";
+                   echo "<td>NOTAS CREDITO</td>";                
+                   echo "<td>".$cantnc."</td>";
+                   echo "<td>".$otros."</td>";
+                   echo "<td>".$totalafnc."</td>";
+                   echo "<td>".$otros."</td>";
+                   echo "<td>".$totaliva."</td>";
+                   echo "<td>".$otros."</td>";
+                   echo "<td>".$totalnc."</td>";
+            echo "</tr>";
+             $totalafecto = $totalaffa + $totalafnc;
+             $totalivafin = $totalivafa + $totaliva;
+             $totalfinala = $totalfa + $totalnc;
+             
+            echo "<tr>";
+                echo "<td>-------------</td>";
+                echo "<td>-------------</td>";
+                echo "<td>-------------</td>";
+                echo "<td>-------------</td>";
+                echo "<td>-------------</td>";
+                echo "<td>-------------</td>";
+                echo "<td>-------------</td>";
+                echo "<td>-------------</td>";
+            echo "<tr>";                
+                   echo "<td>TOTALES</td>";                
+                   echo "<td></td>";
+                   echo "<td></td>";
+                   echo "<td>".$totalafecto."</td>";
+                   echo "<td>".$otros."</td>";
+                   echo "<td>".$totalivafin."</td>";
+                   echo "<td>".$otros."</td>";
+                   echo "<td>".$totalfinala."</td>";                  
+            echo "</tr>";
             echo '</table>';
         }
 

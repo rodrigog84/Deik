@@ -840,7 +840,7 @@ cargar_listado_contribuyentes: function(){
           
           i++;
         })
-
+       
         var view =this.getFormularioexportar()
         var viewnew =this.getFacturasprincipal()
         var fecha = view.down('#fechaId').getSubmitValue();
@@ -856,7 +856,6 @@ cargar_listado_contribuyentes: function(){
 
         };
 
-
         if (fecha > fecha2) {        
                Ext.Msg.alert('Alerta', 'Fechas Incorrectas');
             return;          
@@ -866,7 +865,7 @@ cargar_listado_contribuyentes: function(){
         if (opcion == "LIBRO VENTAS"){
 
              
-             if (tipo == 1){
+             if (tipo == 101){
 
              window.open(preurl + 'adminServicesExcel/exportarExcellibroFacturas?cols='+Ext.JSON.encode(jsonCol)+'&fecha='+fecha+'&fecha2='+fecha2);
              view.close();
@@ -880,7 +879,7 @@ cargar_listado_contribuyentes: function(){
 
              }; 
              
-             if (tipo == 3){
+             if (tipo == 103){
 
              window.open(preurl + 'adminServicesExcel/exportarExcelGuias?cols='+Ext.JSON.encode(jsonCol)+'&fecha='+fecha+'&fecha2='+fecha2);
              view.close();
@@ -897,7 +896,7 @@ cargar_listado_contribuyentes: function(){
 
         }else{
 
-             if (tipo == 1){
+             if (tipo == 101){
 
              window.open(preurl + 'adminServicesExcel/exportarExcelFacturas?cols='+Ext.JSON.encode(jsonCol)+'&fecha='+fecha+'&fecha2='+fecha2+'&opcion='+opcion+'&nombre='+nombre);
              view.close();
@@ -911,7 +910,7 @@ cargar_listado_contribuyentes: function(){
 
              };
 
-             if (tipo == 3){
+             if (tipo == 103){
 
              window.open(preurl + 'adminServicesExcel/exportarExcelGuias?cols='+Ext.JSON.encode(jsonCol)+'&fecha='+fecha+'&fecha2='+fecha2+'&opcion='+opcion+'&nombre='+nombre);
              view.close();
