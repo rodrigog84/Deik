@@ -169,7 +169,7 @@ class Notacredito extends CI_Controller {
             foreach ($detalle_factura as $detalle) {
 
 				$lista_detalle[$i]['NmbItem'] = $detalle->glosa;
-				$glosa = $tiponc == 3 ? $glosa . " . " . $detalle->glosa : $glosa;
+				//$glosa = $tiponc == 3 ? $glosa . " . " . $detalle->glosa : $glosa;
 				if($tiponc!=3){
 					$lista_detalle[$i]['QtyItem'] = 1;
 	                $lista_detalle[$i]['PrcItem'] = floor($detalle->neto);
