@@ -2454,9 +2454,9 @@ public function cargacontribuyentes(){
         $nombre = $this->input->get('nombre');
         $opcion = $this->input->get('opcion');
         
-        /*if(!$opcion){
+        if(!$opcion){
         	$opcion="Nombre";
-        } */
+        } 
              
         $tipo = "1";
         $tipo2 = "101";
@@ -2470,7 +2470,7 @@ public function cargacontribuyentes(){
 		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.id_factura = '.$nombre.' and acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.')');
+			WHERE acc.id_factura = '.$nombre.' acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.')');
 		
 		  $total = 0;
 
@@ -2489,8 +2489,7 @@ public function cargacontribuyentes(){
 		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.num_factura = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.')
-			limit '.$start.', '.$limit.' ' 	);
+			WHERE acc.num_factura = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.')' 	);
 
 		
 		  $total = 0;
@@ -2509,8 +2508,7 @@ public function cargacontribuyentes(){
 		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.id_cliente = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.')
-			limit '.$start.', '.$limit.' ' 	);
+			WHERE acc.id_cliente = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.')');
 
 		
 		  $total = 0;

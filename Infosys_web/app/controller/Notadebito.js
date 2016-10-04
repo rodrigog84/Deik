@@ -150,6 +150,9 @@ Ext.define('Infosys_web.controller.Notadebito', {
             'buscarfacturasdebito button[action=seleccionarfactura]': {
                 click: this.seleccionarfactura
             },
+            'buscarfacturasdebito button[action=buscarnumero]': {
+                click: this.buscarnumero
+            },
             'notadebitoprincipal button[action=exportarexcelnotadebito]': {
                 click: this.exportarexcelnotadebito
             },
@@ -317,7 +320,7 @@ Ext.define('Infosys_web.controller.Notadebito', {
 
     recalcularFinal: function(){
         var view = this.getNotadebitoingresar();
-        var stItem = this.getProductosItemsStore();
+        var stItem = this.getNotadebitoItemsStore();
         var pretotal = 0;
         var total = 0;
         
@@ -326,7 +329,7 @@ Ext.define('Infosys_web.controller.Notadebito', {
           
         });
         total = pretotal;
-        neto = (total / 1.19);
+        neto = Math.round(total / 1.19);  
         afecto = neto;
         iva = total - neto;
         
@@ -504,7 +507,8 @@ Ext.define('Infosys_web.controller.Notadebito', {
        if (nombre){
           var edit =  Ext.create('Infosys_web.view.notadebito.BuscarFacturas').show();
           var st = this.getFactura2Store();
-          st.proxy.extraParams = {nombre : nombre};
+          st.proxy.extraParams = {nombre : nombre,
+                                  opcion: "Cliente"};
           st.load();
        }else {
           Ext.Msg.alert('Alerta', 'Debe seleccionar Cliente.');
@@ -575,6 +579,16 @@ Ext.define('Infosys_web.controller.Notadebito', {
         var nombre = view.down('#nombreId').getValue()
         st.proxy.extraParams = {nombre : nombre,
                                 opcion : "Nombre"}
+        st.load();
+    },
+
+    buscarnumero: function(){
+        
+        var view = this.getBuscarfacturasdebito();
+        var st = this.getFactura2Store()
+        var nombre = view.down('#nombreId').getValue()
+        st.proxy.extraParams = {nombre : nombre,
+                                opcion : "Numero"}
         st.load();
     },
 
