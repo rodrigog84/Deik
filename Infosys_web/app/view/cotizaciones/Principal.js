@@ -24,33 +24,38 @@ Ext.define('Infosys_web.view.cotizaciones.Principal' ,{
         hidden: true
     },{
         header: "Numero",
-        flex: 1,
+        width: 65,
         dataIndex: 'num_cotiza'
     },{
         header: "Contacto",
-        flex: 1,
+        width: 250,
         dataIndex: 'nombre_contacto'
     },{
         header: "Telefono",
-        flex: 1,
+       width: 70,
         dataIndex: 'telefono_contacto'
     },{
         header: "Mail",
         flex: 1,
         dataIndex: 'email_contacto'
     },{
+        header: "Rut",
+        width: 100,
+        dataIndex: 'rut',
+        align: 'right'
+    },{
         header: "Empresa",
-        flex: 1,
+        width: 400,
         dataIndex: 'nombre'
     },{
         header: "Neto",
-        flex: 1,
+        width: 100,
         dataIndex: 'neto',
         align: 'right',
         renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00")}
     },{
         header: "Descuento",
-        flex: 1,
+        width: 100,
         dataIndex: 'descuento',
         align: 'right',
         renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00")}
@@ -63,11 +68,13 @@ Ext.define('Infosys_web.view.cotizaciones.Principal' ,{
     },{
         header: "Iva",
         dataIndex: 'iva',
+        width: 100,
         align: 'right',
         renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00")}
     },{
         header: "Total",
         dataIndex: 'total',
+        width: 100,
         align: 'right',
         renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00")}
     }],

@@ -152,7 +152,7 @@ Ext.define('Infosys_web.controller.Cotizacion', {
                 click: this.exportarcotizacion
             },
             'cotizacionprincipal button[action=Buscar]': {
-                click: this.buscar
+                click: this.buscarclientes                
             },
             'topmenus menuitem[action=mcotizacion]': {
                 click: this.mcotizacion
@@ -1046,13 +1046,15 @@ Ext.define('Infosys_web.controller.Cotizacion', {
 
     buscarclientes: function(){
         
-        var view = this.getClientesprincipal()
-        var st = this.getClientesStore()
+        var view = this.getCotizacionprincipal()
+        var st = this.getCotizacionesStore()
+        var cero = "";
         var opcion = view.down('#tipoSeleccionId').getValue()
         var nombre = view.down('#nombreId').getValue()
         st.proxy.extraParams = {nombre : nombre,
                                 opcion : opcion}
         st.load();
+        view.down('#nombreId').setValue(cero);
     },
 
     buscar: function(){

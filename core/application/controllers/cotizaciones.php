@@ -272,7 +272,7 @@ class Cotizaciones extends CI_Controller {
 
 		if($opcion == "Rut"){
 
-			$query = $this->db->query('SELECT ctz.*, cli.direccion as direccion, cli.id as id_cliente, cli.nombres as nombre, cli.id_giro as giro, g.nombre as nombre_giro, cli.rut as rut FROM cotiza_cotizaciones ctz
+			$query = $this->db->query('SELECT ctz.*, cli.direccion as direccion, cli.id as id_cliente, cli.rut as rut, cli.nombres as nombre, cli.id_giro as giro, g.nombre as nombre_giro, cli.rut as rut FROM cotiza_cotizaciones ctz
 				left join clientes cli ON (ctz.id_cliente = cli.id)
 				left join cod_activ_econ g on (cli.id_giro = g.id)
 				WHERE rut = '.$nombres.'
@@ -280,7 +280,7 @@ class Cotizaciones extends CI_Controller {
 
 		}elseif($opcion == "Numero"){
 
-			$query = $this->db->query('SELECT ctz.*, cli.direccion as direccion, cli.id as id_cliente, cli.nombres as nombre, cli.id_giro as giro, g.nombre as nombre_giro, cli.rut as rut FROM cotiza_cotizaciones ctz
+			$query = $this->db->query('SELECT ctz.*, cli.direccion as direccion, cli.id as id_cliente, cli.rut as rut, cli.nombres as nombre, cli.id_giro as giro, g.nombre as nombre_giro, cli.rut as rut FROM cotiza_cotizaciones ctz
 				left join clientes cli ON (ctz.id_cliente = cli.id)
 				left join cod_activ_econ g on (cli.id_giro = g.id)
 				WHERE ctz.num_cotiza = '.$nombres.'');
@@ -295,9 +295,9 @@ class Cotizaciones extends CI_Controller {
 	        }
 
 
-			$query = $this->db->query('SELECT ctz.*, cli.direccion as direccion, cli.id as id_cliente, cli.nombres as nombre, cli.id_giro as giro, g.nombre as nombre_giro, cli.rut as rut FROM cotiza_cotizaciones ctz
-			left join clientes cli ON (ctz.id_cliente = cli.id)
-			left join cod_activ_econ g on (cli.id_giro = g.id)
+			$query = $this->db->query('SELECT ctz.*, cli.direccion as direccion, cli.id as id_cliente, cli.rut as rut, cli.nombres as nombre, cli.id_giro as giro, g.nombre as nombre_giro, cli.rut as rut FROM cotiza_cotizaciones ctz
+				left join clientes cli ON (ctz.id_cliente = cli.id)
+				left join cod_activ_econ g on (cli.id_giro = g.id)
 			WHERE ' . $sql_nombre . ' 1 = 1');
 
 			$total = 0;
@@ -312,10 +312,9 @@ class Cotizaciones extends CI_Controller {
 			
 
 		}else if($opcion == "Todos"){
-
-			$query = $this->db->query('SELECT ctz.*, cli.direccion as direccion, cli.id as id_cliente, cli.nombres as nombre, cli.id_giro as giro, g.nombre as nombre_giro, cli.rut as rut FROM cotiza_cotizaciones ctz
-			left join clientes cli ON (ctz.id_cliente = cli.id)
-			left join cod_activ_econ g on (cli.id_giro = g.id) order by ctz.id desc		
+			$query = $this->db->query('SELECT ctz.*, cli.direccion as direccion, cli.id as id_cliente, cli.rut as rut, cli.nombres as nombre, cli.id_giro as giro, g.nombre as nombre_giro, cli.rut as rut FROM cotiza_cotizaciones ctz
+				left join clientes cli ON (ctz.id_cliente = cli.id)
+				left join cod_activ_econ g on (cli.id_giro = g.id) order by ctz.id desc		
 			limit '.$start.', '.$limit.'');
 
 		}else if($opcion == "Contacto"){
@@ -328,9 +327,9 @@ class Cotizaciones extends CI_Controller {
 	        }
 
 
-			$query = $this->db->query('SELECT ctz.*, cli.direccion as direccion, cli.id as id_cliente, cli.nombres as nombre, cli.id_giro as giro, g.nombre as nombre_giro, cli.rut as rut FROM cotiza_cotizaciones ctz
-			left join clientes cli ON (ctz.id_cliente = cli.id)
-			left join cod_activ_econ g on (cli.id_giro = g.id)
+			$query = $this->db->query('SELECT ctz.*, cli.direccion as direccion, cli.id as id_cliente, cli.rut as rut, cli.nombres as nombre, cli.id_giro as giro, g.nombre as nombre_giro, cli.rut as rut FROM cotiza_cotizaciones ctz
+				left join clientes cli ON (ctz.id_cliente = cli.id)
+				left join cod_activ_econ g on (cli.id_giro = g.id)
 			WHERE ' . $sql_nombre . ' 1 = 1');
 
 			$total = 0;
@@ -350,6 +349,54 @@ class Cotizaciones extends CI_Controller {
 			$this->db->where('id_cotizacion', $row->id);
 			$cproductos = $this->db->count_all_results("cotiza_cotizaciones_items");
 			$row->cproductos = $cproductos;
+			$rutautoriza = $row->rut;
+		   	if (strlen($rutautoriza) == 8){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 3);
+		      $ruta3 = substr($rutautoriza, -7, 3);
+		      $ruta4 = substr($rutautoriza, -8, 1);
+		      $row->rut = ($ruta4.".".$ruta3.".".$ruta2."-".$ruta1);
+		    };
+		    if (strlen($rutautoriza) == 9){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 3);
+		      $ruta3 = substr($rutautoriza, -7, 3);
+		      $ruta4 = substr($rutautoriza, -9, 2);
+		      $row->rut = ($ruta4.".".$ruta3.".".$ruta2."-".$ruta1);
+		   
+		    };
+
+		    if (strlen($rutautoriza) == 2){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 1);
+		      $row->rut = ($ruta2."-".$ruta1);
+		     
+		    };
+
+		   if (strlen($rutautoriza) == 7){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 3);
+		      $ruta3 = substr($rutautoriza, -7, 3);
+		      $row->rut = ($ruta3.".".$ruta2."-".$ruta1);
+		     
+		    };
+		    
+		    
+		    if (strlen($rutautoriza) == 4){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 3);
+		      $row->rut = ($ruta2."-".$ruta1);
+		     
+		    };	
+
+
+		    if (strlen($rutautoriza) == 6){
+		      $ruta1 = substr($rutautoriza, -1);
+		      $ruta2 = substr($rutautoriza, -4, 3);
+		      $ruta3 = substr($rutautoriza, -6, 2);
+		      $row->rut = ($ruta3.".".$ruta2."-".$ruta1);
+		     
+		    };
 			$data[] = $row;
 		}
         $resp['success'] = true;
