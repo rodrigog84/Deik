@@ -320,3 +320,10 @@ CREATE TABLE `guarda_csv` (
 COLLATE='latin1_swedish_ci'
 ENGINE=InnoDB
 ;
+
+/*****************************************************************************************************/
+
+ALTER TABLE `folios_caf`
+	ADD COLUMN `dte_cliente` TEXT NOT NULL AFTER `dte`;
+ALTER TABLE `folios_caf`
+	ADD COLUMN `archivo_dte_cliente` VARCHAR(50) NOT NULL AFTER `archivo_dte`;	

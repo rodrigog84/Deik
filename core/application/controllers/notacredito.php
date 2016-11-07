@@ -230,6 +230,15 @@ class Notacredito extends CI_Controller {
                 'NroResol' => $empresa->nro_resolucion
             ];
 
+
+            $caratula_cliente = [
+                //'RutEnvia' => '11222333-4', // se obtiene de la firma
+                'RutReceptor' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
+                'FchResol' => $empresa->fec_resolucion,
+                'NroResol' => $empresa->nro_resolucion
+            ];            
+
+
             $Firma = new sasco\LibreDTE\FirmaElectronica($config['firma']); //lectura de certificado digital        
             $caf = $this->facturaelectronica->get_content_caf_folio($numdocuemnto,61);
             $Folios = new sasco\LibreDTE\Sii\Folios($caf->caf_content);
@@ -251,33 +260,38 @@ class Notacredito extends CI_Controller {
                 $track_id = 0;
                 $xml_dte = $EnvioDTE->generar();
 
+
+			    #GENERACIÓN DTE CLIENTE
+				$EnvioDTE_CLI = new \sasco\LibreDTE\Sii\EnvioDte();
+				$EnvioDTE_CLI->agregar($DTE);
+				$EnvioDTE_CLI->setFirma($Firma);
+				$EnvioDTE_CLI->setCaratula($caratula_cliente);
+				$xml_dte_cliente = $EnvioDTE_CLI->generar();                   
+
                 $tipo_envio = $this->facturaelectronica->busca_parametro_fe('envio_sii'); //ver si está configurado para envío manual o automático
+
+
+			    $dte = $this->facturaelectronica->crea_archivo_dte($xml_dte,$idfactura,61,'sii');
+			    $dte_cliente = $this->facturaelectronica->crea_archivo_dte($xml_dte_cliente,$idfactura,61,'cliente');
 
                 if($tipo_envio == 'automatico'){
                     $track_id = $EnvioDTE->enviar();
                 }               
 
-                //$track_id = 0;
-
-                $nombre_dte = $numdocuemnto."_61_".$idfactura."_".date("His").".xml"; // nombre archivo
-                $path = date('Ym').'/'; // ruta guardado
-                if(!file_exists('./facturacion_electronica/dte/'.$path)){
-                    mkdir('./facturacion_electronica/dte/'.$path,0777,true);
-                }               
-                $f_archivo = fopen('./facturacion_electronica/dte/'.$path.$nombre_dte,'w');
-                fwrite($f_archivo,$xml_dte);
-                fclose($f_archivo);
 
 
                 $this->db->where('f.folio', $numdocuemnto);
                 $this->db->where('c.tipo_caf', 61);
-                $this->db->update('folios_caf f inner join caf c on f.idcaf = c.id',array('dte' => $xml_dte,
-                                                                                          'estado' => 'O',
-                                                                                          'idfactura' => $idfactura,
-                                                                                          'path_dte' => $path,
-                                                                                          'archivo_dte' => $nombre_dte,
-                                                                                          'trackid' => $track_id
-                                                                                          )); 
+				$this->db->update('folios_caf f inner join caf c on f.idcaf = c.id',array('dte' => $dte['xml_dte'],
+																						  'dte_cliente' => $dte_cliente['xml_dte'],
+																						  'estado' => 'O',
+																						  'idfactura' => $idfactura,
+																						  'path_dte' => $dte['path'],
+																						  'archivo_dte' => $dte['nombre_dte'],
+																						  'archivo_dte_cliente' => $dte_cliente['nombre_dte'],
+																						  'trackid' => $track_id
+																						  )); 
+
 
 
 
@@ -594,6 +608,13 @@ class Notacredito extends CI_Controller {
 			    'NroResol' => $empresa->nro_resolucion
 			];
 
+			$caratula_cliente = [
+			    //'RutEnvia' => '11222333-4', // se obtiene de la firma
+			    'RutReceptor' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
+			    'FchResol' => $empresa->fec_resolucion,
+			    'NroResol' => $empresa->nro_resolucion
+			];				
+
 			$Firma = new sasco\LibreDTE\FirmaElectronica($config['firma']); //lectura de certificado digital		
 			$caf = $this->facturaelectronica->get_content_caf_folio($numdocuemnto,61);
 			$Folios = new sasco\LibreDTE\Sii\Folios($caf->caf_content);
@@ -616,33 +637,37 @@ class Notacredito extends CI_Controller {
 				$track_id = 0;
 			    $xml_dte = $EnvioDTE->generar();
 
+			    #GENERACIÓN DTE CLIENTE
+				$EnvioDTE_CLI = new \sasco\LibreDTE\Sii\EnvioDte();
+				$EnvioDTE_CLI->agregar($DTE);
+				$EnvioDTE_CLI->setFirma($Firma);
+				$EnvioDTE_CLI->setCaratula($caratula_cliente);
+				$xml_dte_cliente = $EnvioDTE_CLI->generar();			    
+
+
 			    $tipo_envio = $this->facturaelectronica->busca_parametro_fe('envio_sii'); //ver si está configurado para envío manual o automático
+
+			    $dte = $this->facturaelectronica->crea_archivo_dte($xml_dte,$idfactura,61,'sii');
+			    $dte_cliente = $this->facturaelectronica->crea_archivo_dte($xml_dte_cliente,$idfactura,61,'cliente');
+
 
 			    if($tipo_envio == 'automatico'){
 				    $track_id = $EnvioDTE->enviar();
 			    }			    
 
-			    //$track_id = 0;
-
-				$nombre_dte = $numdocuemnto."_61_".$idfactura."_".date("His").".xml"; // nombre archivo
-				$path = date('Ym').'/'; // ruta guardado
-				if(!file_exists('./facturacion_electronica/dte/'.$path)){
-					mkdir('./facturacion_electronica/dte/'.$path,0777,true);
-				}				
-				$f_archivo = fopen('./facturacion_electronica/dte/'.$path.$nombre_dte,'w');
-				fwrite($f_archivo,$xml_dte);
-				fclose($f_archivo);
 
 
 			    $this->db->where('f.folio', $numdocuemnto);
 			    $this->db->where('c.tipo_caf', 61);
-				$this->db->update('folios_caf f inner join caf c on f.idcaf = c.id',array('dte' => $xml_dte,
+				$this->db->update('folios_caf f inner join caf c on f.idcaf = c.id',array('dte' => $dte['xml_dte'],
+																						  'dte_cliente' => $dte_cliente['xml_dte'],
 																						  'estado' => 'O',
 																						  'idfactura' => $idfactura,
-																						  'path_dte' => $path,
-																						  'archivo_dte' => $nombre_dte,
+																						  'path_dte' => $dte['path'],
+																						  'archivo_dte' => $dte['nombre_dte'],
+																						  'archivo_dte_cliente' => $dte_cliente['nombre_dte'],
 																						  'trackid' => $track_id
-																						  )); 
+																						  )); 	
 
 				if($track_id != 0 && $datos_empresa_factura->e_mail != ''){ //existe track id, se envía correo
 						$this->facturaelectronica->envio_mail_dte($idfactura);

@@ -2868,7 +2868,7 @@ public function cargacontribuyentes(){
 				$i++;
 			}
 
-
+			$rutCliente = substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1);
 			// datos
 			$factura = [
 			    'Encabezado' => [
@@ -2886,7 +2886,7 @@ public function cargacontribuyentes(){
 			            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
 			        ],
 			        'Receptor' => [
-			            'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
+			            'RUTRecep' =>  $rutCliente,
 			            'RznSocRecep' => substr($datos_empresa_factura->nombre_cliente,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
 			            'GiroRecep' => substr($datos_empresa_factura->giro,0,35),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
 			            'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
@@ -2913,6 +2913,13 @@ public function cargacontribuyentes(){
 			    'NroResol' => $empresa->nro_resolucion
 			];		
 
+			//FchResol y NroResol deben cambiar con los datos reales de producción
+			$caratula_cliente = [
+			    //'RutEnvia' => '11222333-4', // se obtiene de la firma
+			    'RutReceptor' => $rutCliente,
+			    'FchResol' => $empresa->fec_resolucion,
+			    'NroResol' => $empresa->nro_resolucion
+			];
 
 			//exit;
 			// Objetos de Firma y Folios
@@ -2939,16 +2946,19 @@ public function cargacontribuyentes(){
 				$track_id = 0;
 			    $xml_dte = $EnvioDTE->generar();
 
+			    #GENERACIÓN DTE CLIENTE
+				$EnvioDTE_CLI = new \sasco\LibreDTE\Sii\EnvioDte();
+				$EnvioDTE_CLI->agregar($DTE);
+				$EnvioDTE_CLI->setFirma($Firma);
+				$EnvioDTE_CLI->setCaratula($caratula_cliente);
+				$xml_dte_cliente = $EnvioDTE_CLI->generar();
+
+
 			    $tipo_envio = $this->facturaelectronica->busca_parametro_fe('envio_sii'); //ver si está configurado para envío manual o automático
 
-				$nombre_dte = $numfactura."_". $tipo_caf ."_".$idfactura."_".date("His").".xml"; // nombre archivo
-				$path = date('Ym').'/'; // ruta guardado
-				if(!file_exists('./facturacion_electronica/dte/'.$path)){
-					mkdir('./facturacion_electronica/dte/'.$path,0777,true);
-				}				
-				$f_archivo = fopen('./facturacion_electronica/dte/'.$path.$nombre_dte,'w');
-				fwrite($f_archivo,$xml_dte);
-				fclose($f_archivo);
+			    $dte = $this->facturaelectronica->crea_archivo_dte($xml_dte,$idfactura,$tipo_caf,'sii');
+			    $dte_cliente = $this->facturaelectronica->crea_archivo_dte($xml_dte_cliente,$idfactura,$tipo_caf,'cliente');
+
 
 			    if($tipo_envio == 'automatico'){
 				    $track_id = $EnvioDTE->enviar();
@@ -2956,11 +2966,13 @@ public function cargacontribuyentes(){
 
 			    $this->db->where('f.folio', $numfactura);
 			    $this->db->where('c.tipo_caf', $tipo_caf);
-				$this->db->update('folios_caf f inner join caf c on f.idcaf = c.id',array('dte' => $xml_dte,
+				$this->db->update('folios_caf f inner join caf c on f.idcaf = c.id',array('dte' => $dte['xml_dte'],
+																						  'dte_cliente' => $dte_cliente['xml_dte'],
 																						  'estado' => 'O',
 																						  'idfactura' => $idfactura,
-																						  'path_dte' => $path,
-																						  'archivo_dte' => $nombre_dte,
+																						  'path_dte' => $dte['path'],
+																						  'archivo_dte' => $dte['nombre_dte'],
+																						  'archivo_dte_cliente' => $dte_cliente['nombre_dte'],
 																						  'trackid' => $track_id
 																						  )); 
 
