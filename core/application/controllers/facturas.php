@@ -792,25 +792,28 @@ class Facturas extends CI_Controller {
 
 
 
-	public function ver_dte($idfactura){
+	public function ver_dte($idfactura,$tipo = 'sii'){
+
+		$ruta = $tipo == 'cliente' ? 'dte_cliente' : 'dte';
 		$this->load->model('facturaelectronica');
 		$dte = $this->facturaelectronica->datos_dte($idfactura);
 
 		if(empty($dte)){
 		//if($dte->path_dte == ''){
 
-			$dte = $this->facturaelectronica->crea_dte($idfactura);
+			$dte = $this->facturaelectronica->crea_dte($idfactura,$tipo);
 		}
 
 
-		$path_archivo = "./facturacion_electronica/dte/".$dte->path_dte;
-		$data_archivo = basename($path_archivo.$dte->archivo_dte);
+		$nombre_archivo = $tipo == 'cliente' ? $dte->archivo_dte_cliente : $dte->archivo_dte;
+ 		$path_archivo = "./facturacion_electronica/" . $ruta . "/".$dte->path_dte;
+ 		$data_archivo = basename($path_archivo.$nombre_archivo);
+
 		header('Content-Type: text/plain');
 		header('Content-Disposition: attachment; filename=' . $data_archivo);
-		header('Content-Length: ' . filesize($path_archivo.$dte->archivo_dte));
-		readfile($path_archivo.$dte->archivo_dte);			
+		header('Content-Length: ' . filesize($path_archivo.$nombre_archivo));
+ 		readfile($path_archivo.$nombre_archivo);				
 	 }
-
 
 	public function ver_libro($idlibro){
 		$this->load->model('facturaelectronica');

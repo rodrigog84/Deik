@@ -803,7 +803,7 @@ public function datos_dte_by_trackid($trackid){
 
 	public function get_factura($id_factura){
 
-		$this->db->select('fc.tipo_documento, fc.num_factura, fc.fecha_factura, fc.sub_total, fc.descuento, fc.neto, fc.iva, fc.totalfactura, fc.forma')
+		$this->db->select('fc.tipo_documento, fc.num_factura, fc.fecha_factura, fc.sub_total, fc.descuento, fc.neto, fc.iva, fc.totalfactura, fc.forma, fc.id_factura')
 		  ->from('factura_clientes fc')
 		  ->where('fc.id',$id_factura)
 		  ->limit(1);
@@ -811,7 +811,7 @@ public function datos_dte_by_trackid($trackid){
 		return $query->row();
 	 }	 
 
-	public function crea_dte($idfactura){
+	public function crea_dte($idfactura,$tipo = 'sii'){
 
 		$data_factura = $this->get_factura($idfactura);
 		$tipodocumento = $data_factura->tipo_documento;
@@ -823,6 +823,8 @@ public function datos_dte_by_trackid($trackid){
 			$tipo_caf = 34;
 		}else if($tipodocumento == 105){
 			$tipo_caf = 52;
+		}else if($tipodocumento == 102){
+			$tipo_caf = 61;
 		}		
 
 		header('Content-type: text/plain; charset=ISO-8859-1');
@@ -833,12 +835,14 @@ public function datos_dte_by_trackid($trackid){
 		$empresa = $this->get_empresa();
 		$datos_empresa_factura = $this->get_empresa_factura($idfactura);
 
-		$detalle_factura = $this->get_detalle_factura($idfactura);
+		//$detalle_factura = $this->get_detalle_factura($idfactura);
+		$detalle_factura = $data_factura->forma == 1 ? $this->get_detalle_factura_glosa($idfactura) : $this->get_detalle_factura($idfactura);
+
 		$lista_detalle = array();
 		$i = 0;
 		foreach ($detalle_factura as $detalle) {
-			$lista_detalle[$i]['NmbItem'] = $detalle->nombre;
-			$lista_detalle[$i]['QtyItem'] = $detalle->cantidad;
+			$lista_detalle[$i]['NmbItem'] = $data_factura->forma == 1 ? $detalle->glosa : $detalle->nombre;
+			$lista_detalle[$i]['QtyItem'] = $data_factura->forma == 1 ? 1 : $detalle->cantidad;
 			//$lista_detalle[$i]['PrcItem'] = $detalle->precio;
 			//$lista_detalle[$i]['PrcItem'] = round((($detalle->precio*$detalle->cantidad)/1.19)/$detalle->cantidad,0);
 			//$total = $detalle->precio*$detalle->cantidad;
@@ -847,8 +851,15 @@ public function datos_dte_by_trackid($trackid){
 			//$lista_detalle[$i]['PrcItem'] = round($neto/$detalle->cantidad,2);
 			//$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 ? floor($detalle->precio/1.19) : floor($detalle->precio);
 
-			$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 ? floor(($detalle->totalproducto - $detalle->iva)/$detalle->cantidad) : floor($detalle->precio);
-			if($tipo_caf == 33){
+
+			if($data_factura->forma == 1){
+				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 || $tipo_caf == 52 ? floor($detalle->neto) : floor($detalle->total);
+			}else{
+				$lista_detalle[$i]['PrcItem'] = $tipo_caf == 33 ? floor(($detalle->totalproducto - $detalle->iva)/$detalle->cantidad) : round($detalle->precio);
+			}
+
+
+			if($tipo_caf == 33 && $data_factura->forma != 1){
 				$lista_detalle[$i]['MontoItem'] = ($detalle->totalproducto - $detalle->iva);
 			}				
 
@@ -862,34 +873,73 @@ public function datos_dte_by_trackid($trackid){
 			$i++;
 		}
 
+		if($tipo_caf == 61){
+			$tipo_nota_credito = 1;
+			$numfactura_asoc = $data_factura->id_factura;
+			$glosa = $tipo_nota_credito == 1 ? 'Anula factura '. $numfactura_asoc : 'Correccion factura '. $numfactura_asoc;
+			// datos
+			$factura = [
+			    'Encabezado' => [
+			        'IdDoc' => [
+			            'TipoDTE' => $tipo_caf,
+			            'Folio' => $numfactura,
+			            'FchEmis' => $fecemision
+			        ],
+			        'Emisor' => [
+			            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
+			            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+			            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
+			            'Acteco' => $empresa->cod_actividad,
+			            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
+			            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
+			        ],
+			        'Receptor' => [
+			            'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
+			            'RznSocRecep' => substr($datos_empresa_factura->nombre_cliente,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+			            'GiroRecep' => substr($datos_empresa_factura->giro,0,40),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+			            'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+			            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
+			        ],
+			    ],
+				'Detalle' => $lista_detalle,
+		        'Referencia' => [
+		            'TpoDocRef' => 33,
+		            'FolioRef' => $numfactura_asoc,
+		            'CodRef' => $tipo_nota_credito,
+		            'RazonRef' => $glosa,
+		        ]				
+			];
 
-		// datos
-		$factura = [
-		    'Encabezado' => [
-		        'IdDoc' => [
-		            'TipoDTE' => $tipo_caf,
-		            'Folio' => $numfactura,
-		            'FchEmis' => $fecemision
-		        ],
-		        'Emisor' => [
-		            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
-		            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
-		            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
-		            'Acteco' => $empresa->cod_actividad,
-		            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
-		            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
-		        ],
-		        'Receptor' => [
-		            'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
-		            'RznSocRecep' => substr($datos_empresa_factura->nombre_cliente,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
-		            'GiroRecep' => substr($datos_empresa_factura->giro,0,35),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
-		            'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
-		            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
-		        ],
-		    ],
-			'Detalle' => $lista_detalle
-		];
 
+		}else{
+			// datos
+			$factura = [
+			    'Encabezado' => [
+			        'IdDoc' => [
+			            'TipoDTE' => $tipo_caf,
+			            'Folio' => $numfactura,
+			            'FchEmis' => $fecemision
+			        ],
+			        'Emisor' => [
+			            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
+			            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+			            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
+			            'Acteco' => $empresa->cod_actividad,
+			            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
+			            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
+			        ],
+			        'Receptor' => [
+			            'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
+			            'RznSocRecep' => substr($datos_empresa_factura->nombre_cliente,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+			            'GiroRecep' => substr($datos_empresa_factura->giro,0,35),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+			            'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+			            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
+			        ],
+			    ],
+				'Detalle' => $lista_detalle
+			];
+
+		}
 
 		//FchResol y NroResol deben cambiar con los datos reales de producción
 		$caratula = [
@@ -925,35 +975,24 @@ public function datos_dte_by_trackid($trackid){
 			$track_id = 0;
 		    $xml_dte = $EnvioDTE->generar();
 
-		    $tipo_envio = $this->busca_parametro_fe('envio_sii'); //ver si está configurado para envío manual o automático
+		    $dte = $this->crea_archivo_dte($xml_dte,$idfactura,$tipo_caf,$tipo);
 
-			$nombre_dte = $numfactura."_". $tipo_caf ."_".$idfactura."_".date("His").".xml"; // nombre archivo
-			$path = date('Ym').'/'; // ruta guardado
-			if(!file_exists('./facturacion_electronica/dte/'.$path)){
-				mkdir('./facturacion_electronica/dte/'.$path,0777,true);
-			}				
-			$f_archivo = fopen('./facturacion_electronica/dte/'.$path.$nombre_dte,'w');
-			fwrite($f_archivo,$xml_dte);
-			fclose($f_archivo);
-
-		    if($tipo_envio == 'automatico'){
-			    $track_id = $EnvioDTE->enviar();
-		    }
-
+		    $campos['dte'] = $tipo == 'cliente' ? 'dte_cliente' : 'dte';
+		    $campos['archivo_dte'] = $tipo == 'cliente' ? 'archivo_dte_cliente' : 'archivo_dte';
 
 		    $this->db->where('f.folio', $numfactura);
 		    $this->db->where('c.tipo_caf', $tipo_caf);
-			$this->db->update('folios_caf f inner join caf c on f.idcaf = c.id',array('dte' => $xml_dte,
+			$this->db->update('folios_caf f inner join caf c on f.idcaf = c.id',array($campos['dte'] => $dte['xml_dte'],
 																					  'estado' => 'O',
 																					  'idfactura' => $idfactura,
-																					  'path_dte' => $path,
-																					  'archivo_dte' => $nombre_dte,
+																					  'path_dte' => $dte['path'],
+																					  $campos['archivo_dte'] => $dte['nombre_dte'],
 																					  'trackid' => $track_id
-																					  )); 
+																					  )); 	
 
-			if($track_id != 0 && $datos_empresa_factura->e_mail != ''){ //existe track id, se envía correo
+			/*if($track_id != 0 && $datos_empresa_factura->e_mail != ''){ //existe track id, se envía correo
 				$this->envio_mail_dte($idfactura);
-			}
+			}*/
 
 		}
 

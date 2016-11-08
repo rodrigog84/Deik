@@ -409,14 +409,17 @@ cargar_listado_contribuyentes: function(){
 
             Ext.create('Infosys_web.view.facturaelectronica.verEstadoDte', {idfactura: r.data.id});              
         }else if(t == 2){
-            url = preurl + 'facturas/ver_dte/'+r.data.id,
+            url = preurl + 'facturas/ver_dte/'+r.data.id+'/sii',
             window.open(url,'_blank');           
         }else if(t == 3){
             Ext.create('Infosys_web.view.facturaelectronica.verEstadoEnvio', {idfactura: r.data.id});                          
         }else if(t == 4){
             url = preurl + 'facturas/ver_libro/'+r.data.id,
             window.open(url,'_blank');           
-        }        
+        }else if(t == 5){
+             url = preurl + 'facturas/ver_dte/'+r.data.id+'/cliente',
+             window.open(url,'_blank');   
+         }       
     },
 
 

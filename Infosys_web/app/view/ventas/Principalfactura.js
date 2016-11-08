@@ -43,7 +43,7 @@ Ext.define('Infosys_web.view.ventas.Principalfactura' ,{
     },{
         header: "Tipo Documento",
         dataIndex: 'tipo_doc',
-        width:300,
+        width:280,
         align: 'left'
                
     },{
@@ -119,7 +119,7 @@ Ext.define('Infosys_web.view.ventas.Principalfactura' ,{
     },{
             header: "Estado DTE",
             xtype:'actioncolumn',
-            width:90,
+            width:85,
             align: 'center',
             items: [{
                 icon: 'images/search_page.png',  // Use a URL in the icon config
@@ -140,18 +140,41 @@ Ext.define('Infosys_web.view.ventas.Principalfactura' ,{
                 }                
             }]
     },{
-            header: "Ver DTE",
+            header: "DTE SII",
             xtype:'actioncolumn',
             width:70,
             align: 'center',
             items: [{
-                icon: 'images/download-icon.png',  // Use a URL in the icon config
+                icon: 'images/xml-icon.png',  // Use a URL in the icon config
                 tooltip: 'Descargar DTE',
                 handler: function(grid, rowIndex, colIndex) {
                     var rec = grid.getStore().getAt(rowIndex);
                     //salert("Edit " + rec.get('firstname'));
                     var vista = this.up('facturasprincipal');
                     vista.fireEvent('verEstadoDte',rec,2)
+                },
+                isDisabled: function(view, rowIndex, colIndex, item, record) {
+                    // Returns true if 'editable' is false (, null, or undefined)
+                    if(record.get('tipo_documento') == 101 || record.get('tipo_documento') == 103 || record.get('tipo_documento') == 105){
+                        return false;
+                    }else{
+                        return true;
+                    }
+                }                
+            }]
+    },{
+            header: "DTE Cliente",
+            xtype:'actioncolumn',
+            width:90,
+            align: 'center',
+            items: [{
+                icon: 'images/xml-icon.png',  // Use a URL in the icon config
+                tooltip: 'Descargar DTE',
+                handler: function(grid, rowIndex, colIndex) {
+                    var rec = grid.getStore().getAt(rowIndex);
+                    //salert("Edit " + rec.get('firstname'));
+                    var vista = this.up('facturasprincipal');
+                    vista.fireEvent('verEstadoDte',rec,5)
                 },
                 isDisabled: function(view, rowIndex, colIndex, item, record) {
                     // Returns true if 'editable' is false (, null, or undefined)
