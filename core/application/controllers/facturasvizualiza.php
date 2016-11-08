@@ -303,30 +303,39 @@ class Facturasvizualiza extends CI_Controller {
 	    $items = $this->db->get_where('preventa_detalle', array('id_ticket' => $idticket));
 	    $neto_total = 0;
 
-	    		foreach($items->result() as $v){
+	    foreach($items->result() as $v){
 			
-			$neto_producto = round((round($v->total,0) - round($v->iva,0)),0);
-			$factura_clientes_item = array(
-		        'id_producto' => $v->id_producto,
-		        'id_factura' => $idfactura,
-		        'num_factura' => $numfactura,
-		        'precio' => $v->valor_unit,
-		        'cantidad' => $v->cantidad,
-		        'neto' => $neto_producto,
-		        'descuento' => round($v->desc,0),
-		        'iva' => round($v->iva,0),
-		        'totalproducto' => $v->total,
-		        'fecha' => $fechafactura
-			);
+		$neto_producto = round((round($v->total,0) - round($v->iva,0)),0);
+		$factura_clientes_item = array(
+	        'id_producto' => $v->id_producto,
+	        'id_factura' => $idfactura,
+	        'num_factura' => $numfactura,
+	        'precio' => $v->valor_unit,
+	        'cantidad' => $v->cantidad,
+	        'neto' => $neto_producto,
+	        'descuento' => round($v->desc,0),
+	        'iva' => round($v->iva,0),
+	        'totalproducto' => $v->total,
+	        'fecha' => $fechafactura
+		);
 
 		$neto_total += $neto_producto;
 		$producto = $v->id_producto;
 		$this->db->insert('detalle_factura_cliente', $factura_clientes_item);
 
+
 		$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto.'"');
 		 if($query->num_rows()>0){
 		 	$row = $query->first_row();
 		 	$saldo = ($row->stock)-($v->cantidad);
+
+			 $prduc = array(			
+		        'stock' => $saldo,
+		     );
+
+			$this->db->where('id', $producto);
+			
+			$this->db->update('productos', $prduc); 
 		 };
 		
 		$query = $this->db->query('SELECT * FROM existencia WHERE id_producto='.$producto.' and id_bodega='.$idbodega.'');
@@ -723,7 +732,15 @@ class Facturasvizualiza extends CI_Controller {
 		if($query->num_rows()>0){
 
 		 	$row = $query->first_row();
-		 	$saldo = ($row->stock)-($v->cantidad); 
+		 	$saldo = ($row->stock)-($v->cantidad);
+
+			 $prduc = array(			
+		        'stock' => $saldo,
+		     );
+
+			$this->db->where('id', $producto);
+			
+			$this->db->update('productos', $prduc); 
 
 		};
 
