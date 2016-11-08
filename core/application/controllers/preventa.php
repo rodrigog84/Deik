@@ -819,7 +819,7 @@ class Preventa extends CI_Controller {
 
 		$this->db->insert('preventa_detalle', $preventa_detalle);
 
-		$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto.'"');
+		/*$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto.'"');
 		 
 		if($query->num_rows()>0){
 
@@ -834,7 +834,7 @@ class Preventa extends CI_Controller {
 
     	$this->db->where('id', $producto);
 
-    	$this->db->update('productos', $datos);
+    	$this->db->update('productos', $datos);*/
     	
 		}
 
@@ -926,7 +926,7 @@ class Preventa extends CI_Controller {
 
 		$this->db->insert('preventa_detalle', $preventa_detalle);
 
-		$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto.'"');
+		/*$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto.'"');
 		 
 		 if($query->num_rows()>0){
 
@@ -942,7 +942,7 @@ class Preventa extends CI_Controller {
 
     	$this->db->where('id', $producto);
 
-    	$this->db->update('productos', $datos);
+    	$this->db->update('productos', $datos);*/
     	
 		}
 		
@@ -1003,7 +1003,7 @@ class Preventa extends CI_Controller {
 
 	    $this->db->insert('preventa_detalle', $preventa_detalle);
 
-		$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto.'"');
+		/*$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto.'"');
 		if($query->num_rows()>0){
 
 		 	$row = $query->first_row();
@@ -1018,7 +1018,7 @@ class Preventa extends CI_Controller {
 
     	$this->db->where('id', $producto);
 
-    	$this->db->update('productos', $datos);
+    	$this->db->update('productos', $datos);*/
 
     	$resp['detalle'] = false;
     	
@@ -1042,7 +1042,7 @@ class Preventa extends CI_Controller {
 
 		$query2 = $this->db->query('SELECT * FROM preventa_detalle WHERE id_ticket= '.$idticket.'');
 
-		foreach ($query2->result() as $row1){
+		/*foreach ($query2->result() as $row1){
 
 			$producto2 = $row1->id_producto;
 
@@ -1064,7 +1064,7 @@ class Preventa extends CI_Controller {
 
 	    	$this->db->update('productos', $datos);
 
-		}
+		}*/
 
 		$preventa = array(
 	        'num_ticket' => $numticket,
