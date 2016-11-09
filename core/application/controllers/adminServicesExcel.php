@@ -2,6 +2,167 @@
 
 class AdminServicesExcel extends CI_Controller {
 
+      public function exportarTXT(){
+
+        header("Content-Type: application/force-download");
+        header("Content-Transfer-Encoding: binary");
+
+        header("Content-disposition: attachment; filename=facturacion.txt");
+
+        $fecha = $this->input->get('fecha');
+        list($dia, $mes, $anio) = explode("/",$fecha);
+        $fecha3 = $anio ."-". $mes ."-". $dia;
+        $fecha2 = $this->input->get('fecha2');
+        list($dia, $mes, $anio) = explode("/",$fecha2);
+        $fecha4 = $anio ."-". $mes ."-". $dia;
+
+                          
+        $data = array();
+        $query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor, t.descripcion as nomdocumento, t.id as tipdocumento, con.nombre as nomcondventa, c.id_pago as codigo_con_pago FROM factura_clientes acc
+        left join clientes c on (acc.id_cliente = c.id)
+        left join tipo_documento t on (acc.tipo_documento = t.id)
+        left join cond_pago con on (c.id_pago = con.id)
+        left join vendedores v on (acc.id_vendedor = v.id)
+        WHERE acc.fecha_factura between "'.$fecha3.'"  AND "'.$fecha4.'"
+        ' 
+        );
+
+        echo "NUM_DOCUMENTO";
+        echo ";";
+        echo "FECHA FACTURA";
+        echo ";";
+        echo "FECHA VENCIMIENTO";
+        echo ";";
+        echo "TIPO DOCUMENTO";
+        echo ";";
+        echo "RUT";
+        echo ";";
+        echo "NOMBRE";
+        echo ";";
+        echo "COND VENTA";
+        echo ";";
+        echo "CODIGO CONDICION";
+        echo ";";
+        echo "VENDEDOR";
+        echo ";";
+        echo "COD VENDEDOR";
+        echo ";";
+        echo "NETO";
+        echo ";";
+        echo "IVA";
+        echo ";";
+        echo "TOTAL";
+        echo ";";
+        echo "CODIGO";
+        echo ";";
+        echo "NOMBRE PRODUCTO";
+        echo ";";
+        echo "PRECIO";
+        echo ";";
+        echo "CANTIDAD";
+        echo ";";
+        echo "DESCUENTO";
+        echo ";";
+        echo "NETO";
+        echo ";";
+        echo "IVA";
+        echo ";";
+        echo "TOTAL";
+        
+        //$users = $query->result_array();
+                      
+        foreach ($query->result() as $v){
+
+            
+            $nomdocumento = $v->nomdocumento;
+            $fechafactura = $v->fecha_factura;
+            $fechavenc = $v->fecha_venc;            
+            $numdocumento = $v->num_factura;
+            $rutcliente = $v->rut_cliente;
+            $nomcliente = $v->nombre_cliente;
+            $condventa = $v->nomcondventa;
+            $codcondventa = $v->codigo_con_pago;
+            $vendedor = $v->nom_vendedor;
+            $codvendedor = $v->id_vendedor;
+            if ($v->tipdocumento==102){
+                $neto = (round($v->totalfactura /1.19) / -1);
+                $iva = (($v->totalfactura - $neto) / -1);
+                $total = ($v->totalfactura / -1);                
+            }else{
+                $neto = (round($v->totalfactura /1.19));
+                $iva = ($v->totalfactura - $neto);
+                $total = ($v->totalfactura);             
+            };
+            
+            $id = $v->id;
+
+            
+            $query2 = $this->db->query('SELECT acc.*, c.codigo as codigo,
+            c.nombre as nom_producto
+            FROM detalle_factura_cliente acc
+            left join productos c on (acc.id_producto = c.id)
+            WHERE acc.id_factura = "'.$id.'"');                     
+
+            foreach ($query2->result() as $z){
+            if ($v->tipdocumento==102){
+            $netop = (round($z->totalproducto / 1.19)/ -1);
+            $ivap = (($z->totalproducto - $netop) /-1);
+            $totalproductop = ($z->totalproducto / -1);
+            }else{
+            $netop = (round($z->totalproducto / 1.19));
+            $ivap = ($z->totalproducto - $netop);
+            $totalproductop = ($z->totalproducto);                
+            };
+            echo chr(13).chr(10);
+            echo $numdocumento;
+            echo ";";
+            echo $fechafactura;
+            echo ";";
+            echo $fechavenc;
+            echo ";";
+            echo $nomdocumento;
+            echo ";";
+            echo $rutcliente;
+            echo ";";
+            echo $nomcliente;
+            echo ";";
+            echo $condventa;
+            echo ";";
+            echo $codcondventa;
+            echo ";";
+            echo $vendedor;
+            echo ";";
+            echo $codvendedor;
+            echo ";";
+            echo $neto;
+            echo ";";
+            echo $iva;
+            echo ";";
+            echo $total;   
+            echo ";";
+            echo $z->codigo;
+            echo ";";
+            echo $z->nom_producto;
+            echo ";";
+            echo $z->precio;
+            echo ";";
+            echo $z->cantidad;
+            echo ";";
+            echo $z->descuento;
+            echo ";";
+            echo $netop;
+            echo ";";
+            echo $ivap;
+            echo ";";
+            echo $totalproductop;
+                       
+            //echo chr(13).chr(10);     
+            }
+            //echo chr(13).chr(10);
+          }
+          
+      }
+
 
       public function exportarExcellistaProductos()
          {

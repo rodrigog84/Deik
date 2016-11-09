@@ -32,6 +32,7 @@ Ext.define('Infosys_web.controller.Facturacion', {
              'ventas.Exportar',
              'ventas.Observaciones',
              'ventas.Facturaseditar',
+             'ventas.Exportartxt',
              'notacredito.Principal',
              'facturaelectronica.CargaCertificadoDigital',
              'facturaelectronica.CargaManualCaf',
@@ -113,6 +114,9 @@ Ext.define('Infosys_web.controller.Facturacion', {
     },{
         ref: 'emails',
         selector: 'emails'
+    },{
+        ref: 'formularioexportartxt',
+        selector: 'formularioexportartxt'
     }
     
     ],
@@ -133,6 +137,9 @@ Ext.define('Infosys_web.controller.Facturacion', {
            
             'topmenus menuitem[action=mejemplo]': {
                 click: this.mejemplo
+            },
+            'facturasprincipal button[action=exporttxt]': {
+                click: this.exporttxt
             },
 
             'topmenus menuitem[action=mregempresa]': {
@@ -313,9 +320,40 @@ Ext.define('Infosys_web.controller.Facturacion', {
             },
             'facturasingresar #codigoId': {
                 specialkey: this.buscarproductos
+            },
+             'formularioexportartxt button[action=exporttxtfechas]': {
+                click: this.exporttxtfechas
             }
 
         });
+    },
+
+    exporttxt: function(){
+
+         Ext.create('Infosys_web.view.ventas.Exportartxt').show();
+                              
+        //window.open(preurl + 'adminServicesExcel/exportarTXT');
+       
+    },
+
+    exporttxtfechas : function(){
+
+        var view =this.getFormularioexportartxt()
+        var viewnew =this.getFacturasprincipal()
+        var fecha = view.down('#fechaId').getSubmitValue();
+        var opcion = viewnew.down('#tipoSeleccionId').getValue()
+        var nombre = viewnew.down('#nombreId').getSubmitValue();
+        var fecha2 = view.down('#fecha2Id').getSubmitValue();
+                
+        if (fecha > fecha2) {
+        
+               Ext.Msg.alert('Alerta', 'Fechas Incorrectas');
+            return;          
+
+        };
+
+        window.open(preurl + 'adminServicesExcel/exportarTXT?cols='+'&fecha='+fecha+'&fecha2='+fecha2);
+            view.close();
     },
 
 
@@ -323,7 +361,7 @@ Ext.define('Infosys_web.controller.Facturacion', {
         this.recalculardescuento();
     },
 
-cargar_dte_provee: function(){
+    cargar_dte_provee: function(){
 
         var view = this.getCargadteproveedor();
         var win = this.getDteproveeprincipal();

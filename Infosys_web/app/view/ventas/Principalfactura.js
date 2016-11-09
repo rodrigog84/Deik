@@ -253,6 +253,11 @@ Ext.define('Infosys_web.view.ventas.Principalfactura' ,{
                 iconCls : 'icon-pdf',
                 text: 'PDF Libro',
                 action:'generarlibropdf'
+            },{                
+                xtype: 'button',
+                iconCls : 'icon-word',
+                text: 'EXPORTAR TXT',
+                action:'exporttxt'
             },'->',{
                 xtype: 'combo',
                 align: 'center',
