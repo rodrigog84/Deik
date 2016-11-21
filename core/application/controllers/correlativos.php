@@ -86,6 +86,51 @@ class Correlativos extends CI_Controller {
         echo json_encode($resp);
 	}
 
+	public function generarecepcion(){
+
+		$resp = array();
+		$factura = $this->input->get('valida');
+		$query = $this->db->query('SELECT * FROM correlativos WHERE id like "'.$factura.'"');
+
+		if($query->num_rows()>0){
+	   		$row = $query->first_row();
+	   		$resp['cliente'] = $row;
+	   		$corr = (($row->correlativo)+1); 
+	   		$id = ($row->id);
+
+	   		$data3 = array(
+	         'correlativo' => $corr
+		    );
+
+		    $this->db->where('id', $id);
+		  
+		    $this->db->update('correlativos', $data3);
+
+		    $this->Bitacora->logger("M", 'correlativos', $id);
+
+		    $query = $this->db->query('SELECT * FROM recepcion_compra WHERE num_recepcion like "'.$corr.'"');
+
+			if($query->num_rows()>0){
+
+				$resp['success'] = false;
+			    echo json_encode($resp);
+
+			}else{
+
+				$resp['success'] = true;
+			    echo json_encode($resp);
+				
+
+			}
+
+	   }else{
+	   	    $resp['success'] = false;
+	   	    echo json_encode($resp);
+	        return false;
+	   }		
+
+	}
+
 	public function genera(){
 
 		$resp = array();
