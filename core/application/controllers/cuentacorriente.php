@@ -1289,7 +1289,7 @@ $header = '
 									inner join detalle_cuenta_corriente dcc on dcc.idctacte = cc.id
 									inner join clientes c on cc.idcliente = c.id
 									inner join cuenta_contable cco on cc.idcuentacontable = cco.id
-									where cc.saldo > 0 " . $sql_filtro . " and dcc.tipodocumento not in (11,102)
+									where dcc.saldo > 0 " . $sql_filtro . " and dcc.tipodocumento not in (11,102)
 									order by c.nombres, cco.id, c.id, dcc.id"); // SE ELIMINAN NOTAS DE CREDITO
 
 		$data = array();
