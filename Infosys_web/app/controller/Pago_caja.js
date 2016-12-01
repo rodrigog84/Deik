@@ -94,6 +94,11 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                 specialkey: this.special,
                 blur: this.selectItemcancela                    
             },
+            'generapagoingresar #numfacturaId': {
+                specialkey: this.special9,
+                blur: this.valnum                   
+            },
+           
             'generapagoingresar button[action=agregarrecaudacion]': {
                 click: this.agregarrecaudacion
             },
@@ -139,6 +144,43 @@ Ext.define('Infosys_web.controller.Pago_caja', {
 
         });
     },
+
+    special9: function(f,e){
+        if (e.getKey() == e.ENTER) {
+            this.valnum()
+        }
+    },
+
+    valnum: function(f,e){
+
+        //if (e.getKey() == e.ENTER) {
+
+        var view = this.getGenerapagoingresar();
+        var numdoc = view.down('#numfacturaId').getValue();
+        var tipdoc = view.down('#tipoDocumentoId').getValue();
+
+        console.log(numdoc);
+        
+        Ext.Ajax.request({
+            url: preurl + 'facturasvizualiza/validadocumento',
+            params: {
+                numdoc: numdoc,
+                tipdoc: tipdoc
+            },
+            success: function(response){
+                var resp = Ext.JSON.decode(response.responseText);
+                if (resp.success == true) {
+                 view.down('#numfacturaId').setValue(resp.numdoc);
+                 Ext.Msg.alert('Alerta', 'Correlativo para Documento ya Existe');
+                 return;
+                };
+            }
+           
+        }); 
+    //};        
+          
+    },
+
 
     special6: function(f,e){
         if (e.getKey() == e.ENTER) {
@@ -381,6 +423,8 @@ Ext.define('Infosys_web.controller.Pago_caja', {
         var recItem = this.getRecaudacionItemsStore();
         var valida = view.down('#permiteId').getValue();
         var valida2 = view.down('#valida2Id').getValue();
+
+
         if (valida == "SI"){
            Ext.Msg.alert('Alerta', 'Documento ya Generado');
            return;       
