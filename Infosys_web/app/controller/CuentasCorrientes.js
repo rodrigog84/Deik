@@ -647,9 +647,9 @@ Ext.define('Infosys_web.controller.CuentasCorrientes', {
           var i = 0;
 
           var grid =this.getSaldodocumentosprincipal();
-          rutcliente = grid.down('#rutcliente').getValue();
-          nombrecliente = grid.down('#nombrecliente').getValue();
-          cuentacontable = grid.down('#cuentacontable').getValue();
+          //rutcliente = grid.down('#rutcliente').getValue();
+          //nombrecliente = grid.down('#nombrecliente').getValue();
+          //cuentacontable = grid.down('#cuentacontable').getValue();
 
           Ext.each(grid.columns, function(col, index){
             if(!col.hidden){

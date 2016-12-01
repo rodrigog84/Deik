@@ -1313,7 +1313,7 @@ $header = '
 
         public function exportarSaldoDocumentosPDF(){
             
-            
+            set_time_limit(0);
             $columnas = json_decode($this->input->get('cols'));
             $rutcliente = $this->input->get('rutcliente');
             $nombrecliente = $this->input->get('nombrecliente');
@@ -1333,7 +1333,6 @@ $header = '
             }                
 
             $this->load->database();
-            
 
             $query = $this->db->query("SELECT cco.nombre as cuentacontable, dcc.numdocumento as documento, dcc.fecha, dcc.fechavencimiento, 
                   if(datediff(curdate(),dcc.fechavencimiento)<=0,dcc.saldo,0) as saldoporvencer,
@@ -1346,9 +1345,8 @@ $header = '
                   inner join detalle_cuenta_corriente dcc on dcc.idctacte = cc.id
                   inner join clientes c on cc.idcliente = c.id
                   inner join cuenta_contable cco on cc.idcuentacontable = cco.id
-                  where cc.saldo > 0 " . $sql_filtro . "
+                  where dcc.saldo > 0 " . $sql_filtro . " and dcc.tipodocumento not in (11,102)
                   order by cco.id, c.id, dcc.id");
-
 
 
 
