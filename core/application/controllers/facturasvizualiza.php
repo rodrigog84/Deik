@@ -11,6 +11,35 @@ class Facturasvizualiza extends CI_Controller {
 		$this->load->database();
 	}
 
+	public function validadocumento(){
+
+		$resp = array();
+		$numdoc = $this->input->post('numdoc');
+		$tipdoc = $this->input->post('tipdoc');
+
+		$query = $this->db->query('SELECT * FROM factura_clientes 
+		WHERE tipo_documento = "'.$tipdoc.'" and num_factura = "'.$numdoc.'"');
+
+		if($query->num_rows()>0){
+
+			$resp['success'] = true;
+			$query = $this->db->query('SELECT * FROM correlativos WHERE id like "'.$tipdoc.'"');
+			if($query->num_rows()>0){
+	   			$row = $query->first_row();
+	   			$nudoc= $row->correlativo + 1;
+	   			$resp['numdoc'] = $nudoc; 
+		    }
+		
+		}else{
+			$resp['success'] = false;
+			$resp['numdoc'] = $numdoc;
+			
+
+		};
+		echo json_encode($resp);	
+
+	}
+
 	public function saveobserva(){
 
 		$resp = array();
