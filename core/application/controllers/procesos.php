@@ -440,6 +440,85 @@ truncate movimiento_cuenta_corriente;
 	}	
 
 
+
+	public function envio_programado_sii(){
+
+		$this->load->model('facturaelectronica');
+		$facturas = $this->facturaelectronica->get_factura_no_enviada();
+
+		
+
+		foreach ($facturas as $factura) {
+			$idfactura = $factura->idfactura;
+			$factura = $this->facturaelectronica->datos_dte($idfactura);
+			$config = $this->facturaelectronica->genera_config();
+			include $this->facturaelectronica->ruta_libredte();
+
+
+			$token = \sasco\LibreDTE\Sii\Autenticacion::getToken($config['firma']);
+			if (!$token) {
+			    foreach (\sasco\LibreDTE\Log::readAll() as $error){
+			    	$result['error'] = true;
+
+			    }
+			    $result['message'] = "Error de conexión con SII";		   
+			   	echo json_encode($result);
+			    exit;
+			}
+
+			$Firma = new \sasco\LibreDTE\FirmaElectronica($config['firma']); //lectura de certificado digital
+			$rut = $Firma->getId(); 
+			$rut_consultante = explode("-",$rut);
+			$RutEnvia = $rut_consultante[0]."-".$rut_consultante[1];
+
+			$xml = $factura->dte;
+
+			$EnvioDte = new \sasco\LibreDTE\Sii\EnvioDte();
+			$EnvioDte->loadXML($xml);
+			$Documentos = $EnvioDte->getDocumentos();	
+
+			$DTE = $Documentos[0];
+			$RutEmisor = $DTE->getEmisor(); 
+
+			// enviar DTE
+			$result_envio = \sasco\LibreDTE\Sii::enviar($RutEnvia, $RutEmisor, $xml, $token);
+
+			// si hubo algún error al enviar al servidor mostrar
+			if ($result_envio===false) {
+			    foreach (\sasco\LibreDTE\Log::readAll() as $error){
+			        $result['error'] = true;
+			    }
+			    $result['message'] = "Error de envío de DTE";		   
+			   	echo json_encode($result);
+			    exit;
+			}
+
+			// Mostrar resultado del envío
+			if ($result_envio->STATUS!='0') {
+			    foreach (\sasco\LibreDTE\Log::readAll() as $error){
+					$result['error'] = true;
+			    }
+			    $result['message'] = "Error de envío de DTE";		   
+			   	echo json_encode($result);
+			    exit;
+			}
+
+
+			$track_id = 0;
+			$track_id = (int)$result_envio->TRACKID;
+		    $this->db->where('id', $factura->id);
+			$this->db->update('folios_caf',array('trackid' => $track_id)); 
+
+
+			$result['success'] = true;
+			$result['message'] = $track_id != 0 ? "DTE enviado correctamente" : "Error en env&iacute;o de DTE";
+			$result['trackid'] = $track_id;
+			echo json_encode($result);
+			
+		}
+
+	}	
+
 }
 
 
