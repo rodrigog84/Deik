@@ -5,7 +5,7 @@
  * Copyright (C) SASCO SpA (https://sasco.cl)
  *
  * Este programa es software libre: usted puede redistribuirlo y/o
- * modificarlo bajo los términos de la Licencia Pública General GNU
+ * modificarlo bajo los términos de la Licencia Pública General Affero de GNU
  * publicada por la Fundación para el Software Libre, ya sea la versión
  * 3 de la Licencia, o (a su elección) cualquier versión posterior de la
  * misma.
@@ -13,12 +13,12 @@
  * Este programa se distribuye con la esperanza de que sea útil, pero
  * SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
  * MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
- * Consulte los detalles de la Licencia Pública General GNU para obtener
- * una información más detallada.
+ * Consulte los detalles de la Licencia Pública General Affero de GNU para
+ * obtener una información más detallada.
  *
- * Debería haber recibido una copia de la Licencia Pública General GNU
+ * Debería haber recibido una copia de la Licencia Pública General Affero de GNU
  * junto a este programa.
- * En caso contrario, consulte <http://www.gnu.org/licenses/gpl.html>.
+ * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
 namespace sasco\LibreDTE;
@@ -26,14 +26,18 @@ namespace sasco\LibreDTE;
 /**
  * Clase para acciones genéricas asociadas al SII de Chile
  * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
- * @version 2015-09-30
+ * @version 2016-07-25
  */
 class Sii
 {
 
     private static $config = [
-        'wsdl' => 'https://{servidor}.sii.cl/DTEWS/{servicio}.jws?WSDL',
-        'servidor' => ['palena', 'maullin2'], ///< servidores 0: producción, 1: certificación
+        'wsdl' => [
+            '*' => 'https://{servidor}.sii.cl/DTEWS/{servicio}.jws?WSDL',
+            'QueryEstDteAv' => 'https://{servidor}.sii.cl/DTEWS/services/{servicio}?WSDL',
+            'wsDTECorreo' => 'https://{servidor}.sii.cl/DTEWS/services/{servicio}?WSDL',
+        ],
+        'servidor' => ['palena', 'maullin'], ///< servidores 0: producción, 1: certificación
         'certs' => [300, 100], ///< certificados 0: producción, 1: certificación
     ];
 
@@ -43,7 +47,24 @@ class Sii
     const IVA = 19; ///< Tasa de IVA
 
     private static $retry = 10; ///< Veces que se reintentará conectar a SII al usar el servicio web
-    private static $verificar_ssl = true; ///< Indica si se deberá verificar o no el certificado SSL del SII
+    private static $verificar_ssl = false; ///< Indica si se deberá verificar o no el certificado SSL del SII
+    private static $ambiente = self::PRODUCCION; ///< Ambiente que se utilizará
+
+    private static $direcciones_regionales = [
+        'CHILLÁN VIEJO' => 'CHILLÁN',
+        'HUECHURABA' => 'SANTIAGO NORTE',
+        'LA CISTERNA' => 'SANTIAGO SUR',
+        'LAS CONDES' => 'SANTIAGO ORIENTE',
+        'LO ESPEJO' => 'SANTIAGO SUR',
+        'PEÑALOLÉN' => 'ÑUÑOA',
+        'PUDAHUEL' => 'SANTIAGO PONIENTE',
+        'RECOLETA' => 'SANTIAGO NORTE',
+        'SANTIAGO' => 'SANTIAGO CENTRO',
+        'SAN MIGUEL' => 'SANTIAGO SUR',
+        'SAN VICENTE' => 'SAN VICENTE TAGUA TAGUA',
+        'TALTAL' => 'ANTOFAGASTA',
+        'VITACURA' => 'SANTIAGO ORIENTE',
+    ]; /// Direcciones regionales del SII según la comuna
 
     /**
      * Método que permite asignar el nombre del servidor del SII que se
@@ -56,6 +77,17 @@ class Sii
     public static function setServidor($servidor = 'maullin', $certificacion = Sii::CERTIFICACION)
     {
         self::$config['servidor'][$certificacion] = $servidor;
+    }
+
+    /**
+     * Método que entrega el nombre del servidor a usar según el ambiente
+     * @param ambiente Ambiente que se desea obtener el servidor, si es null se autodetectará
+     * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
+     * @version 2016-08-01
+     */
+    public static function getServidor($ambiente = null)
+    {
+        return self::$config['servidor'][self::getAmbiente($ambiente)];
     }
 
     /**
@@ -72,19 +104,18 @@ class Sii
      *   $wsdl = \sasco\LibreDTE\Sii::wsdl('CrSeed', \sasco\LibreDTE\Sii::CERTIFICACION);
      * \endcode
      *
-     * La otra manera, para evitar este segundo parámetro, es crear la constante
-     * _LibreDTE_CERTIFICACION_ con valor true antes de ejecutar cualquier
-     * llamada a la biblioteca:
+     * La otra manera, para evitar este segundo parámetro, es asignar el valor a
+     * través de la configuración:
      *
      * \code{.php}
-     *   define('_LibreDTE_CERTIFICACION_', true);
+     *   \sasco\LibreDTE\Sii::setAmbiente(\sasco\LibreDTE\Sii::CERTIFICACION);
      * \endcode
      *
      * @param servicio Servicio por el cual se está solicitando su WSDL
      * @param ambiente Ambiente a usar: Sii::PRODUCCION o Sii::CERTIFICACION o null (para detección automática)
      * @return URL del WSDL del servicio según ambiente solicitado
      * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
-     * @version 2015-09-25
+     * @version 2016-06-11
      */
     public static function wsdl($servicio, $ambiente = null)
     {
@@ -97,14 +128,12 @@ class Sii
                 return $wsdl;
         }
         // entregar WSDL oficial desde SII
+        $location = isset(self::$config['wsdl'][$servicio]) ? self::$config['wsdl'][$servicio] : self::$config['wsdl']['*'];
         $wsdl = str_replace(
             ['{servidor}', '{servicio}'],
             [self::$config['servidor'][$ambiente], $servicio],
-            self::$config['wsdl']
+            $location
         );
-        // wsdl wsDTECorreo sale de la norma y tiene otra URL
-        if ($servicio == 'wsDTECorreo')
-            $wsdl = str_replace('wsDTECorreo.jws', 'services/wsDTECorreo', $wsdl);
         // entregar wsdl
         return $wsdl;
     }
@@ -117,7 +146,7 @@ class Sii
      * @param retry Intentos que se realizarán como máximo para obtener respuesta
      * @return Objeto SimpleXMLElement con la espuesta del servicio web consultado
      * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
-     * @version 2015-09-25
+     * @version 2016-08-28
      */
     public static function request($wsdl, $request, $args = null, $retry = null)
     {
@@ -129,8 +158,24 @@ class Sii
             $retry = self::$retry;
         if ($args and !is_array($args))
             $args = [$args];
+        if (!self::$verificar_ssl) {
+            if (self::getAmbiente()==self::PRODUCCION) {
+                $msg = Estado::get(Estado::ENVIO_SSL_SIN_VERIFICAR);
+                //trigger_error($msg, E_USER_NOTICE);
+                \sasco\LibreDTE\Log::write(Estado::ENVIO_SSL_SIN_VERIFICAR, $msg, LOG_WARNING);
+            }
+            $options = ['stream_context' => stream_context_create([
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                ]
+            ])];
+        } else {
+            $options = [];
+        }
         try {
-            $soap = new \SoapClient(self::wsdl($wsdl));
+            $soap = new \SoapClient(self::wsdl($wsdl), $options);
         } catch (\Exception $e) {
             $msg = $e->getMessage();
             if (isset($e->getTrace()[0]['args'][1]) and is_string($e->getTrace()[0]['args'][1])) {
@@ -185,7 +230,7 @@ class Sii
      * @param retry Intentos que se realizarán como máximo para obtener respuesta
      * @return Respuesta XML desde SII o bien null si no se pudo obtener respuesta
      * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
-     * @version 2015-10-01
+     * @version 2016-08-06
      */
     public static function enviar($usuario, $empresa, $dte, $token, $retry = null)
     {
@@ -216,8 +261,8 @@ class Sii
         // crear sesión curl con sus opciones
         $curl = curl_init();
         $header = [
-            'User-Agent: Mozilla/4.0 (compatible; PROG 1.0; Windows NT 5.0; YComp 5.0.2.4)',
-            //'Referer: http://libredte.cl',
+            'User-Agent: Mozilla/4.0 (compatible; PROG 1.0; LibreDTE)',
+            'Referer: https://libredte.cl',
             'Cookie: TOKEN='.$token,
         ];
         $url = 'https://'.self::$config['servidor'][self::getAmbiente()].'.sii.cl/cgi_dte/UPL/DTEUpload';
@@ -232,7 +277,7 @@ class Sii
         if (!self::$verificar_ssl) {
             if (self::getAmbiente()==self::PRODUCCION) {
                 $msg = Estado::get(Estado::ENVIO_SSL_SIN_VERIFICAR);
-                trigger_error($msg, E_USER_NOTICE);
+                //trigger_error($msg, E_USER_NOTICE);
                 \sasco\LibreDTE\Log::write(Estado::ENVIO_SSL_SIN_VERIFICAR, $msg, LOG_WARNING);
             }
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -301,7 +346,24 @@ class Sii
     }
 
     /**
-     * Método qu determina el ambiente que se debe utilizar: producción o
+     * Método que asigna el ambiente que se usará por defecto (si no está
+     * asignado con la constante _LibreDTE_CERTIFICACION_)
+     * @param ambiente Ambiente a usar: Sii::PRODUCCION o Sii::CERTIFICACION
+     * @warning No se está verificando SSL en ambiente de certificación
+     * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
+     * @version 2016-08-28
+     */
+    public static function setAmbiente($ambiente = self::PRODUCCION)
+    {
+        $ambiente = $ambiente ? self::CERTIFICACION : self::PRODUCCION;
+        if ($ambiente==self::CERTIFICACION) {
+            self::setVerificarSSL(false);
+        }
+        self::$ambiente = $ambiente;
+    }
+
+    /**
+     * Método que determina el ambiente que se debe utilizar: producción o
      * certificación
      * @param ambiente Ambiente a usar: Sii::PRODUCCION o Sii::CERTIFICACION o null (para detección automática)
      * @return Ambiente que se debe utilizar
@@ -314,7 +376,7 @@ class Sii
             if (defined('_LibreDTE_CERTIFICACION_'))
                 $ambiente = (int)_LibreDTE_CERTIFICACION_;
             else
-                $ambiente = self::PRODUCCION;
+                $ambiente = self::$ambiente;
         }
         return $ambiente;
     }
@@ -334,7 +396,7 @@ class Sii
      * Método que entrega un arreglo con todos los datos de los contribuyentes
      * que operan con factura electrónica descargados desde el SII
      * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
-     * @version 2015-09-30
+     * @version 2016-08-06
      */
     public static function getContribuyentes(\sasco\LibreDTE\FirmaElectronica $Firma, $ambiente = null)
     {
@@ -348,7 +410,7 @@ class Sii
         // preparar consulta curl
         $curl = curl_init();
         $header = [
-            'User-Agent: Mozilla/4.0 (compatible; PROG 1.0; Windows NT 5.0; YComp 5.0.2.4)',
+            'User-Agent: Mozilla/4.0 (compatible; PROG 1.0; LibreDTE)',
             'Referer: https://'.$servidor.'.sii.cl/cvc/dte/ee_empresas_dte.html',
             'Cookie: TOKEN='.$token,
             'Accept-Encoding' => 'gzip, deflate, sdch',
@@ -363,7 +425,7 @@ class Sii
         if (!self::$verificar_ssl) {
             if ($ambiente==self::PRODUCCION) {
                 $msg = Estado::get(Estado::ENVIO_SSL_SIN_VERIFICAR);
-                trigger_error($msg, E_USER_NOTICE);
+                //trigger_error($msg, E_USER_NOTICE);
                 \sasco\LibreDTE\Log::write(Estado::ENVIO_SSL_SIN_VERIFICAR, $msg, LOG_WARNING);
             }
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -392,6 +454,23 @@ class Sii
             $data[] = $row;
         }
         return $data;
+    }
+
+    /**
+     * Método que entrega la dirección regional según la comuna que se esté
+     * consultando
+     * @param comuna de la sucursal del emior o bien código de la sucursal del SII
+     * @return Dirección regional del SII
+     * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
+     * @version 2016-06-03
+     */
+    public static function getDireccionRegional($comuna)
+    {
+        if (!is_numeric($comuna)) {
+            $direccion = mb_strtoupper($comuna, 'UTF-8');
+            return isset(self::$direcciones_regionales[$direccion]) ? self::$direcciones_regionales[$direccion] : $direccion;
+        }
+        return 'SUC '.$comuna;
     }
 
 }
