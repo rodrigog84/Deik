@@ -442,7 +442,7 @@ truncate movimiento_cuenta_corriente;
 
 
 	public function envio_programado_sii(){
-
+		set_time_limit(0);
 		$this->load->model('facturaelectronica');
 		$facturas = $this->facturaelectronica->get_factura_no_enviada();
 
@@ -471,7 +471,14 @@ truncate movimiento_cuenta_corriente;
 			$rut_consultante = explode("-",$rut);
 			$RutEnvia = $rut_consultante[0]."-".$rut_consultante[1];
 
-			$xml = $factura->dte;
+			//$xml = $factura->dte;
+			$archivo = "./facturacion_electronica/dte/".$factura->path_dte.$factura->archivo_dte;
+		 	if(file_exists($archivo)){
+		 		$xml = file_get_contents($archivo);
+		 	}else{
+		 		$xml = $factura->dte;
+		 	}
+
 
 			$EnvioDte = new \sasco\LibreDTE\Sii\EnvioDte();
 			$EnvioDte->loadXML($xml);
@@ -508,7 +515,8 @@ truncate movimiento_cuenta_corriente;
 			$track_id = (int)$result_envio->TRACKID;
 		    $this->db->where('id', $factura->id);
 			$this->db->update('folios_caf',array('trackid' => $track_id)); 
-
+			echo "idfactura: " .$factura->id." -- folio : ".$factura->folio." -- trackid : ". $track_id . "<br>";
+			ob_flush(); 
 
 			$result['success'] = true;
 			$result['message'] = $track_id != 0 ? "DTE enviado correctamente" : "Error en env&iacute;o de DTE";
