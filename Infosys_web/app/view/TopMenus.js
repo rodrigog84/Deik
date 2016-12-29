@@ -571,13 +571,13 @@ Ext.define('Infosys_web.view.TopMenus' ,{
                         itemId: 'vyf_libro_compra_venta',
                         disabled: '',
                         action: 'mlibrocompraventa'
-                },{
+                },/*{
                         text: 'Hist&oacute;rico Libros Compra/Venta',
                         iconCls: '',
                         itemId: 'vyf_hist_libro_compra_venta',
                         disabled: '',
                         action: 'mhistlibrocompraventa'
-                },{
+                },*/{
                         text: 'Carga Contribuyentes Autorizados',
                         iconCls: '',
                         itemId: 'vyf_carga_contribuyentes',
