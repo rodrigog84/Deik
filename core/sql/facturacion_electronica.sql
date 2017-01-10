@@ -327,3 +327,23 @@ ALTER TABLE `folios_caf`
 	ADD COLUMN `dte_cliente` TEXT NOT NULL AFTER `dte`;
 ALTER TABLE `folios_caf`
 	ADD COLUMN `archivo_dte_cliente` VARCHAR(50) NOT NULL AFTER `archivo_dte`;	
+
+
+/******************************************************************************************************/
+
+
+ALTER TABLE `log_libros`
+	ADD COLUMN `estado` ENUM('P','G') NULL DEFAULT 'P' COMMENT 'P: Pendiente, G: Generado' AFTER `tipo_libro`;	
+ALTER TABLE `log_libros`
+	ADD COLUMN `fecha_solicita` DATETIME NOT NULL AFTER `archivo`,
+	ADD COLUMN `fecha_procesa` DATETIME NULL DEFAULT NULL AFTER `fecha_solicita`;	
+
+
+/******************************************************************************************************/
+
+
+ALTER TABLE `log_libros`
+	ADD COLUMN `trackid` VARCHAR(30) NULL AFTER `estado`;
+ALTER TABLE `log_libros`
+	ADD COLUMN `xml_libro` TEXT NULL DEFAULT NULL AFTER `trackid`;	
+	

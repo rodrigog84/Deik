@@ -949,7 +949,7 @@ class Cuentacorriente extends CI_Controller {
 		</head>
 
 		<body>
-		 <td width="197px"><img src="http://92.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		 <td width="197px"><img src="http://192.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
@@ -1094,7 +1094,7 @@ $header = '
 		<body>
 		<table width="987px" height="602" border="0">
 		  <tr>
-		    <td width="197px"><img src="http://92.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		    <td width="197px"><img src="http://192.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
@@ -1371,7 +1371,7 @@ $header = '
 		</head>
 
 		<body>
-		 <td width="197px"><img src="http://92.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		 <td width="197px"><img src="http://192.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
@@ -1578,7 +1578,7 @@ $header = '
 		</head>
 
 		<body>
-		 <td width="197px"><img src="http://92.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		 <td width="197px"><img src="http://192.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
@@ -1812,7 +1812,7 @@ $header = '
 		</head>
 
 		<body>
-		 <td width="197px"><img src="http://92.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		 <td width="197px"><img src="http://192.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
@@ -1998,7 +1998,7 @@ $body_header = '<tr>
 		<body>
 		<table width="987px" height="602" border="0">
 		  <tr>
-		   <td width="197px"><img src="http://92.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		   <td width="197px"><img src="http://192.168.1.10/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
 		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
 		    <p>RUT:76.019.353-4</p>
