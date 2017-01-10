@@ -527,6 +527,16 @@ truncate movimiento_cuenta_corriente;
 
 	}	
 
+
+	public function libera_folios(){
+
+			$this->db->where('estado', 'T');
+			$this->db->update('folios_caf',array(
+											'estado' => 'P')); 
+
+	}	
+
+
 }
 
 
