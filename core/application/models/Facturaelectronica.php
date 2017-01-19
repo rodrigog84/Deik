@@ -234,7 +234,7 @@ class Facturaelectronica extends CI_Model
 	 }
 
 	public function get_detalle_factura_glosa($id_factura){
-		$this->db->select('f.glosa, f.neto, f.iva, f.total ')
+		$this->db->select('f.glosa, f.neto, f.iva, f.total, f.num_guia ')
 		  ->from('detalle_factura_glosa f')
 		  ->where('f.id_factura',$id_factura);
 		$query = $this->db->get();
