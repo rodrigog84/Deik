@@ -1034,12 +1034,13 @@ Ext.define('Infosys_web.controller.Ordencompra', {
     buscarorden: function(){
         
         var view = this.getOrdencompraprincipal();
-        var st = this.getOrden_compraStore()
+        var st = this.getOrdencompra_originalStore()
         var opcion = view.down('#tipoSeleccionId').getValue()
         var nombre = view.down('#nombreId').getValue()
         st.proxy.extraParams = {nombre : nombre,
                                 opcion : opcion}
         st.load();
+        console.log("llegamos")
 
     },
 

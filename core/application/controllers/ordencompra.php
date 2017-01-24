@@ -695,6 +695,11 @@ class Ordencompra extends CI_Controller {
 		$data = array();
 		$total = 0;
 
+		if (!$opcion){
+			
+			$opcion = "Todos";
+		};
+
 		if($opcion == "Rut"){
 
 			$query = $this->db->query('SELECT ctz.*, pro.nombres as empresa, pro.rut as rut, pro.direccion as direccion, ciu.nombre as ciudad, com.nombre as comuna, gir.nombre as giro, ctz.semicumplida as estado, ven.nombre as nom_vendedor
@@ -704,13 +709,15 @@ class Ordencompra extends CI_Controller {
 			LEFT JOIN ciudad ciu ON (pro.id_ciudad = ciu.id)
 			LEFT JOIN comuna com ON (pro.id_comuna = com.id)
 			LEFT JOIN cod_activ_econ gir ON (pro.id_giro = gir.id)
-			WHERE ctz.semicumplida="NO" and pro.rut = '.$nombres.'
+			WHERE pro.rut = '.$nombres.'
 			order by ctz.id desc		
 			limit '.$start.', '.$limit.''		 
 
 			);
 
-		}else if($opcion == "Numero"){
+		};
+		
+		if($opcion == "Numero"){
 
 			$query = $this->db->query('SELECT ctz.*, pro.nombres as empresa, pro.rut as rut, pro.direccion as direccion, ciu.nombre as ciudad, com.nombre as comuna, gir.nombre as giro, ctz.semicumplida as estado, ven.nombre as nom_vendedor
 			FROM orden_compra ctz
@@ -719,19 +726,21 @@ class Ordencompra extends CI_Controller {
 			LEFT JOIN ciudad ciu ON (pro.id_ciudad = ciu.id)
 			LEFT JOIN comuna com ON (pro.id_comuna = com.id)
 			LEFT JOIN cod_activ_econ gir ON (pro.id_giro = gir.id)
-			WHERE ctz.semicumplida="NO" and ctz.num_orden = '.$nombres.'
+			WHERE ctz.num_orden = '.$nombres.'
 			order by ctz.id desc		
 			limit '.$start.', '.$limit.''		 
 
 			);
 
-		}else if($opcion == "Nombre"){
+		};
+
+		if($opcion == "Nombre"){
 
 			$sql_nombre = "";
 	        $arrayNombre =  explode(" ",$nombres);
 
 	        foreach ($arrayNombre as $nombre) {
-	        	$sql_nombre .= "and pro.nombres like '%".$nombre."%' ";
+	        	$sql_nombre .= "pro.nombres like '%".$nombre."%' ";
 	        }
 
 			$query = $this->db->query('SELECT ctz.*, pro.nombres as empresa, pro.rut as rut, pro.direccion as direccion, ciu.nombre as ciudad, com.nombre as comuna, gir.nombre as giro, ctz.semicumplida as estado, ven.nombre as nom_vendedor
@@ -741,11 +750,13 @@ class Ordencompra extends CI_Controller {
 			LEFT JOIN ciudad ciu ON (pro.id_ciudad = ciu.id)
 			LEFT JOIN comuna com ON (pro.id_comuna = com.id)
 			LEFT JOIN cod_activ_econ gir ON (pro.id_giro = gir.id)
-			WHERE ctz.semicumplida="NO" ' . $sql_nombre . '
+			WHERE ' . $sql_nombre . '
 			order by ctz.id desc		
 			limit '.$start.', '.$limit.'');
 
-		}else if($opcion == "Todos"){
+		};
+		
+		if($opcion == "Todos"){
 
 			$query = $this->db->query('SELECT ctz.*, pro.nombres as empresa, pro.rut as rut, pro.direccion as direccion, ciu.nombre as ciudad, com.nombre as comuna, gir.nombre as giro, ctz.semicumplida as estado, ven.nombre as nom_vendedor
 			FROM orden_compra ctz
@@ -758,22 +769,8 @@ class Ordencompra extends CI_Controller {
 			order by ctz.id desc		
 			limit '.$start.', '.$limit.'');			
 
-		}else{
-
-			$query = $this->db->query('SELECT ctz.*, pro.nombres as empresa, pro.rut as rut, pro.direccion as direccion, ciu.nombre as ciudad, com.nombre as comuna, gir.nombre as giro, ctz.semicumplida as estado, ven.nombre as nom_vendedor
-			FROM orden_compra ctz
-			LEFT JOIN clientes pro ON (ctz.id_proveedor = pro.id)
-			LEFT JOIN vendedores ven ON (ctz.id_vendedor = ven.id)
-			LEFT JOIN ciudad ciu ON (pro.id_ciudad = ciu.id)
-			LEFT JOIN comuna com ON (pro.id_comuna = com.id)
-			LEFT JOIN cod_activ_econ gir ON (pro.id_giro = gir.id)
-			WHERE ctz.cumplida="NO"
-			order by ctz.id desc		
-			limit '.$start.', '.$limit.'');
-
-			
 		};
-
+			
 		foreach ($query->result() as $row)
 		{
 
@@ -839,7 +836,9 @@ class Ordencompra extends CI_Controller {
 
 			);
 
-		}else if($opcion == "Numero"){
+		};
+
+		if($opcion == "Numero"){
 
 			$query = $this->db->query('SELECT ctz.*, pro.nombres as empresa, pro.rut as rut, pro.direccion as direccion, ciu.nombre as ciudad, com.nombre as comuna, gir.nombre as giro, ven.nombre as nom_vendedor
 			FROM ordencompra_original ctz
@@ -854,13 +853,15 @@ class Ordencompra extends CI_Controller {
 
 			);
 
-		}else if($opcion == "Nombre"){
+		};
+
+		if($opcion == "Nombre"){
 
 			$sql_nombre = "";
 	        $arrayNombre =  explode(" ",$nombres);
 
 	        foreach ($arrayNombre as $nombre) {
-	        	$sql_nombre .= "and pro.nombres like '%".$nombre."%' ";
+	        	$sql_nombre .= "pro.nombres like '%".$nombre."%' ";
 	        }
 
 			$query = $this->db->query('SELECT ctz.*, pro.nombres as empresa, pro.rut as rut, pro.direccion as direccion, ciu.nombre as ciudad, com.nombre as comuna, gir.nombre as giro, ven.nombre as nom_vendedor
@@ -874,7 +875,9 @@ class Ordencompra extends CI_Controller {
 			order by ctz.id desc		
 			limit '.$start.', '.$limit.'');
 
-		}else if($opcion == "Todos"){
+		} 
+
+		if($opcion == "Todos"){
 
 			$query = $this->db->query('SELECT ctz.*, pro.nombres as empresa, pro.rut as rut, pro.direccion as direccion, ciu.nombre as ciudad, com.nombre as comuna, gir.nombre as giro, ven.nombre as nom_vendedor
 			FROM ordencompra_original ctz
@@ -886,21 +889,8 @@ class Ordencompra extends CI_Controller {
 			order by ctz.id desc		
 			limit '.$start.', '.$limit.'');			
 
-		}else{
-
-			$query = $this->db->query('SELECT ctz.*, pro.nombres as empresa, pro.rut as rut, pro.direccion as direccion, ciu.nombre as ciudad, com.nombre as comuna, gir.nombre as giro, ven.nombre as nom_vendedor
-			FROM ordencompra_original ctz
-			LEFT JOIN clientes pro ON (ctz.id_proveedor = pro.id)
-			LEFT JOIN vendedores ven ON (ctz.id_vendedor = ven.id)
-			LEFT JOIN ciudad ciu ON (pro.id_ciudad = ciu.id)
-			LEFT JOIN comuna com ON (pro.id_comuna = com.id)
-			LEFT JOIN cod_activ_econ gir ON (pro.id_giro = gir.id)
-			order by ctz.id desc		
-			limit '.$start.', '.$limit.'');
-
-			
 		};
-
+		
 		foreach ($query->result() as $row)
 		{
 
