@@ -518,6 +518,12 @@ truncate movimiento_cuenta_corriente;
 			echo "idfactura: " .$factura->id." -- folio : ".$factura->folio." -- trackid : ". $track_id . "<br>";
 			ob_flush(); 
 
+			$datos_empresa_factura = $this->facturaelectronica->get_empresa_factura($factura->idfactura);
+			if($track_id != 0 && $datos_empresa_factura->e_mail != ''){ //existe track id, se envía correo
+				$this->facturaelectronica->envio_mail_dte($factura->idfactura);
+			}
+
+
 			$result['success'] = true;
 			$result['message'] = $track_id != 0 ? "DTE enviado correctamente" : "Error en env&iacute;o de DTE";
 			$result['trackid'] = $track_id;
