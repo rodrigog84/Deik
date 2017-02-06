@@ -533,6 +533,28 @@ truncate movimiento_cuenta_corriente;
 
 	}	
 
+	public function envio_mail_manual(){
+
+		set_time_limit(0);
+		$this->db->select('f.id, f.num_factura')
+		  ->from('factura_clientes f ')
+		  ->where('f.id_cliente',1653)
+		  ->where('f.num_factura >= 7000');
+		$query = $this->db->get();
+		$facturas = $query->result();
+
+		$this->load->model('facturaelectronica');
+		foreach ($facturas as $factura) {
+			$idfactura = $factura->id;
+			$datos_empresa_factura = $this->facturaelectronica->get_empresa_factura($idfactura);
+			if($datos_empresa_factura->e_mail != ''){ //existe track id, se envía correo
+				$this->facturaelectronica->envio_mail_dte($idfactura);
+				echo "envio de factura :" . $factura->num_factura;
+				ob_flush();
+			}
+		}
+	}
+
 
 	public function libera_folios(){
 
