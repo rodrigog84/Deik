@@ -22,6 +22,7 @@ class Notacredito extends CI_Controller {
 		$fechafactura = $this->input->post('fechafactura');
 		$fechavenc = $this->input->post('fechavenc');
 		$vendedor = $this->input->post('idvendedor');
+		$sucursal = $this->input->post('idsucursal');
 		$datacliente = json_decode($this->input->post('datacliente'));
 		$items = json_decode($this->input->post('items'));
 		$neto = $this->input->post('netofactura');
@@ -53,6 +54,7 @@ class Notacredito extends CI_Controller {
 	        'id_cliente' => $idcliente,
 	        'num_factura' => $numdocuemnto,
 	        'id_vendedor' => $vendedor,
+	        'id_sucursal' => $sucursal,
 	        'sub_total' => $neto,
 	        'id_cond_venta' => $idtipo,
 	        'neto' => $neto,
@@ -180,6 +182,8 @@ class Notacredito extends CI_Controller {
 
             $TpoDocRef = $numfactura_asoc >= 100000 ? 30 : 33;
 
+			$dir_cliente = is_null($datos_empresa_factura->dir_sucursal) ? permite_alfanumerico($datos_empresa_factura->direccion) : permite_alfanumerico($datos_empresa_factura->dir_sucursal);
+
             // datos
             $nota_credito = [
                 'Encabezado' => [
@@ -198,9 +202,9 @@ class Notacredito extends CI_Controller {
                     ],
                     'Receptor' => [
                         'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
-                        'RznSocRecep' => substr($datos_empresa_factura->nombre_cliente,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
-                        'GiroRecep' => substr($datos_empresa_factura->giro,0,40), //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
-                        'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+                        'RznSocRecep' => substr(permite_alfanumerico($datos_empresa_factura->nombre_cliente),0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+                        'GiroRecep' => substr(permite_alfanumerico($datos_empresa_factura->giro),0,40), //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+                        'DirRecep' => substr($dir_cliente,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
                         'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
                     ],
 					'Totales' => [
@@ -327,6 +331,7 @@ class Notacredito extends CI_Controller {
 		$fechafactura = $this->input->post('fechafactura');
 		$fechavenc = $this->input->post('fechavenc');
 		$vendedor = $this->input->post('idvendedor');
+		$sucursal = $this->input->post('idsucursal');
 		$datacliente = json_decode($this->input->post('datacliente'));
 		$items = json_decode($this->input->post('items'));
 		$neto = $this->input->post('netofactura');
@@ -347,6 +352,7 @@ class Notacredito extends CI_Controller {
 	        'id_cliente' => $idcliente,
 	        'num_factura' => $numdocuemnto,
 	        'id_vendedor' => $vendedor,
+	        'id_sucursal' => $sucursal,
 	        'sub_total' => $neto,
 	        'descuento' => ($neto - $fafecto),
 	        'neto' => $neto,
@@ -560,6 +566,10 @@ class Notacredito extends CI_Controller {
 
 
 			$TpoDocRef = $numfactura >= 100000 ? 30 : 33;
+
+			$dir_cliente = is_null($datos_empresa_factura->dir_sucursal) ? permite_alfanumerico($datos_empresa_factura->direccion) : permite_alfanumerico($datos_empresa_factura->dir_sucursal);
+
+
 			// datos
 			$nota_credito = [
 			    'Encabezado' => [
@@ -578,9 +588,9 @@ class Notacredito extends CI_Controller {
 			        ],
 			        'Receptor' => [
 			            'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
-			            'RznSocRecep' => substr($datos_empresa_factura->nombre_cliente,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
-			            'GiroRecep' => substr($datos_empresa_factura->giro,0,30), //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
-			            'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+			            'RznSocRecep' => substr(permite_alfanumerico($datos_empresa_factura->nombre_cliente),0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+			            'GiroRecep' => substr(permite_alfanumerico($datos_empresa_factura->giro),0,30), //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+			            'DirRecep' => substr($dir_cliente,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
 			            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
 			        ],
 		            'Totales' => [

@@ -210,10 +210,11 @@ class Facturaelectronica extends CI_Model
 
 		$tabla_contribuyentes = $this->busca_parametro_fe('tabla_contribuyentes');
 
-		$this->db->select('c.nombres as nombre_cliente, c.rut as rut_cliente, c.direccion, m.nombre as nombre_comuna, s.nombre as nombre_ciudad, c.fono, e.nombre as giro, ifnull(ca.mail,c.e_mail) as e_mail',false)
+		$this->db->select('c.nombres as nombre_cliente, c.rut as rut_cliente, c.direccion, m.nombre as nombre_comuna, s.nombre as nombre_ciudad, c.fono, e.nombre as giro, ifnull(ca.mail,c.e_mail) as e_mail, cs.direccion as dir_sucursal',false)
 		  ->from('factura_clientes acc')
 		  ->join('clientes c','acc.id_cliente = c.id','left')
 		  ->join('cod_activ_econ e','c.id_giro = e.id','left')
+		  ->join('clientes_sucursales cs','acc.id_sucursal = cs.id','left')
 		  ->join('comuna m','c.id_comuna = m.id','left')		  
 		  ->join('ciudad s','c.id_ciudad = s.id','left')	
 		  ->join($tabla_contribuyentes . ' ca','c.rut = concat(ca.rut,ca.dv)','left')
