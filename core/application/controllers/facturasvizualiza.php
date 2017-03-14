@@ -311,7 +311,7 @@ class Facturasvizualiza extends CI_Controller {
 	        'id_cond_venta' => $formadepago,
 	        'sub_total' => $neto,
 	        'descuento' => ($neto - $fafecto),
-	        'neto' => $neto,
+	        'neto' => $fafecto,
 	        'iva' => $fiva,
 	        'totalfactura' => $ftotal,
 	        'fecha_factura' => $fechafactura,
