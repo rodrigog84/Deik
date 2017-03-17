@@ -565,6 +565,14 @@ truncate movimiento_cuenta_corriente;
 	}	
 
 
+
+	public function get_contribuyentes(){
+
+		set_time_limit(0);
+		$this->load->model('facturaelectronica');
+		$this->facturaelectronica->get_contribuyentes();
+	}		
+
 }
 
 

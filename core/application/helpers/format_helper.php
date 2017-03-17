@@ -436,3 +436,23 @@ if (!function_exists('permite_alfanumerico'))
     
   }
 }      
+
+
+if (!function_exists('formato_fecha'))
+{
+
+  function formato_fecha($fecha,$formato_origen,$formato_destino)
+  {
+    if($formato_origen == 'd/m/Y' && $formato_destino == 'Y-m-d'){
+      return substr($fecha,6,4)."-".substr($fecha,3,2)."-".substr($fecha,0,2);
+
+    }else if($formato_origen == 'Y-m-d' && $formato_destino == 'd/m/Y'){
+      return substr($fecha,8,2)."/".substr($fecha,5,2)."/".substr($fecha,0,4);
+    }else if($formato_origen == 'Y-m-d' && $formato_destino == 'd-m-Y'){
+      return substr($fecha,8,2)."-".substr($fecha,5,2)."-".substr($fecha,0,4);
+    }else if($formato_origen == 'd-m-Y' && $formato_destino == 'Y-m-d'){
+      return substr($fecha,6,4)."-".substr($fecha,3,2)."-".substr($fecha,0,2);
+    }
+
+  }
+}     
