@@ -445,7 +445,7 @@ class Facturas extends CI_Controller {
 											$factura->fecha_factura,
 											'',
 											$factura->rut,
-											substr(str_replace(",","",$factura->nombres),0,45),
+											substr(str_replace(",","",permite_alfanumerico($factura->nombres)),0,45),
 											$factura->tipo_caf == 34 ? $factura->neto : '',
 											$factura->tipo_caf == 34 ? '' : $factura->neto,
 											$factura->tipo_caf == 34 ? '' : $factura->iva,
@@ -3191,6 +3191,7 @@ public function cargacontribuyentes(){
 																						  'trackid' => $track_id
 																						  )); 
 
+				//echo $this->db->last_query();
 				if($track_id != 0 && $datos_empresa_factura->e_mail != ''){ //existe track id, se envía correo
 					$this->facturaelectronica->envio_mail_dte($idfactura);
 				}

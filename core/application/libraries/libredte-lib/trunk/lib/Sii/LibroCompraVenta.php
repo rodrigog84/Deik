@@ -267,28 +267,29 @@ class LibroCompraVenta extends \sasco\LibreDTE\Sii\Base\Libro
         for ($i=1; $i<$n_data; $i++) {
             // detalle genérico
             $detalle = [
-                'TpoDoc' => $data[$i][0],
-                'NroDoc' => $data[$i][1],
-                'TasaImp' => !empty($data[$i][2]) ? $data[$i][2] : false,
+                'TpoDoc' => permite_alfanumerico($data[$i][0]),
+                'NroDoc' => permite_alfanumerico($data[$i][1]),
+                'TasaImp' => !empty($data[$i][2]) ? permite_alfanumerico($data[$i][2]) : false,
+                //'FchDoc' => permite_alfanumerico($data[$i][3]),
                 'FchDoc' => $data[$i][3],
-                'CdgSIISucur' => !empty($data[$i][4]) ? $data[$i][4] : false,
+                'CdgSIISucur' => !empty($data[$i][4]) ? permite_alfanumerico($data[$i][4]) : false,
                 'RUTDoc' => $data[$i][5],
-                'RznSoc' => !empty($data[$i][6]) ? $data[$i][6] : false,
-                'MntExe' => !empty($data[$i][7]) ? $data[$i][7] : false,
-                'MntNeto' => !empty($data[$i][8]) ? $data[$i][8] : false,
-                'MntIVA' => !empty($data[$i][9]) ? $data[$i][9] : 0,
+                'RznSoc' => !empty($data[$i][6]) ? permite_alfanumerico($data[$i][6]) : false,
+                'MntExe' => !empty($data[$i][7]) ? permite_alfanumerico($data[$i][7]) : false,
+                'MntNeto' => !empty($data[$i][8]) ? permite_alfanumerico($data[$i][8]) : false,
+                'MntIVA' => !empty($data[$i][9]) ? permite_alfanumerico($data[$i][9]) : 0,
             ];
             // agregar código y monto de otros impuestos
             if (!empty($data[$i][10]) and !empty($data[$i][11])) {
                 $detalle['OtrosImp'] = [
-                    'CodImp' => $data[$i][10],
-                    'TasaImp' => $data[$i][11],
-                    'MntImp' => !empty($data[$i][12]) ? $data[$i][12] : round($detalle['MntNeto'] * ($data[$i][11]/100)),
+                    'CodImp' => permite_alfanumerico($data[$i][10]),
+                    'TasaImp' => permite_alfanumerico($data[$i][11]),
+                    'MntImp' => !empty($data[$i][12]) ? permite_alfanumerico($data[$i][12]) : round($detalle['MntNeto'] * ($data[$i][11]/100)),
                 ];
             }
             // si hay monto total se agrega
             if (!empty($data[$i][13])) {
-                $detalle['MntTotal'] = $data[$i][13];
+                $detalle['MntTotal'] = permite_alfanumerico($data[$i][13]);
             }
             // agregar a los detalles
             $this->agregar($detalle);

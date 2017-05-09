@@ -201,7 +201,7 @@ class Facturaelectronica extends CI_Model
 						);
 
 		$this->db->insert('log_libros',$array_insert); 
-		return true;
+		return $this->db->insert_id();
 	}
 
 

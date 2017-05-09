@@ -46,13 +46,13 @@ Ext.define('Infosys_web.view.facturaelectronica.verEstadoEnvioLibro' ,{
         }
 
 
-        response_estado = Ext.Ajax.request({
+        /*response_estado = Ext.Ajax.request({
         async: false,
         waitMsg    :    'Procesando',
         url: preurl + 'facturas/estado_dte/'+idlibro});
         var obj_estado = Ext.decode(response_estado.responseText);
 
-        var estado_dte = obj_estado.error ? obj_estado.message : obj_estado.glosa_estado + " - " + obj_estado.glosa_err;      
+        var estado_dte = obj_estado.error ? obj_estado.message : obj_estado.glosa_estado + " - " + obj_estado.glosa_err;  */    
 
         var disabled_envio = estado_envio_dte == 'No Enviado' || estado_envio_dte == 'N/A' ? false : true;
         this.items = [
