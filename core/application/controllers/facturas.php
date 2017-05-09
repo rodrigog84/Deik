@@ -918,6 +918,14 @@ class Facturas extends CI_Controller {
 		echo json_encode($datos);
 	}		
 
+	public function datos_libro_json($idlibro){
+		$this->load->model('facturaelectronica');
+		$data = array();
+		$datos = $this->facturaelectronica->get_libro_by_id($idlibro);
+		$datos->mes = month2string($datos->mes);
+		echo json_encode($datos);
+	}	
+
 
 	public function busca_parametro_fe($parametro){
 
@@ -926,6 +934,55 @@ class Facturas extends CI_Controller {
 		echo json_encode($datos);		
 	}
 
+
+public function estado_envio_libro($idlibro){
+		$this->load->model('facturaelectronica');
+		$libro = $this->facturaelectronica->get_libro_by_id($idlibro);
+
+		$config = $this->facturaelectronica->genera_config();
+		include $this->facturaelectronica->ruta_libredte();
+		$empresa = $this->facturaelectronica->get_empresa();
+
+		$result = array();
+		$result['error'] = false;
+		$result['codigo'] = "";
+		$result['glosa'] = "";
+
+		$token = \sasco\LibreDTE\Sii\Autenticacion::getToken($config['firma']);
+		if (!$token) {
+		    foreach (\sasco\LibreDTE\Log::readAll() as $error){
+		    	$result['error'] = true;
+
+		    }
+		    $result['message'] = "Error de conexión con SII";		   
+		   	echo json_encode($result);
+		    exit;
+		}
+
+		// consultar estado enviado
+		$rut = $empresa->rut;
+		$dv = $empresa->dv;
+		$trackID = $libro->trackid; // se obtiene al enviar un dte  $track_id = $EnvioDTE->enviar();
+		$estado = \sasco\LibreDTE\Sii::request('QueryEstUp', 'getEstUp', [$rut, $dv, $trackID, $token]);
+		// si el estado se pudo recuperar se muestra estado y glosa
+		if ($estado!==false) {
+	    	$result['error'] = false;
+	    	$result['codigo'] = (string)$estado->xpath('/SII:RESPUESTA/SII:RESP_HDR/ESTADO')[0];			
+	    	$result['glosa'] = (string)$estado->xpath('/SII:RESPUESTA/SII:RESP_HDR/ESTADO')[0] != -11 ? (string)$estado->xpath('/SII:RESPUESTA/SII:RESP_HDR/GLOSA')[0] : "Trackid Err&oacute;neo";			
+	    	echo json_encode($result);
+	    	exit;
+		}
+
+		// mostrar error si hubo
+		foreach (\sasco\LibreDTE\Log::readAll() as $error){
+	    	$result['error'] = true;
+	    	$result['message'] = "Error de conexión con SII";
+		}
+		echo json_encode($result);
+		exit;
+	}	
+
+	
 	public function set_parametro_fe(){
 
 		$this->load->model('facturaelectronica');
