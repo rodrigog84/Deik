@@ -37,7 +37,8 @@ Ext.define('Infosys_web.controller.Preventa', {
             'Preventa.Autoriza',
             'Preventa.Autoriza3',
             'Preventa.Autoriza2',
-            'Preventa.IngresarClientes'
+            'Preventa.IngresarClientes',
+            'Preventa.Ingresar'
             ],
 
     //referencias, es un alias interno para el controller
@@ -101,7 +102,11 @@ Ext.define('Infosys_web.controller.Preventa', {
     },{
         ref: 'observacionespreventa',
         selector: 'observacionespreventa'
+    },{
+        ref: 'clientesingresarpreventa2',
+        selector: 'clientesingresarpreventa2'
     }
+
   
     ],
     
@@ -293,9 +298,79 @@ Ext.define('Infosys_web.controller.Preventa', {
             'observacionespreventa button[action=validar]': {
                 click: this.validarut2
             },
+            'clientesingresarpreventa2 button[action=grabarclientespreventa2]': {
+                click: this.grabarclientespreventa2
+            },
 
         });
     },
+
+    grabarclientespreventa2: function(){
+
+        var view = this.getClientesingresarpreventa2();
+        var rut = view.down('#rutId').getValue();
+        var nombre = view.down('#nombre_id').getValue();
+        var idcliente = view.down('#id_cliente').getValue();
+        var direccion = view.down('#direccionId').getValue();
+        var ciudad = view.down('#tipoCiudadId').getValue();
+        var comuna = view.down('#tipoComunaId').getValue();
+        var giro = view.down('#giroId').getValue();
+        var fono = view.down('#fonoId').getValue();
+        var mail = view.down('#e_mailId').getValue();
+        var vendedor = view.down('#tipoVendedorId').getValue();
+        var descuento = view.down('#descuentoId').getValue();
+        var tipopago = view.down('#tipopagoId').getValue();
+        var disponible = view.down('#disponibleId').getValue();
+        var impuesto = view.down('#impuestoId').getValue();
+        var fechaincorporacion = view.down('#fecha_incripcionId').getValue();
+        var fechaactualiza = view.down('#fecha_ult_actualizId').getValue();
+        var estado = view.down('#tipoEstadoId').getValue();
+        var tipocliente = 1;
+        var st = this.getClientesStore();
+        var viewIngresa = this.getPreventaingresar();                    
+                
+
+         Ext.Ajax.request({
+            url: preurl + 'clientes/grabarpreventa',
+            params: {
+                rut: rut,
+                nombre: nombre,
+                idcliente: idcliente,
+                direccion: direccion,
+                ciudad: ciudad,
+                comuna: comuna,
+                giro : giro,
+                fono : fono,
+                mail : mail,
+                vendedor : vendedor,
+                descuento: descuento,
+                tipopago: tipopago,
+                disponible: disponible,
+                impuesto: impuesto,
+                fechaincorporacion : fechaincorporacion,
+                fechaactualiza : fechaactualiza,
+                estado : estado,
+                tipocliente : tipocliente
+            },
+             success: function(response){
+                var resp = Ext.JSON.decode(response.responseText);
+                if (resp.success == true) {
+                    var idcliente = resp.id;
+                    view.close();
+                    st.load();
+                    viewIngresa.down('#id_cliente').setValue(idcliente);
+                    viewIngresa.down('#nombre_id').setValue(nombre);
+                    viewIngresa.down('#rutId').setValue(rut);
+                    viewIngresa.down('#tipocondpagoId').setValue(tipopago);
+                    viewIngresa.down('#direccionId').setValue(direccion);
+                    viewIngresa.down('#giroId').setValue(giro);
+                    viewIngresa.down("#tipoVendedorId").focus();
+            }
+            }
+           
+        });
+
+    },  
 
     validarut2: function(){
 
@@ -2432,7 +2507,7 @@ Ext.define('Infosys_web.controller.Preventa', {
                             
                         };                      
                     }else{
-                        var viewedit = Ext.create('Infosys_web.view.clientes.Ingresar').show();                        
+                        var viewedit = Ext.create('Infosys_web.view.Preventa.Ingresar').show();                        
                         viewedit.down("#rutId").setValue(rut);                         
                     }
                     
