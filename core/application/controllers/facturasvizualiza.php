@@ -311,7 +311,7 @@ class Facturasvizualiza extends CI_Controller {
 	        'id_cond_venta' => $formadepago,
 	        'sub_total' => $neto,
 	        'descuento' => ($neto - $fafecto),
-	        'neto' => $fafecto,
+	        'neto' => $neto,
 	        'iva' => $fiva,
 	        'totalfactura' => $ftotal,
 	        'fecha_factura' => $fechafactura,
@@ -371,7 +371,6 @@ class Facturasvizualiza extends CI_Controller {
 	    	 $row = $query->result();
 			 if ($query->num_rows()>0){
 				$row = $row[0];	
-				$saldo = ($row->stock)-($v->cantidad);
 				$idexiste = ($row->id);
 		        if ($producto==($row->id_producto) and $idbodega==($row->id_bodega)){
 				    $datos3 = array(

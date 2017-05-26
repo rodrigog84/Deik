@@ -2954,7 +2954,6 @@ public function cargacontribuyentes(){
 	    	 $row = $query->result();
 			 if ($query->num_rows()>0){
 				$row = $row[0];	
-				$saldo = ($row->stock)-($v->cantidad);
 				$idexiste = ($row->id);
 		        if ($producto==($row->id_producto) and $idbodega==($row->id_bodega)){
 				    $datos3 = array(
