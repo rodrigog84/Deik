@@ -347,3 +347,40 @@ ALTER TABLE `log_libros`
 ALTER TABLE `log_libros`
 	ADD COLUMN `xml_libro` TEXT NULL DEFAULT NULL AFTER `trackid`;	
 	
+
+/*********************************************************************************/
+
+
+ALTER TABLE `existencia`
+	ADD INDEX `id_producto` (`id_producto`);	
+ALTER TABLE `productos`
+	ADD COLUMN `fecha_ult_compra` DATE NOT NULL AFTER `p_may_compra`;
+
+CREATE TABLE `factura_compras` (
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`tipo_documento` INT(11) NOT NULL,
+	`id_proveedor` INT(11) NOT NULL,
+	`id_sucursal` INT(11) NOT NULL,
+	`id_vendedor` INT(11) NOT NULL,
+	`id_mecanicos` INT(11) NOT NULL,
+	`num_factura` INT(11) NOT NULL,
+	`id_cond_venta` INT(11) NOT NULL,
+	`sub_total` INT(20) NOT NULL,
+	`descuento` INT(20) NOT NULL,
+	`neto` INT(20) NOT NULL,
+	`iva` INT(20) NOT NULL,
+	`totalfactura` INT(20) NOT NULL,
+	`fecha_factura` DATE NOT NULL,
+	`fecha_venc` DATE NOT NULL,
+	`id:factura` INT(11) NOT NULL,
+	`observacion` TEXT NOT NULL,
+	`id_observa` INT(11) NOT NULL,
+	`id_despacho` INT(11) NOT NULL,
+	`estado` VARCHAR(2) NOT NULL,
+	`forma` INT(11) NOT NULL,
+	`tipo_boleta` VARCHAR(1) NOT NULL,
+	PRIMARY KEY (`id`)
+)
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB
+;

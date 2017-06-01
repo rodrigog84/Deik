@@ -517,6 +517,18 @@ Ext.define('Infosys_web.view.TopMenus' ,{
                             text: 'Libro Ventas',
                             iconCls: '',
                             action: 'mejemplo'
+                        },{
+                            text: 'Resumen Ventas',
+                            iconCls: '',
+                            action: 'resumenventas'
+                        },{
+                            text: 'Informe Stock',
+                            iconCls: '',
+                            action: 'informestock'
+                        },{
+                            text: 'Estad&iacute;stica de Ventas',
+                            iconCls: '',
+                            action: 'estadisticasventas'
                         }]
                 },]
 
