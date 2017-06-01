@@ -815,7 +815,7 @@ class Preventa extends CI_Controller {
 		        'secuencia' => $secuencia
 			);
 
-		$producto = $v->id;
+		$producto = $v->id_producto;
 
 		$this->db->insert('preventa_detalle', $preventa_detalle);
 
@@ -1042,11 +1042,11 @@ class Preventa extends CI_Controller {
 
 		$query2 = $this->db->query('SELECT * FROM preventa_detalle WHERE id_ticket= '.$idticket.'');
 
-		/*foreach ($query2->result() as $row1){
+		foreach ($query2->result() as $row1){
 
 			$producto2 = $row1->id_producto;
 
-			$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto2.'"');
+			/*$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto2.'"');
 		
 			if($query->num_rows()>0){
 
@@ -1062,9 +1062,9 @@ class Preventa extends CI_Controller {
 
 	    	$this->db->where('id', $producto2);
 
-	    	$this->db->update('productos', $datos);
+	    	$this->db->update('productos', $datos);*/
 
-		}*/
+		}
 
 		$preventa = array(
 	        'num_ticket' => $numticket,

@@ -145,6 +145,58 @@ class Clientes extends CI_Controller {
         echo json_encode($resp);
 
 	}
+
+	public function grabarpreventa(){
+
+		$resp = array();
+		$nombres = $this->input->post('nombre');
+		$rut = $this->input->post('rut');
+		$id = $this->input->post('idcliente');
+		$direccion = $this->input->post('direccion');
+		$ciudad = $this->input->post('ciudad');		
+		$comuna = $this->input->post('comuna');		
+		$giro = $this->input->post('giro');
+		$fono = $this->input->post('fono');
+		$mail = $this->input->post('mail');
+		$vendedor = $this->input->post('vendedor');
+		$descuento = $this->input->post('descuento');
+		$tipopago = $this->input->post('tipopago');
+		$disponible = $this->input->post('disponible');
+		$impuesto = $this->input->post('impuesto');
+		$fechaincorporacion = $this->input->post('fechaincorporacion');
+		$fechaactualiza = $this->input->post('fechaactualiza');
+		$estado = $this->input->post('estado');
+		$tipocliente = $this->input->post('tipocliente');
+		
+		
+		$data = array(
+			'nombres' => strtoupper($nombres),
+			'rut' => $rut,
+	        'id_giro' => $giro,
+	        'fono' => $fono,			
+	        'direccion' => strtoupper($direccion),
+	        'id_ciudad' => $ciudad,
+	        'id_comuna' => $comuna,
+	        'id_vendedor' => $vendedor,
+	        'e_mail' => $mail,
+	        'descuento' => $descuento,		
+	        'fecha_incripcion' => $fechaincorporacion,
+            'fecha_ult_actualiz' => date('Y-m-d'),
+            'estado' => $estado,
+          	'id_pago' => $tipopago,
+          	'cupo_disponible' => $disponible,
+          	'imp_adicional' => $impuesto,
+          	'tipo' => $tipocliente
+              
+	    );
+	    
+		$this->db->insert('clientes', $data);
+        $idobserva = $this->db->insert_id();
+
+        $resp['success'] = true;
+ 		$resp['id'] = $idobserva;
+        echo json_encode($resp);
+	}
 	
 	
 	public function update(){
@@ -192,10 +244,10 @@ class Clientes extends CI_Controller {
 	    
 		$this->db->where('id', $id);
 		
-		$this->db->update('clientes', $data); 
-
+		$this->db->update('clientes', $data);
+		
         $resp['success'] = true;
-
+ 		
         $this->Bitacora->logger("M", 'clientes', $id);
 
         echo json_encode($resp);
