@@ -854,6 +854,7 @@ public function datos_dte_by_trackid($trackid){
 	public function crea_dte($idfactura,$tipo = 'sii'){
 
 		$data_factura = $this->get_factura($idfactura);
+
 		$tipodocumento = $data_factura->tipo_documento;
 		$numfactura = $data_factura->num_factura;
 		$fecemision = $data_factura->fecha_factura;
@@ -877,6 +878,7 @@ public function datos_dte_by_trackid($trackid){
 
 		//$detalle_factura = $this->get_detalle_factura($idfactura);
 		$detalle_factura = $data_factura->forma == 1 ? $this->get_detalle_factura_glosa($idfactura) : $this->get_detalle_factura($idfactura);
+
 
 		$lista_detalle = array();
 		$i = 0;
@@ -903,12 +905,17 @@ public function datos_dte_by_trackid($trackid){
 				$lista_detalle[$i]['MontoItem'] = ($detalle->totalproducto - $detalle->iva);
 			}				
 
-			if($detalle->descuento != 0){
-				$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
-				$lista_detalle[$i]['DescuentoPct'] = $porc_descto;		
-				//$lista_detalle[$i]['PrcItem'] =- $lista_detalle[$i]['PrcItem']*$porc_descto;
+			if(isset($detalle->descuento)){
+				if($detalle->descuento != 0){
+					$porc_descto = round(($detalle->descuento/($detalle->cantidad*$lista_detalle[$i]['PrcItem'])*100),0);
+					$lista_detalle[$i]['DescuentoPct'] = $porc_descto;		
+					//$lista_detalle[$i]['PrcItem'] =- $lista_detalle[$i]['PrcItem']*$porc_descto;
+
+				}
 
 			}
+
+
 
 			$i++;
 		}
