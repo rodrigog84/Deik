@@ -2830,6 +2830,7 @@ public function cargacontribuyentes(){
 		$idfactura = $this->input->post('idfactura');
 		$fechafactura = $this->input->post('fechafactura');
 		$fechavenc = $this->input->post('fechavenc');
+		$ordencompra = $this->input->post('ordencompra');
 		$vendedor = $this->input->post('vendedor');
 		$sucursal = $this->input->post('idsucursal');
 		$datacliente = json_decode($this->input->post('datacliente'));
@@ -2862,7 +2863,8 @@ public function cargacontribuyentes(){
 	        'iva' => $fiva,
 	        'totalfactura' => $ftotal,
 	        'fecha_factura' => $fechafactura,
-	        'fecha_venc' => $fechavenc
+	        'fecha_venc' => $fechavenc,
+	        'orden_compra' => $ordencompra
 	          
 		);
 

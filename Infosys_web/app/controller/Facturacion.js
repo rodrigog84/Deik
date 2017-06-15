@@ -1323,6 +1323,7 @@ cargar_listado_contribuyentes: function(){
         var idtipo= viewIngresa.down('#tipoDocumentoId').getValue();
         var idsucursal= viewIngresa.down('#id_sucursalID').getValue();
         var idcondventa= viewIngresa.down('#tipocondpagoId').getValue();
+        var ordencompra= viewIngresa.down('#ordencompraId').getValue();
         var idfactura = viewIngresa.down('#idfactura').getValue();
         var vendedor = viewIngresa.down('#tipoVendedorId').getValue();
         var observa = viewIngresa.down('#observaId').getValue();
@@ -1361,6 +1362,7 @@ cargar_listado_contribuyentes: function(){
                 idtipo:idtipo,
                 items: Ext.JSON.encode(dataItems),
                 observacion: observa,
+                ordencompra: ordencompra,
                 idobserva: idobserva,
                 vendedor : vendedor,
                 sucursal : sucursal,

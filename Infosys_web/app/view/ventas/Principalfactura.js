@@ -117,6 +117,11 @@ Ext.define('Infosys_web.view.ventas.Principalfactura' ,{
      
         
     },{
+        header: "Orden Compra",
+        flex: 1,
+        dataIndex: 'orden_compra',
+        align: 'right'        
+    },{
             header: "Estado DTE",
             xtype:'actioncolumn',
             width:85,

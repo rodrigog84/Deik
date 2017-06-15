@@ -277,15 +277,15 @@ Ext.define('Infosys_web.view.ventas.Facturas', {
                                             itemId: 'tipoCiudadId',
                                             name : 'nombre_ciudad',
                                             maxHeight: 25,
-                                            width: 210,
+                                            width: 200,
+                                            labelWidth: 60,
                                             readOnly: true,
                                             //disabled : true,                                            
                                             fieldLabel: '<b>CIUDAD</b>'
                                         },{
                                             xtype: 'displayfield',
-                                            flex: 1,
-                                            maxWidth: 25,
-                                            labelWidth: 50
+                                            width: 15
+                                            //labelWidth: 50
                                         },{
                                             xtype: 'textfield',
                                             fieldCls: 'required',
@@ -293,20 +293,21 @@ Ext.define('Infosys_web.view.ventas.Facturas', {
                                             name : 'nombre_comuna',
                                             readOnly: true,
                                             maxHeight: 25,
-                                            width: 210,
+                                            width: 200,
+                                            labelWidth: 60,
                                             //disabled : true,                                           
                                             fieldLabel: '<b>COMUNA</b>'
                                         },{
                                             xtype: 'displayfield',
-                                            flex: 1,
-                                            maxWidth: 25,
-                                            labelWidth: 50
+                                            width: 15
+                                            //labelWidth: 50
                                         },{
                                             xtype: 'combo',
                                             itemId: 'tipoVendedorId',
-                                            width: 350,
+                                            width: 300,
                                             fieldCls: 'required',
                                             maxHeight: 25,
+                                            labelWidth: 80,
                                             fieldLabel: '<b>VENDEDOR</b>',
                                             forceSelection : true,
                                             name : 'id_vendedor',
@@ -317,11 +318,11 @@ Ext.define('Infosys_web.view.ventas.Facturas', {
                                             //disabled : true, 
                                         },{
                                             xtype: 'displayfield',
-                                            width: 105
+                                            width: 10
                                         },{
                                             xtype: 'combo',
                                             itemId: 'tipocondpagoId',
-                                            width: 330,
+                                            width: 300,
                                             fieldCls: 'required',
                                             maxHeight: 25,
                                             fieldLabel: '<b>COND.PAGO</b>',
@@ -332,6 +333,15 @@ Ext.define('Infosys_web.view.ventas.Facturas', {
                                             emptyText : "Seleccione",
                                             store : 'Cond_pago',
                                             //disabled : true, 
+                                        },{xtype: 'splitter'},{
+                                            xtype: 'textfield',
+                                            width: 200,
+                                            labelWidth: 85,
+                                            maxHeight: 25,
+                                            fieldLabel: '<b>O. COMPRA</b>',
+                                            name: 'orden_compra',
+                                            itemId: 'ordencompraId',
+                                            style: 'font-weight: bold;'
                                         }
                                     ]
                                     },{

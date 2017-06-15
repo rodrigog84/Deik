@@ -306,7 +306,7 @@ Ext.define('Infosys_web.view.ventas.Facturaseditar', {
                                         },{
                                             xtype: 'combo',
                                             itemId: 'tipoVendedorId',
-                                            width: 350,
+                                            width: 300,
                                             fieldCls: 'required',
                                             maxHeight: 25,
                                             fieldLabel: '<b>VENDEDOR</b>',
@@ -319,11 +319,11 @@ Ext.define('Infosys_web.view.ventas.Facturaseditar', {
                                             //disabled : true, 
                                         },{
                                             xtype: 'displayfield',
-                                            width: 105
+                                            width: 10
                                         },{
                                             xtype: 'combo',
                                             itemId: 'tipocondpagoId',
-                                            width: 330,
+                                            width: 300,
                                             fieldCls: 'required',
                                             maxHeight: 25,
                                             fieldLabel: '<b>COND.PAGO</b>',
@@ -333,6 +333,15 @@ Ext.define('Infosys_web.view.ventas.Facturaseditar', {
                                             displayField : 'nombre',
                                             emptyText : "Seleccione",
                                             store : 'Cond_pago'
+                                        },{xtype: 'splitter'},{
+                                            xtype: 'textfield',
+                                            width: 280,
+                                            labelWidth: 115,
+                                            maxHeight: 25,
+                                            fieldLabel: '<b>ORDEN DE COMPRA</b>',
+                                            name: 'orden_compra',
+                                            itemId: 'ordencompraId',
+                                            style: 'font-weight: bold;'
                                         }
                                     ]
                              },{
