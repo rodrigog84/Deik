@@ -322,6 +322,7 @@ Ext.define('Infosys_web.controller.Preventa', {
         var tipopago = view.down('#tipopagoId').getValue();
         var disponible = view.down('#disponibleId').getValue();
         var impuesto = view.down('#impuestoId').getValue();
+        var ordencompra = view.down('#ordencompraId').getValue();
         var fechaincorporacion = view.down('#fecha_incripcionId').getValue();
         var fechaactualiza = view.down('#fecha_ult_actualizId').getValue();
         var estado = view.down('#tipoEstadoId').getValue();
@@ -340,6 +341,7 @@ Ext.define('Infosys_web.controller.Preventa', {
                 ciudad: ciudad,
                 comuna: comuna,
                 giro : giro,
+                ordencompra : ordencompra,
                 fono : fono,
                 mail : mail,
                 vendedor : vendedor,
@@ -961,6 +963,7 @@ Ext.define('Infosys_web.controller.Preventa', {
         var idtipo = viewIngresa.down('#tipoDocumento2Id').getValue();
         var idcliente = viewIngresa.down('#id_cliente').getValue();
         var sucursal = viewIngresa.down('#id_sucursalID').getValue();
+        var ordencompra = viewIngresa.down('#ordencompraId').getValue();
         var producto = viewIngresa.down('#tipoVendedorId');
         if(!producto){
             Ext.Msg.alert('Seleccione Vendedor');
@@ -1002,6 +1005,7 @@ Ext.define('Infosys_web.controller.Preventa', {
                 idtipo : idtipo,
                 idpago : idpago,
                 observa: observa,
+                ordencompra: ordencompra,
                 sucursal: sucursal,
                 numeroticket : numeroticket,
                 idticket : idticket,
@@ -1230,6 +1234,7 @@ Ext.define('Infosys_web.controller.Preventa', {
                     view.down('#descuentovalorId').setValue(Ext.util.Format.number(cliente.desc, '0'));
                     view.down('#observacionesId').setValue(cliente.observaciones);
                     view.down("#secuenciaId").setValue(secuencia);
+                    view.down("#ordencompraId").setValue(cliente.orden_compra);
                     var bolEnable = false;
                     if (cliente.id_pago == 1){
                         view.down('#DescuentoproId').setDisabled(bolEnable);
@@ -2544,8 +2549,8 @@ Ext.define('Infosys_web.controller.Preventa', {
         var idcliente = viewIngresa.down('#id_cliente').getValue();
         var sucursal = viewIngresa.down('#id_sucursalID').getValue();
         var idpago = viewIngresa.down('#tipocondpagoId').getValue();
-        var vender = viewIngresa.down('#tipoVendedorId').getValue();
-                
+        var ordencompra = viewIngresa.down('#ordencompraId').getValue();
+        var vender = viewIngresa.down('#tipoVendedorId').getValue();                
         if(!vender){
             Ext.Msg.alert('Seleccione Vendedor');
             return;   
@@ -2565,14 +2570,10 @@ Ext.define('Infosys_web.controller.Preventa', {
             Ext.Msg.alert('Ingrese Productos a la Venta');
             return;   
         }
-      
-
         if(!idpago){
             Ext.Msg.alert('Ingrese Condicion Venta');
             return;   
-        }
-
-        
+        }        
         var dataItems = new Array();
         stItem.each(function(r){
             dataItems.push(r.data)
@@ -2586,6 +2587,7 @@ Ext.define('Infosys_web.controller.Preventa', {
                 vendedor : vendedor,
                 sucursal: sucursal,
                 observa: observa,
+                ordencompra: ordencompra,
                 idtipo : idtipo,
                 idpago : idpago,
                 numeroticket : numeroticket,

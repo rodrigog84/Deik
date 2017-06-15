@@ -120,6 +120,16 @@ Ext.define('Infosys_web.view.Pago_caja.Principal' ,{
         flex: 1,
         dataIndex: 'id_documento',
         hidden: true
+    },{
+        header: "Id_dpocuemnto",
+        flex: 1,
+        dataIndex: 'id_documento',
+        hidden: true
+    },{
+        header: "Orden Compra",
+        flex: 1,
+        dataIndex: 'orden_compra',
+        hidden: true
     }],
     
     initComponent: function() {

@@ -25,6 +25,7 @@ Ext.define('Infosys_web.model.Preventa', {
     	{name: 'total'},
         {name: 'id_documento'},
         {name: 'id_observa'},
+        {name: 'orden_compra'},
         
         
     	

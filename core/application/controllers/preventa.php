@@ -517,6 +517,7 @@ class Preventa extends CI_Controller {
 		$observacion = $row->observacion;
 		$rutobserva = $row->rut_observa;
 		$nom_observa = $row->nom_observa;
+		$ordencompra = $row->orden_compra;
 		$fecha = $row->fecha_venta;
 		$datetime = DateTime::createFromFormat('Y-m-d', $fecha);
 		$fecha = $datetime->format('d/m/Y');
@@ -580,6 +581,7 @@ class Preventa extends CI_Controller {
 			<td width="395px">'. $row->nom_cliente.'</td>
 			<td width="100px">Rut:</td>
 			<td width="197px">'. number_format(substr($row->rut_cliente, 0, strlen($row->rut_cliente) - 1),0,".",".")."-".substr($row->rut_cliente,-1).'</td>
+			<td width="197px">Orden de Compra N.'.$ordencompra.'</td>
 		    </tr>
 		    <tr>
 		    <td width="60px">Vendedor:</td>
@@ -748,6 +750,7 @@ class Preventa extends CI_Controller {
 		$numticket = $this->input->post('numeroticket');
 		$idtipo = $this->input->post('idtipo');
 		$idpago = $this->input->post('idpago');
+		$ordencompra = $this->input->post('ordencompra');
 	    $fechapreventa = $this->input->post('fechapreventa');
 		$vendedor = $this->input->post('vendedor');
 		$sucursal = $this->input->post('sucursal');
@@ -787,7 +790,8 @@ class Preventa extends CI_Controller {
 	        'id_pago' => $idpago,
 	        'desc' => $desc,
 	        'total' => $ftotal,
-	        'id_observa' => $observa
+	        'id_observa' => $observa,
+	        'orden_compra' => $ordencompra
 		);
 
 		$this->db->insert('preventa', $preventa); 
@@ -819,23 +823,7 @@ class Preventa extends CI_Controller {
 
 		$this->db->insert('preventa_detalle', $preventa_detalle);
 
-		/*$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto.'"');
-		 
-		if($query->num_rows()>0){
-
-		$row = $query->first_row();
-	 	$saldo = ($row->stock)-($v->cantidad); 
-
-        };
-
-		$datos = array(
-         'stock' => $saldo,
-    	);
-
-    	$this->db->where('id', $producto);
-
-    	$this->db->update('productos', $datos);*/
-    	
+		    	
 		}
 
 		
@@ -861,6 +849,7 @@ class Preventa extends CI_Controller {
 		$vendedor = $this->input->post('vendedor');
 		$sucursal = $this->input->post('sucursal');
 		$datacliente = json_decode($this->input->post('datacliente'));
+		$ordencompra = $this->input->post('ordencompra');
 		$items = json_decode($this->input->post('items'));
 		$neto = $this->input->post('neto');
 		$desc = $this->input->post('descuento');
@@ -898,7 +887,8 @@ class Preventa extends CI_Controller {
 	        'id_tip_docu' => $idtipo,
 	        'desc' => $desc,
 	        'total' => $ftotal,
-	        'observaciones' => $observa
+	        'observaciones' => $observa,
+	        'orden_compra' => $ordencompra
 		);
 
 		$this->db->insert('preventa', $preventa); 
@@ -926,24 +916,7 @@ class Preventa extends CI_Controller {
 
 		$this->db->insert('preventa_detalle', $preventa_detalle);
 
-		/*$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto.'"');
-		 
-		 if($query->num_rows()>0){
-
-		 	$row = $query->first_row();
-
-		 	$saldo = ($row->stock)-($v->cantidad); 
-
-		 };
-
-		$datos = array(
-         'stock' => $saldo,
-    	);
-
-    	$this->db->where('id', $producto);
-
-    	$this->db->update('productos', $datos);*/
-    	
+		   	
 		}
 		
         $resp['success'] = true;
@@ -968,6 +941,7 @@ class Preventa extends CI_Controller {
 	    $fechapreventa = $this->input->post('fechapreventa');
 		$vendedor = $this->input->post('vendedor');
 		$sucursal = $this->input->post('sucursal');
+		$ordencompra = $this->input->post('ordencompra');
 		$datacliente = json_decode($this->input->post('datacliente'));
 		$items = json_decode($this->input->post('items'));
 		$neto = $this->input->post('neto');
@@ -1003,24 +977,7 @@ class Preventa extends CI_Controller {
 
 	    $this->db->insert('preventa_detalle', $preventa_detalle);
 
-		/*$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto.'"');
-		if($query->num_rows()>0){
-
-		 	$row = $query->first_row();
-
-		 	$saldo = ($row->stock)-($v->cantidad); 
-
-		};
-
-		$datos = array(
-         'stock' => $saldo,
-    	);
-
-    	$this->db->where('id', $producto);
-
-    	$this->db->update('productos', $datos);*/
-
-    	$resp['detalle'] = false;
+		$resp['detalle'] = false;
     	
 		}
 
@@ -1046,24 +1003,7 @@ class Preventa extends CI_Controller {
 
 			$producto2 = $row1->id_producto;
 
-			/*$query = $this->db->query('SELECT * FROM productos WHERE id="'.$producto2.'"');
-		
-			if($query->num_rows()>0){
-
-			 	$row = $query->first_row();
-
-			 	$saldo = ($row->stock)+($row1->cantidad); 
-
-			};
-
-			$datos = array(
-	         'stock' => $saldo,
-	    	);
-
-	    	$this->db->where('id', $producto2);
-
-	    	$this->db->update('productos', $datos);*/
-
+			
 		}
 
 		$preventa = array(
@@ -1076,7 +1016,8 @@ class Preventa extends CI_Controller {
 	        'id_tip_docu' => $idtipo,
 	        'desc' => $desc,
 	        'total' => $ftotal,
-	        'id_observa' => $observa
+	        'id_observa' => $observa,
+	        'orden_compra' => $ordencompra
 		);
 
 		$this->db->where('id', $idticket);
@@ -1106,7 +1047,8 @@ class Preventa extends CI_Controller {
 	        'id_vendedor' => $data->id_vendedor,
 	        'neto' => $data->neto,
 	        'desc' => $data->desc,
-	        'total' => $data->total
+	        'total' => $data->total,
+
 	    );
 		$this->db->where('id', $id);
 		

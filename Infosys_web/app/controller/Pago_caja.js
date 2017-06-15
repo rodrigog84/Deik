@@ -407,6 +407,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
         var idsucursal = view.down('#id_sucursalID').getValue();
         var vendedor = view.down('#VendedorId').getValue();
         var idvendedor = view.down('#idVendedorId').getValue();
+        var ordencompra = view.down('#ordencompraId').getValue();
         var numfactura = view.down('#numfacturaId').getValue();
         var fechafactura = view.down('#fechafacturaId').getValue(); 
         var permite = "SI";                
@@ -507,7 +508,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                 idticket: ticketid,
                 idsucursal: idsucursal,
                 items: Ext.JSON.encode(dataItems),
-                //recitems: Ext.JSON.encode(recItems),
+                ordencompra: ordencompra,
                 idvendedor : idvendedor,
                 //observacion: observa,
                 idobserva: idobserva,
@@ -563,7 +564,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
         var fechatransac =  view.down("#fechafacturaId").getValue();
         var valida2 =  view.down("#valida2Id").getValue();
         var documento = view.down('#tipoDocumentoId');
-
+        var ordencompra = view.down('#ordencompraId');
         var stCombo = documento.getStore();
         var record = stCombo.findRecord('id', documento.getValue()).data;
         var docum = (record.id);
@@ -1070,6 +1071,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
         var numfactura = view.down('#numfacturaId').getValue();
         var rut = view.down('#rutId').getValue();
         var idcliente = view.down('#id_cliente').getValue();
+        var ordencompra = view.down('#ordencompraId').getValue();
         var nombre = view.down('#nombre_id').getValue();
         var direccion = view.down('#direccionId').getValue();
         var giro = view.down('#giroId').getValue();
@@ -1673,6 +1675,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
             var neto = (row.get('neto'));
             var desc = (row.get('desc'));
             var total = (row.get('total'));
+            var ordencompra = (row.get('orden_compra'));
             var afecto = (neto-desc);
             var iva = (total-afecto);
             var fechafactura = (row.get('fecha_venta'))
@@ -1816,6 +1819,7 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                         view.down("#id_cliente").setValue(cliente.id);
                         view.down("#tipoCiudadId").setValue(cliente.nombre_ciudad);
                         view.down("#tipoComunaId").setValue(cliente.nombre_comuna);
+                        view.down("#ordencompraId").setValue(ordencompra);
                         view.down("#giroId").setValue(cliente.giro);
                         view.down("#direccionId").setValue(cliente.direccion);
                         view.down("#rutId").setValue(cliente.rut);

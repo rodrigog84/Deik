@@ -107,6 +107,11 @@ Ext.define('Infosys_web.view.Preventa.Principal' ,{
         flex: 1,
         dataIndex: 'ciudad',
         hidden: true
+    },{
+        header: "Orden Compra",
+        flex: 1,
+        dataIndex: 'orden_compra',
+        hidden: true
     }],
     
     initComponent: function() {

@@ -586,7 +586,7 @@ Ext.define('Infosys_web.view.Pago_caja.Genera_pago', {
                         },{xtype: 'splitter'},{
                             xtype: 'textfield',
                             fieldCls: 'required',
-                            width: 300,
+                            width: 200,
                             name : 'total',
                             itemId: 'totalaId',
                             readOnly: true,
@@ -594,6 +594,16 @@ Ext.define('Infosys_web.view.Pago_caja.Genera_pago', {
                             labelAlign: 'top',
                             renderer: function(valor){return Ext.util.Format.number((total),"0.000")}
 
+                        },{xtype: 'splitter'},{
+                            xtype: 'textfield',
+                            fieldCls: 'required',
+                            width: 180,
+                            labelWidth : 110,
+                            name : 'orden_compra',
+                            itemId: 'ordencompraId',
+                            readOnly: true,
+                            fieldLabel: '<b>Orden Compra</b>',
+                            labelAlign: 'top'
                         },{
                             xtype: 'numberfield',
                             fieldCls: 'required',

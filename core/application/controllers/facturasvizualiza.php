@@ -262,7 +262,7 @@ class Facturasvizualiza extends CI_Controller {
 		$sucursal = $this->input->post('sucursal');		
 		$idcliente = $this->input->post('idcliente');
 		$numfactura = $this->input->post('numfactura');
-		//$observacion = $this->input->post('observacion');
+		$ordencompra = $this->input->post('ordencompra');
 		$idobserva = $this->input->post('idobserva');
 		$fechafactura = $this->input->post('fechafactura');
 		$idticket = $this->input->post('idticket');
@@ -315,7 +315,8 @@ class Facturasvizualiza extends CI_Controller {
 	        'iva' => $fiva,
 	        'totalfactura' => $ftotal,
 	        'fecha_factura' => $fechafactura,
-	        'fecha_venc' => $fechavenc
+	        'fecha_venc' => $fechavenc,
+	        'orden_compra' => $ordencompra
 	          
 		);
 
@@ -683,7 +684,7 @@ class Facturasvizualiza extends CI_Controller {
 
 		$idcliente = $this->input->post('idcliente');
 		$numfactura = $this->input->post('numfactura');
-		//$observacion = $this->input->post('observacion');
+		$ordencompra = $this->input->post('ordencompra');
 		$idobserva = $this->input->post('idobserva');
 		$fechafactura = $this->input->post('fechafactura');
 		$fechavenc = $this->input->post('fechavenc');
@@ -722,6 +723,7 @@ class Facturasvizualiza extends CI_Controller {
 	        'totalfactura' => $ftotal,
 	        'fecha_factura' => $fechafactura,
 	        'fecha_venc' => $fechavenc,
+	        'orden_compra' => $ordencompra
 	                  
 		);
 

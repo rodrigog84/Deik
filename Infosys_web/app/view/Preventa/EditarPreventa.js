@@ -251,6 +251,15 @@ Ext.define('Infosys_web.view.Preventa.EditarPreventa', {
                                             displayField : 'nombre',
                                             emptyText : "Seleccione",
                                             store : 'Cond_pago'
+                                        },{xtype: 'splitter'},{
+                                            xtype: 'textfield',
+                                            width: 280,
+                                            labelWidth: 115,
+                                            maxHeight: 25,
+                                            fieldLabel: '<b>ORDEN DE COMPRA</b>',
+                                            name: 'orden_compra',
+                                            itemId: 'ordencompraId',
+                                            style: 'font-weight: bold;'
                                         },{
                                             xtype: 'textareafield',
                                             width: 110,
