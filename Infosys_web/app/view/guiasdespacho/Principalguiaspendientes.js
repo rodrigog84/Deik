@@ -6,7 +6,7 @@ Ext.define('Infosys_web.view.guiasdespacho.Principalguiaspendientes' ,{
     
     iconCls: 'icon-grid',
 
-    title : 'GUIAS DESPACHO 2',
+    title : 'FACTURACION GUIAS DE DESPACHO',
     store: 'Guiasdespachopendientes2',
     height: 500,
     viewConfig: {
