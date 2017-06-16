@@ -1247,6 +1247,7 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
         var idsucursal= viewIngresa.down('#id_sucursalID').getValue();
         var idcondventa= viewIngresa.down('#tipocondpagoId').getValue();
         var vendedor = viewIngresa.down('#tipoVendedorId').getValue();
+        var ordencompra = viewIngresa.down('#ordencompraId').getValue();
         var numfactura = viewIngresa.down('#numfacturaId').getValue();
         var fechafactura = viewIngresa.down('#fechafacturaId').getValue();
         var observa = viewIngresa.down('#observaId').getValue();
@@ -1278,6 +1279,7 @@ Ext.define('Infosys_web.controller.Guiasdespacho', {
                 idcondventa: idcondventa,
                 items: Ext.JSON.encode(dataItems),
                 observacion: observa,
+                ordencompra: ordencompra,
                 idobserva: idobserva,
                 vendedor : vendedor,
                 numfactura : numfactura,

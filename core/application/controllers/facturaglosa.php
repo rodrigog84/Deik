@@ -21,6 +21,7 @@ class Facturaglosa extends CI_Controller {
 		$fechavenc = $this->input->post('fechavenc');
 		$vendedor = $this->input->post('idvendedor');
 		$sucursal = $this->input->post('idsucursal');
+		$ordencompra = $this->input->post('ordencompra');
 		$datacliente = json_decode($this->input->post('datacliente'));
 		$items = json_decode($this->input->post('items'));
 		$neto = $this->input->post('netofactura');
@@ -54,7 +55,8 @@ class Facturaglosa extends CI_Controller {
 	        'totalfactura' => $ftotal,
 	        'fecha_factura' => $fechafactura,
 	        'fecha_venc' => $fechavenc,
-	        'forma' => 1	          
+	        'forma' => 1,
+	        'orden_compra' => $ordencompra          
 		);
 
 		$this->db->insert('factura_clientes', $factura_cliente); 

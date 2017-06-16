@@ -20,7 +20,7 @@ Ext.define('Infosys_web.view.facturaglosa.Facturaglosa', {
 
     autoShow: true,
     height: 640,
-    width: 1200,
+    width: 1300,
     layout: 'fit',
     title: 'Factura por Glosa',
 
@@ -236,21 +236,21 @@ Ext.define('Infosys_web.view.facturaglosa.Facturaglosa', {
                                         align: 'stretch'
                                     },
                                     items: [
-                                       {
+                                        {
                                             xtype: 'textfield',
                                             fieldCls: 'required',
                                             itemId: 'tipoCiudadId',
                                             name : 'nombre_ciudad',
                                             maxHeight: 25,
-                                            width: 210,
+                                            width: 200,
+                                            labelWidth: 60,
                                             readOnly: true,
                                             //disabled : true,                                            
                                             fieldLabel: '<b>CIUDAD</b>'
                                         },{
                                             xtype: 'displayfield',
-                                            flex: 1,
-                                            maxWidth: 25,
-                                            labelWidth: 50
+                                            width: 15
+                                            //labelWidth: 50
                                         },{
                                             xtype: 'textfield',
                                             fieldCls: 'required',
@@ -258,37 +258,36 @@ Ext.define('Infosys_web.view.facturaglosa.Facturaglosa', {
                                             name : 'nombre_comuna',
                                             readOnly: true,
                                             maxHeight: 25,
-                                            width: 210,
+                                            width: 200,
+                                            labelWidth: 60,
                                             //disabled : true,                                           
                                             fieldLabel: '<b>COMUNA</b>'
                                         },{
                                             xtype: 'displayfield',
-                                            flex: 1,
-                                            maxWidth: 25,
-                                            labelWidth: 50
+                                            width: 15
+                                            //labelWidth: 50
                                         },{
                                             xtype: 'combo',
                                             itemId: 'tipoVendedorId',
-                                            width: 350,
+                                            width: 300,
                                             fieldCls: 'required',
                                             maxHeight: 25,
+                                            labelWidth: 80,
                                             fieldLabel: '<b>VENDEDOR</b>',
                                             forceSelection : true,
                                             name : 'id_vendedor',
                                             valueField : 'id',
                                             displayField : 'nombre',
                                             emptyText : "Seleccione",
-                                            store : 'Vendedores'
+                                            store : 'Vendedores',
                                             //disabled : true, 
                                         },{
                                             xtype: 'displayfield',
-                                            flex: 1,
-                                            maxWidth: 25,
-                                            labelWidth: 50
+                                            width: 10
                                         },{
                                             xtype: 'combo',
                                             itemId: 'tipocondpagoId',
-                                            width: 310,
+                                            width: 300,
                                             fieldCls: 'required',
                                             maxHeight: 25,
                                             fieldLabel: '<b>COND.PAGO</b>',
@@ -297,7 +296,17 @@ Ext.define('Infosys_web.view.facturaglosa.Facturaglosa', {
                                             valueField : 'id',
                                             displayField : 'nombre',
                                             emptyText : "Seleccione",
-                                            store : 'Cond_pago'
+                                            store : 'Cond_pago',
+                                            //disabled : true, 
+                                        },{xtype: 'splitter'},{
+                                            xtype: 'textfield',
+                                            width: 200,
+                                            labelWidth: 85,
+                                            maxHeight: 25,
+                                            fieldLabel: '<b>O. COMPRA</b>',
+                                            name: 'orden_compra',
+                                            itemId: 'ordencompraId',
+                                            style: 'font-weight: bold;'
                                         }
                                     ]
                                     },{

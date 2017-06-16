@@ -16,7 +16,7 @@ Ext.define('Infosys_web.model.Facturaglo', {
         {name: 'descuento'},
         {name: 'neto'},
         {name: 'iva'},
-        {name: 'totalfactura'}
-       
+        {name: 'totalfactura'},       
+        {name: 'orden_compra'},
     ]
 });

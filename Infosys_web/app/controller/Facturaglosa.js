@@ -625,6 +625,7 @@ Ext.define('Infosys_web.controller.Facturaglosa', {
         var idsucursal= viewIngresa.down('#id_sucursalID').getValue();
         var idcondventa= viewIngresa.down('#tipocondpagoId').getValue();
         var vendedor = viewIngresa.down('#tipoVendedorId').getValue();
+        var ordencompra = viewIngresa.down('#ordencompraId').getValue();
         var numdocumento = viewIngresa.down('#numfacturaId').getValue();
         var fechafactura = viewIngresa.down('#fechafacturaId').getValue();
         var fechavenc = viewIngresa.down('#fechavencId').getValue();
@@ -649,6 +650,7 @@ Ext.define('Infosys_web.controller.Facturaglosa', {
                 idsucursal: idsucursal,
                 idcondventa: idcondventa,
                 idtipo: idtipo,
+                ordencompra: ordencompra,
                 items: Ext.JSON.encode(dataItems),
                 vendedor : vendedor,
                 fechafactura : fechafactura,
