@@ -623,6 +623,18 @@ class Guias extends CI_Controller {
 			$detalle_factura = $this->facturaelectronica->get_detalle_factura_glosa($idfactura);
 			$datos_factura = $this->facturaelectronica->get_factura($idfactura);
 
+			$referencia = array();
+			$NroLinRef = 1;
+			if($ordencompra != ""){
+				$referencia[($NroLinRef-1)]['NroLinRef'] = $NroLinRef;
+				//$referencia['TpoDocRef'] = $datos_empresa_factura->tipodocref;
+				$referencia[($NroLinRef-1)]['TpoDocRef'] = 801;
+				$referencia[($NroLinRef-1)]['FolioRef'] = $ordencompra;
+				$referencia[($NroLinRef-1)]['FchRef'] = substr($fechafactura,0,10);
+				$NroLinRef++;
+			}
+			
+
 			$lista_detalle = array();
 			$i = 0;
 			foreach ($detalle_factura as $detalle) {
@@ -680,7 +692,8 @@ class Guias extends CI_Controller {
 		                'MntTotal' => isset($datos_factura->totalfactura) ? $datos_factura->totalfactura : 0,
 		            ],			        
 			    ],
-				'Detalle' => $lista_detalle
+				'Detalle' => $lista_detalle,
+				'Referencia' => $referencia
 			];
 
 			//FchResol y NroResol deben cambiar con los datos reales de producción
