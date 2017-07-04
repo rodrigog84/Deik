@@ -322,7 +322,7 @@ Ext.define('Infosys_web.controller.Preventa', {
         var tipopago = view.down('#tipopagoId').getValue();
         var disponible = view.down('#disponibleId').getValue();
         var impuesto = view.down('#impuestoId').getValue();
-        var ordencompra = view.down('#ordencompraId').getValue();
+        //var ordencompra = view.down('#ordencompraId').getValue();
         var fechaincorporacion = view.down('#fecha_incripcionId').getValue();
         var fechaactualiza = view.down('#fecha_ult_actualizId').getValue();
         var estado = view.down('#tipoEstadoId').getValue();
@@ -341,7 +341,7 @@ Ext.define('Infosys_web.controller.Preventa', {
                 ciudad: ciudad,
                 comuna: comuna,
                 giro : giro,
-                ordencompra : ordencompra,
+                //ordencompra : ordencompra,
                 fono : fono,
                 mail : mail,
                 vendedor : vendedor,
