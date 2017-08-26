@@ -680,7 +680,15 @@ class Facturas extends CI_Controller {
 		$rut_consultante = explode("-",$rut);
 		$RutEnvia = $rut_consultante[0]."-".$rut_consultante[1];
 
-		$xml = $libro->xml_libro;
+
+	 	$archivo = "./facturacion_electronica/libros/".$libro->archivo;
+	 	if(file_exists($archivo)){
+	 		$xml = file_get_contents($archivo);
+	 	}else{
+	 		$xml = $libro->xml_libro;
+	 	}
+
+
 
 		$empresa = $this->facturaelectronica->get_empresa();
 		$RutEmisor = $empresa->rut."-".$empresa->dv; 
