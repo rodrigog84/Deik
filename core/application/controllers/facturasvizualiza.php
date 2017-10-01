@@ -409,7 +409,8 @@ class Facturasvizualiza extends CI_Controller {
 		        'valor_producto' =>  $v->valor_unit,
 		        'cantidad_salida' => $v->cantidad,
 		        'id_bodega' => $idbodega,
-		        'fecha_movimiento' => $fechafactura
+		        'fecha_movimiento' => $fechafactura,
+		        'id_cliente' => $idcliente
 		);
 
 		$this->db->insert('existencia_detalle', $datos2);

@@ -3009,7 +3009,8 @@ public function cargacontribuyentes(){
 		        'valor_producto' =>  $v->precio,
 		        'cantidad_salida' => $v->cantidad,
 		        'id_bodega' => $idbodega,
-		        'fecha_movimiento' => $fechafactura
+		        'fecha_movimiento' => $fechafactura,
+		        'id_cliente' => $idcliente
 		);
 
 		$this->db->insert('existencia_detalle', $datos2);

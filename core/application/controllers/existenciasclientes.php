@@ -19,7 +19,8 @@ class Existenciasclientes extends CI_Controller {
 
 			$numdocumento = $v->num_movimiento;
 			$idexistencia = $v->id;
-			if ($v->)
+			if ($v->id_tipo_movimiento == 101 or $v->id_tipo_movimiento == 105 or $v->id_tipo_movimiento == 2 ){	
+		
 			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, co.nombre as nombre_docu, v.nombre as nom_vendedor, acc.tipo_documento as id_tip_docu, td.descripcion as tipo_doc	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
@@ -46,12 +47,14 @@ class Existenciasclientes extends CI_Controller {
 			$data[] = $v;
 
 		};
+
+		};
 		       
         $resp['data'] = $data;
 		echo json_encode($resp);	
 
 		
-}
+	}
 	
 	
 	public function update(){
