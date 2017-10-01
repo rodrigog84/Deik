@@ -20,7 +20,7 @@ Ext.application({
                   "Preventa", "Pago_caja","CuentasCorrientes","Cotizacion",
                   "Recaudacion", "Notacredito","Caja", "Guiasdespacho",
                   "Comisiones","Notadebito","Tipodocumentocompras", "Precios",
-                  "Facturaglosa"],
+                  "Facturaglosa","ExistenciasClientes"],
 	   
     views: [
         'Infosys_web.view.WLogin',

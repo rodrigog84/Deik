@@ -153,32 +153,36 @@ Ext.define('Infosys_web.view.TopMenus' ,{
                         iconCls: '',
                         itemId: 'inv_inm_mdiario',
                         disabled: true,
-                        action: 'mtipomovimientoinventario'
-                        
+                        action: 'mtipomovimientoinventario'                        
                     },{
                         text: 'Estadisticas',
                         iconCls: '',
                         menu: [{
-                            text: 'Existencia',
-                            iconCls: '',
-                            itemId: 'inv_inm_estadisticas',
-                            disabled: true,
-                            action: 'mexistencia'
+                                text: 'Existencia',
+                                iconCls: '',
+                                itemId: 'inv_inm_estadisticas',
+                                disabled: true,
+                                action: 'mexistencia'
                             },{
-                            text: 'Movimiento Productos',
-                            iconCls: '',
-                            disabled: true,
-                            action: ''
+                                text: 'Existencia por Cliente',
+                                itemId: 'inv_inm_Clientes',
+                                disabled: true,
+                                iconCls: '',
+                                action: 'mexistenciaclientes'
                             },{
-                            text: 'Inventario Valorizado',
-                            iconCls: '',
-                            disabled: true,
-                            action: ''    
+                                text: 'Movimiento Productos',
+                                iconCls: '',
+                                disabled: true,
+                                action: ''
                             },{
-                            text: 'Inventario Selectivo',
-                            iconCls: '',
-                            action: ''
-                                          
+                                text: 'Inventario Valorizado',
+                                iconCls: '',
+                                disabled: true,
+                                action: ''    
+                            },{
+                                text: 'Inventario Selectivo',
+                                iconCls: '',
+                                action: ''                                          
                         }]
                                                                 
                 }]
@@ -186,22 +190,22 @@ Ext.define('Infosys_web.view.TopMenus' ,{
                 text: 'Centralizacion',
                 iconCls: '',
                 menu: [{
-                            text: 'Centralizacion Contable',
-                            iconCls: '',
-                            itemId: 'inv_cen_ccontable',
-                            disabled: true,
-                            action: ''
+                        text: 'Centralizacion Contable',
+                        iconCls: '',
+                        itemId: 'inv_cen_ccontable',
+                        disabled: true,
+                        action: ''
                 }]
                 
             },{
                 text: 'Cierre',
                 iconCls: '',
                 menu: [{
-                            text: 'Cierre Mensual',
-                            iconCls: '',
-                            itemId: 'inv_cierr_cmensual',
-                            disabled: true,
-                            action: ''
+                        text: 'Cierre Mensual',
+                        iconCls: '',
+                        itemId: 'inv_cierr_cmensual',
+                        disabled: true,
+                        action: ''
                 }]
 
             }],
