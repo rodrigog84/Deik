@@ -87,6 +87,11 @@ Ext.define('Infosys_web.view.clientes.Principal' ,{
         dataIndex: 'imp_adicional',
         hidden: true
     },{
+        header: "Estadoc",
+        flex: 1,
+        dataIndex: 'estadoc',
+        hidden: true
+    },{
         header: "Estado",
         flex: 1,
         dataIndex: 'estado',

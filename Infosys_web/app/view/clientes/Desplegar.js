@@ -233,7 +233,15 @@ Ext.define('Infosys_web.view.clientes.Desplegar', {
                         displayField : 'nombre',
                         emptyText : "Seleccione",
                         store : 'clientes.Activo',
-                        allowBlank: false
+                        //allowBlank: false
+                    },{
+                        xtype: 'textfield',
+                        name : 'estadoc',
+                        width: 350,
+                        itemId: 'estadocId',
+                        fieldLabel: 'Estadoc',
+                        hidden: true
+                        
                     },{xtype: 'splitter'},{
                         xtype: 'combo',
                         labelWidth: 50,
@@ -247,7 +255,7 @@ Ext.define('Infosys_web.view.clientes.Desplegar', {
                         displayField : 'nombre',
                         emptyText : "Seleccione",
                         store : 'clientes.Clientes',
-                        allowBlank: false
+                        //allowBlank: false
                     },]
                     }
                 ]

@@ -9,6 +9,22 @@ class Clientes extends CI_Controller {
 		$this->load->database();
 	}
 
+	public function autoriza(){
+
+		$resp = array();
+	    $tipo = $this->input->post('tipo');
+	    $clave = $this->input->post('usua');
+
+	    $query = $this->db->query('SELECT * FROM autoriza WHERE id ="'.$tipo.'" and clave ="'.$clave.'"');
+
+	    if($query->num_rows()>0){
+	    	$resp['success'] = true;
+	    }else{
+	    	$resp['success'] = false;
+	    };
+	    echo json_encode($resp);
+	}
+
 	public function grabargiro(){
 
 	    $resp = array();
@@ -285,8 +301,7 @@ class Clientes extends CI_Controller {
 		$countAll = $this->db->count_all_results("clientes");
         
 		if($opcion == "Rut"){
-			$query = $this->db->query('SELECT acc.*, c.nombre as nombre_ciudad, com.nombre as nombre_comuna,
-			ven.nombre as nombre_vendedor, g.nombre as giro, con.nombre as nom_id_pago FROM clientes acc
+			$query = $this->db->query('SELECT acc.*, c.nombre as nombre_ciudad, com.nombre as nombre_comuna, acc.estado as estadoc, ven.nombre as nombre_vendedor, g.nombre as giro, con.nombre as nom_id_pago FROM clientes acc
 			left join ciudad c on (acc.id_ciudad = c.id)
 			left join cod_activ_econ g on (acc.id_giro = g.id)
 			left join comuna com on (acc.id_comuna = com.id)
@@ -313,8 +328,7 @@ class Clientes extends CI_Controller {
 	        	$sql_nombre .= "acc.nombres like '%".$nombre."%' and ";
 	        }
 	        
-			$query = $this->db->query('SELECT acc.*, c.nombre as nombre_ciudad, com.nombre as nombre_comuna,
-			ven.nombre as nombre_vendedor, g.nombre as giro, con.nombre as nom_id_pago FROM clientes acc
+			$query = $this->db->query('SELECT acc.*, c.nombre as nombre_ciudad, com.nombre as nombre_comuna, acc.estado as estadoc, ven.nombre as nombre_vendedor, g.nombre as giro, con.nombre as nom_id_pago FROM clientes acc
 			left join ciudad c on (acc.id_ciudad = c.id)
 			left join cod_activ_econ g on (acc.id_giro = g.id)
 			left join comuna com on (acc.id_comuna = com.id)
@@ -337,8 +351,7 @@ class Clientes extends CI_Controller {
 			
 		
 		}else if($opcion == "Todos"){
-			$query = $this->db->query('SELECT acc.*, c.nombre as nombre_ciudad, com.nombre as nombre_comuna,
-			ven.nombre as nombre_vendedor, g.nombre as giro, con.nombre as nom_id_pago FROM clientes acc
+			$query = $this->db->query('SELECT acc.*, c.nombre as nombre_ciudad, com.nombre as nombre_comuna, acc.estado as estadoc, ven.nombre as nombre_vendedor, g.nombre as giro, con.nombre as nom_id_pago FROM clientes acc
 			left join ciudad c on (acc.id_ciudad = c.id)
 			left join cod_activ_econ g on (acc.id_giro = g.id)
 			left join comuna com on (acc.id_comuna = com.id)
@@ -350,8 +363,7 @@ class Clientes extends CI_Controller {
             '
 			);
 		}else{
-			$query = $this->db->query('SELECT acc.*, c.nombre as nombre_ciudad, com.nombre as nombre_comuna,
-			ven.nombre as nombre_vendedor, g.nombre as giro, con.nombre as nom_id_pago FROM clientes acc
+			$query = $this->db->query('SELECT acc.*, c.nombre as nombre_ciudad, com.nombre as nombre_comuna, acc.estado as estadoc, ven.nombre as nombre_vendedor, g.nombre as giro, con.nombre as nom_id_pago FROM clientes acc
 			left join ciudad c on (acc.id_ciudad = c.id)
 			left join cod_activ_econ g on (acc.id_giro = g.id)
 			left join comuna com on (acc.id_comuna = com.id)
@@ -441,8 +453,7 @@ class Clientes extends CI_Controller {
 		$countAll = $this->db->count_all_results("clientes");
         
 		if($idcliente){
-			$query = $this->db->query('SELECT acc.*, c.nombre as nombre_ciudad, com.nombre as nombre_comuna,
-			ven.nombre as nombre_vendedor, g.nombre as giro, con.nombre as nom_id_pago FROM clientes acc
+			$query = $this->db->query('SELECT acc.*, c.nombre as nombre_ciudad, com.nombre as nombre_comuna, acc.estado as estadoc, ven.nombre as nombre_vendedor, g.nombre as giro, con.nombre as nom_id_pago FROM clientes acc
 			left join ciudad c on (acc.id_ciudad = c.id)
 			left join cod_activ_econ g on (acc.id_giro = g.id)
 			left join comuna com on (acc.id_comuna = com.id)

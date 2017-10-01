@@ -25,6 +25,7 @@ Ext.define('Infosys_web.model.Cliente', {
         {name: 'id_pago'},
         {name: 'nom_id_pago'},
         {name: 'estado'},
+        {name: 'estadoc'},
         {name: 'cupo_disponible'},
         {name: 'imp_adicional'},
         {name: 'tipo'}
