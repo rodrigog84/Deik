@@ -8,6 +8,29 @@ class Login extends CI_Controller {
 		$this->load->library('session');
 		$this->load->database();
 	}
+
+	public function modifica(){
+
+		$resp = array();
+	    $id = 1;
+	    $clavenueva = $this->input->post('clave');
+	    $clave = $this->input->post('origen');
+		
+		$query = $this->db->query('SELECT * FROM autoriza WHERE id ="'.$id.'"');
+
+		if($query->num_rows()>0){
+			$this->db->where('id', $id);
+			$this->db->update('usuario', array(
+			   'password' => $clavenueva
+			)); 
+			$resp['success'] = true;
+	    }else{	    	
+	    	 $resp['success'] = false;	    	
+	    };
+
+        echo json_encode($resp);
+	}
+
 	public function changePass(){
         $oldpass = $_REQUEST['oldpass'];
         $newpass = $_REQUEST['newpass'];

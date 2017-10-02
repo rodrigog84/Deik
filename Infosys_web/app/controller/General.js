@@ -141,7 +141,8 @@ Ext.define('Infosys_web.controller.General', {
         'cuentascorrientes.LibroDiarioPrincipal',
         'cuentascorrientes.SaldoDocumentosPrincipal',
         'Tabladescuento.Ingresar',
-        'Tabladescuento.Principal'
+        'Tabladescuento.Principal',
+        'usuarios.CambioClave'
          ],
     
     
@@ -298,6 +299,9 @@ Ext.define('Infosys_web.controller.General', {
     },{
         ref: 'cambiopassword',
         selector: 'cambiopassword'
+    },{
+            ref: 'CambioClave',
+            selector: 'CambioClave'
     }
     ],
 
@@ -732,15 +736,56 @@ Ext.define('Infosys_web.controller.General', {
             
             'cambiopassword button[action=grabaclave]': {
                 click: this.grabaclave
-            }          
+            },
+            'CambioClave button[action=cambiar]': {
+                click: this.cambiar
+            },
+            'topmenus menuitem[action=mcambioClave]': {
+                click: this.mcambioClave
+            }         
 
 
         });
     },
 
+    cambiar: function(){
+
+        var view = this.getCambioClave();
+        var claveactual = view.down('#ActualId').getValue();
+        var clavenueva = view.down('#NuevaId').getValue();
+        var claverepite = view.down('#RepiteId').getValue();
+
+        if (clavenueva != claverepite){
+            Ext.Msg.alert('Alerta', 'Clave No es Igual');
+            return;       
+        };
+
+         Ext.Ajax.request({
+            url: preurl + 'login/modifica',
+            params: {
+               clave: clavenueva,
+               origen: claveactual
+            },
+            success: function(response){
+                var resp = Ext.JSON.decode(response.responseText);
+                if (resp.success == false) {
+                    Ext.Msg.alert('Alerta', 'Clave No Corresponde');
+                    return;                   
+                }else{
+                    view.close();
+                    Ext.Msg.alert('Alerta', 'Clave Modificada Correctamente');
+                    return;                    
+                };
+            }
+        });
+    },
+
+    mcambioClave: function(){
+        var view = Ext.create('Infosys_web.view.usuarios.CambioClave').show();
+        view.down("#ActualId").focus();            
+    },
+
     grabaclave : function(){
-
-
         var view = this.getCambiopassword();
         var id = view.down('#Idid').getValue();
         var oldpass = view.down('#oldpass').getValue();
