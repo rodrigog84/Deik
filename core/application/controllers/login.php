@@ -20,8 +20,8 @@ class Login extends CI_Controller {
 
 		if($query->num_rows()>0){
 			$this->db->where('id', $id);
-			$this->db->update('usuario', array(
-			   'password' => $clavenueva
+			$this->db->update('autoriza', array(
+			   'clave' => $clavenueva
 			)); 
 			$resp['success'] = true;
 	    }else{	    	
