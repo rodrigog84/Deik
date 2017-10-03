@@ -16,7 +16,7 @@ class Login extends CI_Controller {
 	    $clavenueva = $this->input->post('clave');
 	    $clave = $this->input->post('origen');
 		
-		$query = $this->db->query('SELECT * FROM autoriza WHERE id ="'.$id.'"');
+		$query = $this->db->query('SELECT * FROM autoriza WHERE id ="'.$id.'" and clave ="'.$clave.'"');
 
 		if($query->num_rows()>0){
 			$this->db->where('id', $id);
