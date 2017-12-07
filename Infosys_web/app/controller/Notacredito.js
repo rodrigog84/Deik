@@ -866,8 +866,9 @@ Ext.define('Infosys_web.controller.Notacredito', {
         var idfacturaval = view.down('#factactId').getValue();
         var numfactura = view.down('#numfactId').getValue();
         var precio = ((view.down('#precioId').getValue()));
+        var dcto = ((view.down('#descuentoId').getValue()));
         var precioun = (Math.round((view.down('#precioId').getValue())/1.19));
-        var total = ((cantidad * precio));
+        var total = ((cantidad * precio)-dcto);
         var neto = (Math.round(total / 1.19));
         var exists = 0;
         var iva = (total - neto );
@@ -926,6 +927,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
                     view.down('#cantidadId').setValue(cero2);
                     view.down('#precioId').setValue(cero2);
                     view.down('#cantidadOriginalId').setValue(cero);
+                    view.down('#descuentoId').setValue(cero);
                     view.down("#buscarproc").focus();
 
                     Ext.Msg.alert('Alerta', 'Producto No corresponde a Factura');
@@ -943,6 +945,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
                         view.down('#cantidadId').setValue(cero2);
                         view.down('#precioId').setValue(cero2);
                         view.down('#cantidadOriginalId').setValue(cero);
+                        view.down('#descuentoId').setValue(cero);
                         view.down("#buscarproc").focus();
 
 
@@ -960,6 +963,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
                         view.down('#codigoId').setValue(cero);
                         view.down('#productoId').setValue(cero);
                         view.down('#cantidadId').setValue(cero);
+                        view.down('#descuentoId').setValue(cero);
                         view.down('#precioId').setValue(cero);
 
                         return; 
@@ -973,6 +977,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
                         id_producto: producto,
                         nombre: nomproducto,
                         precio: precio,
+                        dcto: dcto,
                         cantidad: cantidad,
                         neto: neto,
                         totaliva: totaliva,
@@ -986,6 +991,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
                     view.down('#cantidadId').setValue(cero2);
                     view.down('#precioId').setValue(cero2);
                     view.down('#cantidadOriginalId').setValue(cero);
+                    view.down('#descuentoId').setValue(cero);
                     view.down("#buscarproc").focus();
                     totalfin = totalfin + totaliva;
                     ivafin = ivafin + iva;
@@ -1540,6 +1546,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
             var nomproducto = (row.data.nombre);
             var idfactura = (row.data.id_factura);
             var pventa = (row.data.p_venta);
+            var dcto = (row.data.descuento);
 
             Ext.Ajax.request({
                     url: preurl + 'notacredito/validaproducto',
@@ -1558,6 +1565,7 @@ Ext.define('Infosys_web.controller.Notacredito', {
                       viewIngresa.down('#nomproductoId').setValue(nomproducto);
                       viewIngresa.down('#codigoId').setValue(row.data.codigo);
                       viewIngresa.down('#precioId').setValue(pventa);
+                      viewIngresa.down('#descuentoId').setValue(dcto);
                       viewIngresa.down('#factactId').setValue(row.data.id_factura);
                       view.close();
                     }

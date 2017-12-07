@@ -17,6 +17,7 @@ Ext.define('Infosys_web.model.Cliente', {
         {name: 'nombre_vendedor'},
         {name: 'nombre_comuna'},
         {name: 'rut'},
+        {name: 'rutaut'},
         {name: 'rutmuestra'},
         {name: 'descuento'},
         {name: 'e_mail'},

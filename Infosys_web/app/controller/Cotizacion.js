@@ -604,6 +604,9 @@ Ext.define('Infosys_web.controller.Cotizacion', {
 
         var view = this.getCotizacioningresar();
         var grid  = view.down('#itemsgridId');
+        var secuencia = view.down('#secuenciaId').getValue();
+        var secuencia = secuencia - 1;
+
         var cero = "";
         if (grid.getSelectionModel().hasSelection()) {
             var row = grid.getSelectionModel().getSelection()[0];
@@ -625,6 +628,7 @@ Ext.define('Infosys_web.controller.Cotizacion', {
                         view.down('#cantidadOriginalId').setValue(cliente.stock);
                         view.down('#cantidadId').setValue(row.data.cantidad);
                         view.down('#totdescuentoId').setValue(row.data.dcto);
+                        view.down('#secuenciaId').setValue(secuencia);
                         if ((row.data.id_descuento)==0){
                             view.down('#DescuentoproId').setValue(cero);
                         }else{
@@ -1796,6 +1800,8 @@ Ext.define('Infosys_web.controller.Cotizacion', {
         var netonue = view.down('#finaltotalnetoId').getValue();
         var ivanue = view.down('#finaltotalivaId').getValue();
         var afectonue = view.down('#finalafectoId').getValue();
+        var secuencia = view.down('#secuenciaId').getValue();
+        var secuencia = secuencia + 1;
         
         if (descuento == 1){            
             var descuento = 0;
@@ -1805,6 +1811,24 @@ Ext.define('Infosys_web.controller.Cotizacion', {
         if (descuento > 0){            
             view.down('#tipoDescuentoId').setDisabled(bolEnable);
             view.down('#descuentovalorId').setDisabled(bolEnable);
+        };
+
+         if (secuencia > 21){
+
+                Ext.Msg.alert('Alerta', 'Ya sobrepaso el maximo de Registros');
+                exists = 1;
+                cero="";
+                cero1=0;
+                cero2=1;
+                view.down('#codigoId').setValue(cero);
+                view.down('#productoId').setValue(cero);
+                view.down('#nombreproductoId').setValue(cero);
+                view.down('#cantidadId').setValue(cero2);
+                view.down('#precioId').setValue(cero);
+                view.down('#cantidadOriginalId').setValue(cero);
+                view.down('#totdescuentoId').setValue(cero1);
+                return; 
+
         };
 
         var exists = 0;
@@ -1839,7 +1863,7 @@ Ext.define('Infosys_web.controller.Cotizacion', {
             return;
 
         stItem.add(new Infosys_web.model.cotizacion.Item({
-            id: producto,
+            id: secuencia,
             id_producto: producto,
             id_descuento: iddescuento,
             nombre: nombre,
@@ -1864,6 +1888,7 @@ Ext.define('Infosys_web.controller.Cotizacion', {
         view.down('#finaltotalivaId').setValue(Ext.util.Format.number(ivanue, '0'));
         view.down('#finalafectoId').setValue(Ext.util.Format.number(afectonue, '0'));
         view.down('#descuentovalorId').setValue(Ext.util.Format.number(cero));
+        view.down('#secuenciaId').setValue(secuencia);
        
 
         cero="";

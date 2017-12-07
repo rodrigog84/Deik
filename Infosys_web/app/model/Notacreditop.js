@@ -24,6 +24,8 @@ Ext.define('Infosys_web.model.Notacreditop', {
         {name: 'id_bodega'},
         {name: 'id_agrupacion'},
         {name: 'id_subfamilia'},
+        {name: 'descuento'},
+        {name: 'dcto'},
         {name: 'foto'},
         {name: 'nom_agrupacion'},
         {name: 'nom_subfamilia'},

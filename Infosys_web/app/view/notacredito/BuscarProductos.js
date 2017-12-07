@@ -52,6 +52,11 @@ Ext.define('Infosys_web.view.notacredito.BuscarProductos' ,{
                 flex: 1,
                 align: 'right',
                 dataIndex: 'stock'
+            },{
+                header: "Descuento",
+                flex: 1,
+                align: 'right',
+                dataIndex: 'descuento'
             }],
         };
         this.dockedItems = [{
@@ -82,7 +87,7 @@ Ext.define('Infosys_web.view.notacredito.BuscarProductos' ,{
         {
             xtype: 'pagingtoolbar',
             dock:'bottom',
-            store: 'Productosf',
+            store: 'Notacreditop',
             displayInfo: true
         }];
         

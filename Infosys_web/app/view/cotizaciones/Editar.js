@@ -183,6 +183,16 @@ Ext.define('Infosys_web.view.cotizaciones.Editar', {
                                     displayField : 'nombre',
                                     emptyText : "Seleccione",
                                     store : 'Cond_pago'
+                                },{
+                                    xtype: 'numberfield',
+                                    width: 80,
+                                    labelWidth: 40,
+                                    minValue: 0,
+                                    fieldLabel: 'secuencia',
+                                    itemId: 'secuenciaId',
+                                    style: 'font-weight: bold;',
+                                    hidden: true
+
                                 }
                                 
                                
@@ -381,7 +391,7 @@ Ext.define('Infosys_web.view.cotizaciones.Editar', {
                         { text: 'PRECIO UNITARIO',  dataIndex: 'precio_base', align: 'right',flex:1,renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00")} },
                         { text: 'CANTIDAD',  dataIndex: 'cantidad', align: 'right',width: 80 },
                         { text: 'VALOR DESCUENTO',  dataIndex: 'dcto', align: 'right',flex:1,renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00")} },
-                        { text: 'NETO',  dataIndex: 'neto', align: 'right',flex:1, decimalPrecision:2},
+                        { text: 'NETO',  dataIndex: 'neto', align: 'right',flex:1, decimalPrecision:2, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")}},
                         { text: 'IVA',  dataIndex: 'iva', align: 'right',flex:1,renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00")}, hidden: true},
                         { text: 'TOTAL',  dataIndex: 'total', align: 'right',flex:1,renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00")}}
                     ]

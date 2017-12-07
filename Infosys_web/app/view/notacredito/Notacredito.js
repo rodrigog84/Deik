@@ -566,6 +566,15 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
                             },
                             {xtype: 'splitter'},
                             {
+                                xtype: 'numberfield',
+                                width: 170,
+                                minValue: 0,
+                                value: 1,
+                                fieldLabel: 'Dcto',
+                                itemId: 'descuentoId'
+                            },
+                            {xtype: 'splitter'},
+                            {
                                 xtype: 'button',
                                 text: 'Agregar',
                                 iconCls: 'icon-plus',
@@ -601,6 +610,7 @@ Ext.define('Infosys_web.view.notacredito.Notacredito', {
                                     { text: 'IdProducto',  dataIndex: 'id_producto', width: 350,hidden: true },
                                     { text: 'Cantidad',  dataIndex: 'cantidad', flex:1 },
                                     { text: 'Precio Unitario',  dataIndex: 'precio', flex:1, align: 'right', decimalPrecision:2},
+                                    { text: 'Dcto',  dataIndex: 'dcto', flex:1, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")}},
                                     { text: 'Neto',  dataIndex: 'neto', flex:1, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")}, hidden: true },
                                     { text: 'Iva',  dataIndex: 'iva', flex:1, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")}, hidden: true },
                                     { text: 'Total',  dataIndex: 'totaliva', flex:1, renderer: function(valor){return Ext.util.Format.number((valor),"0,000")} }

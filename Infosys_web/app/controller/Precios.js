@@ -268,7 +268,10 @@ Ext.define('Infosys_web.controller.Precios', {
 
     buscarproductos: function(){
 
+        var st = this.getProductosfStore();
+        st.load();
         Ext.create('Infosys_web.view.precios.BuscarProductos').show();
+
     },
 
     eliminaritem: function() {

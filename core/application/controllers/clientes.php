@@ -25,24 +25,6 @@ class Clientes extends CI_Controller {
 	    echo json_encode($resp);
 	}
 
-	public function grabargiro(){
-
-	    $resp = array();
-	    $idcliente = $this->input->post('id');
-	    $idgiro = $this->input->post('idgiro');
-
-	    $data = array(
-	        'id_giro' => $idgiro	          
-		);
-
-	    $this->db->where('id', $idcliente);		
-		$this->db->update('clientes', $data);
-
-		$resp['success'] = true;
-	    echo json_encode($resp); 
-	}
-
-
 	public function elimina(){
 
 	    $resp = array();
@@ -61,7 +43,9 @@ class Clientes extends CI_Controller {
 	    $query = $this->db->query('DELETE FROM clientes_sucursales WHERE id_cliente = "'.$idcliente.'"');
 	   
 	    $resp['success'] = true;
-	    echo json_encode($resp);    	
+	    echo json_encode($resp);
+
+	    	
 
 	    };
 
@@ -126,7 +110,7 @@ class Clientes extends CI_Controller {
 	
 	 }
 
-	 public function save(){
+	public function save(){
 		$resp = array();
 
 		$data = json_decode($this->input->post('data'));
@@ -160,58 +144,6 @@ class Clientes extends CI_Controller {
 
         echo json_encode($resp);
 
-	}
-
-	public function grabarpreventa(){
-
-		$resp = array();
-		$nombres = $this->input->post('nombre');
-		$rut = $this->input->post('rut');
-		$id = $this->input->post('idcliente');
-		$direccion = $this->input->post('direccion');
-		$ciudad = $this->input->post('ciudad');		
-		$comuna = $this->input->post('comuna');		
-		$giro = $this->input->post('giro');
-		$fono = $this->input->post('fono');
-		$mail = $this->input->post('mail');
-		$vendedor = $this->input->post('vendedor');
-		$descuento = $this->input->post('descuento');
-		$tipopago = $this->input->post('tipopago');
-		$disponible = $this->input->post('disponible');
-		$impuesto = $this->input->post('impuesto');
-		$fechaincorporacion = $this->input->post('fechaincorporacion');
-		$fechaactualiza = $this->input->post('fechaactualiza');
-		$estado = $this->input->post('estado');
-		$tipocliente = $this->input->post('tipocliente');
-		
-		
-		$data = array(
-			'nombres' => strtoupper($nombres),
-			'rut' => $rut,
-	        'id_giro' => $giro,
-	        'fono' => $fono,			
-	        'direccion' => strtoupper($direccion),
-	        'id_ciudad' => $ciudad,
-	        'id_comuna' => $comuna,
-	        'id_vendedor' => $vendedor,
-	        'e_mail' => $mail,
-	        'descuento' => $descuento,		
-	        'fecha_incripcion' => $fechaincorporacion,
-            'fecha_ult_actualiz' => date('Y-m-d'),
-            'estado' => $estado,
-          	'id_pago' => $tipopago,
-          	'cupo_disponible' => $disponible,
-          	'imp_adicional' => $impuesto,
-          	'tipo' => $tipocliente
-              
-	    );
-	    
-		$this->db->insert('clientes', $data);
-        $idobserva = $this->db->insert_id();
-
-        $resp['success'] = true;
- 		$resp['id'] = $idobserva;
-        echo json_encode($resp);
 	}
 	
 	
@@ -260,10 +192,10 @@ class Clientes extends CI_Controller {
 	    
 		$this->db->where('id', $id);
 		
-		$this->db->update('clientes', $data);
-		
+		$this->db->update('clientes', $data); 
+
         $resp['success'] = true;
- 		
+
         $this->Bitacora->logger("M", 'clientes', $id);
 
         echo json_encode($resp);
@@ -297,7 +229,8 @@ class Clientes extends CI_Controller {
         $idcliente = $this->input->get('idcliente');
 		$tipo = $this->input->get('fTipo');
 		$opcion = $this->input->get('opcion');
-        
+
+
 		$countAll = $this->db->count_all_results("clientes");
         
 		if($opcion == "Rut"){
@@ -380,7 +313,6 @@ class Clientes extends CI_Controller {
 		foreach ($query->result() as $row)
 		{
 
-			
 		if ($row->tipo == 1 or $row->tipo == 3){
 
 			$rutautoriza = $row->rut;
@@ -389,21 +321,21 @@ class Clientes extends CI_Controller {
 		      $ruta2 = substr($rutautoriza, -4, 3);
 		      $ruta3 = substr($rutautoriza, -7, 3);
 		      $ruta4 = substr($rutautoriza, -8, 1);
-		      $row->rutmuestra = ($ruta4.".".$ruta3.".".$ruta2."-".$ruta1);
+		      $row->rut = ($ruta4.".".$ruta3.".".$ruta2."-".$ruta1);
 		    };
 		    if (strlen($rutautoriza) == 9){
 		      $ruta1 = substr($rutautoriza, -1);
 		      $ruta2 = substr($rutautoriza, -4, 3);
 		      $ruta3 = substr($rutautoriza, -7, 3);
 		      $ruta4 = substr($rutautoriza, -9, 2);
-		      $row->rutmuestra = ($ruta4.".".$ruta3.".".$ruta2."-".$ruta1);
+		      $row->rut = ($ruta4.".".$ruta3.".".$ruta2."-".$ruta1);
 		   
 		    };
 
-		    if (strlen($rutautoriza) == 2){
+		     if (strlen($rutautoriza) == 2){
 		      $ruta1 = substr($rutautoriza, -1);
 		      $ruta2 = substr($rutautoriza, -4, 1);
-		      $row->rutmuestra = ($ruta2."-".$ruta1);
+		      $row->rut = ($ruta2."-".$ruta1);
 		     
 		    };
 
@@ -411,7 +343,7 @@ class Clientes extends CI_Controller {
 		      $ruta1 = substr($rutautoriza, -1);
 		      $ruta2 = substr($rutautoriza, -4, 3);
 		      $ruta3 = substr($rutautoriza, -7, 3);
-		      $row->rutmuestra = ($ruta3.".".$ruta2."-".$ruta1);
+		      $row->rut = ($ruta3.".".$ruta2."-".$ruta1);
 		     
 		    };
 		    
@@ -419,18 +351,20 @@ class Clientes extends CI_Controller {
 		    if (strlen($rutautoriza) == 4){
 		      $ruta1 = substr($rutautoriza, -1);
 		      $ruta2 = substr($rutautoriza, -4, 3);
-		      $row->rutmuestra = ($ruta2."-".$ruta1);
+		      $row->rut = ($ruta2."-".$ruta1);
 		     
 		    };	
 
 
-		    if (strlen($rutautoriza) == 6){
+		     if (strlen($rutautoriza) == 6){
 		      $ruta1 = substr($rutautoriza, -1);
 		      $ruta2 = substr($rutautoriza, -4, 3);
 		      $ruta3 = substr($rutautoriza, -6, 2);
-		      $row->rutmuestra = ($ruta3.".".$ruta2."-".$ruta1);
+		      $row->rut = ($ruta3.".".$ruta2."-".$ruta1);
 		     
 		    };
+
+		    $row->rutaut = $rutautoriza;
 			$data[] = $row;
 			$resp['cliente'] = $row;
 		}

@@ -1193,6 +1193,7 @@ class Preventa extends CI_Controller {
 
 			
 		$data = array();
+
 		$query = $this->db->query('SELECT acc.*, c.nombres as nom_cliente, c.rut as rut_cliente, co.nombre as nom_documento, v.nombre as nom_vendedor, co.id as id_tip_docu	FROM preventa acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
@@ -1201,6 +1202,30 @@ class Preventa extends CI_Controller {
 			order by acc.id desc'	
 
 			);
+
+
+			$total = 0;
+
+		  foreach ($query->result() as $row)
+			{
+				$total = $total +1;
+			
+			}
+
+			$countAll = $total;
+		
+
+			$query = $this->db->query('SELECT acc.*, c.nombres as nom_cliente, c.rut as rut_cliente, co.nombre as nom_documento, v.nombre as nom_vendedor, co.id as id_tip_docu	FROM preventa acc
+			left join clientes c on (acc.id_cliente = c.id)
+			left join vendedores v on (acc.id_vendedor = v.id)
+			left join correlativos co on (acc.id_tip_docu = co.id)
+			WHERE acc.id_tip_docu in ('.$tipo5.','.$tipo.',' .$tipo2.',' .$tipo3.',' .$tipo4.') and acc.estado = "'.$estado.'"
+			order by acc.id desc
+			limit '.$start.', '.$limit.''	
+			
+			);
+
+
 
 
 		}

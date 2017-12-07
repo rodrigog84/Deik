@@ -237,6 +237,7 @@ Ext.define('Infosys_web.controller.ExistenciasClientes', {
 
         }); 
    }else{
+        console.log("llegamos")
         var edit = Ext.create('Infosys_web.view.existencia.BuscarClientes'); 
    }; 
 

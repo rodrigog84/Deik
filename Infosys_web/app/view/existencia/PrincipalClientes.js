@@ -35,6 +35,13 @@ Ext.define('Infosys_web.view.existencia.PrincipalClientes' ,{
         renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00.00")}
 
     },{
+        header: "Valor",
+        width: 100,
+        dataIndex: 'valor_producto',
+        align: 'right',
+        renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00.00")}
+
+    },{
         header: "Tipo",
         width: 100,
         dataIndex: 'nom_tipo_movimiento'        
@@ -73,7 +80,8 @@ Ext.define('Infosys_web.view.existencia.PrincipalClientes' ,{
                 xtype: 'button',
                 iconCls : 'icon-exel',
                 text: 'ACTUALIZA',
-                action:'actualizatabla'
+                action:'actualizatabla',
+                hidden: true
             },{
                 width: 610,
                 xtype: 'textfield',
