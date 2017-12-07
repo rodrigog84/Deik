@@ -4,7 +4,8 @@ Ext.define('Infosys_web.controller.ExistenciasClientes', {
     //asociamos vistas, models y stores al controller
 
     stores: ['ExistenciasClientes',
-             'Clientes'
+             'Clientes',
+             'clientes.Selector2'
              ],
 
     models: ['existenciasclientes',
@@ -30,8 +31,6 @@ Ext.define('Infosys_web.controller.ExistenciasClientes', {
         ref: 'buscarclientesexistencia',
         selector: 'buscarclientesexistencia'
     }
-
-
 
     ],
     //init es lo primero que se ejecuta en el controller
@@ -97,7 +96,7 @@ Ext.define('Infosys_web.controller.ExistenciasClientes', {
         if (grid.getSelectionModel().hasSelection()) {
             var row = grid.getSelectionModel().getSelection()[0];
             viewIngresa.down('#razonidd').setValue(row.data.nombres);
-            viewIngresa.down('#rutId').setValue(row.data.rutaut);
+            viewIngresa.down('#rutId').setValue(row.data.rut);
             view.close();         
             
         }else{
@@ -210,12 +209,14 @@ Ext.define('Infosys_web.controller.ExistenciasClientes', {
 
         var view = this.getExistenciaprincipalclientes()
         var st = this.getExistenciasClientesStore()
+        var opcion = view.down('#tipoSeleccionId').getValue()
         var nombre = view.down('#nombreId').getValue()
         var rut = view.down('#rutId').getValue()
 
         if (rut){
         st.proxy.extraParams = {nombre : nombre,
-                                rut : rut}
+                                rut : rut,
+                                opcion : opcion}
         st.load();
         Ext.Ajax.request({
             url: preurl + 'clientes/validaRut?valida='+rut,
@@ -237,7 +238,6 @@ Ext.define('Infosys_web.controller.ExistenciasClientes', {
 
         }); 
    }else{
-        console.log("llegamos")
         var edit = Ext.create('Infosys_web.view.existencia.BuscarClientes'); 
    }; 
 

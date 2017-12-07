@@ -35,13 +35,6 @@ Ext.define('Infosys_web.view.existencia.PrincipalClientes' ,{
         renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00.00")}
 
     },{
-        header: "Valor",
-        width: 100,
-        dataIndex: 'valor_producto',
-        align: 'right',
-        renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00.00")}
-
-    },{
         header: "Tipo",
         width: 100,
         dataIndex: 'nom_tipo_movimiento'        
@@ -83,7 +76,7 @@ Ext.define('Infosys_web.view.existencia.PrincipalClientes' ,{
                 action:'actualizatabla',
                 hidden: true
             },{
-                width: 610,
+                width: 510,
                 xtype: 'textfield',
                 labelWidth: 120,
                 itemId: 'razonidd',
@@ -95,11 +88,21 @@ Ext.define('Infosys_web.view.existencia.PrincipalClientes' ,{
                 itemId: 'rutId',
                 fieldLabel: 'Rut'
             },'-',{
-                width: 180,
+                xtype: 'combo',
+                width: 120,
+                itemId: 'tipoSeleccionId',
+                fieldLabel: '',
+                forceSelection : true,
+                editable : false,
+                valueField : 'id',
+                displayField : 'nombre',
+                emptyText : "Seleccione",
+                store : 'clientes.Selector2'
+            },{
+                width: 200,
                 xtype: 'textfield',
-                labelWidth: 50,
                 itemId: 'nombreId',
-                fieldLabel: 'Codigo'
+                fieldLabel: ''
             },'-',{
                 xtype: 'button',
                 iconCls: 'icon-search',
