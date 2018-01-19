@@ -9,6 +9,62 @@ class Clientes extends CI_Controller {
 		$this->load->database();
 	}
 
+	public function grabarpreventa(){
+
+		$resp = array();
+		$nombres = $this->input->post('nombre');
+		$rut = $this->input->post('rut');
+		$id = $this->input->post('idcliente');
+		$direccion = $this->input->post('direccion');
+		$ciudad = $this->input->post('ciudad');		
+		$comuna = $this->input->post('comuna');		
+		$giro = $this->input->post('giro');
+		$fono = $this->input->post('fono');
+		$mail = $this->input->post('mail');
+		$vendedor = $this->input->post('vendedor');
+		$descuento = $this->input->post('descuento');
+		$tipopago = $this->input->post('tipopago');
+		$disponible = $this->input->post('disponible');
+		$impuesto = $this->input->post('impuesto');
+		$fechaincorporacion = $this->input->post('fechaincorporacion');
+		$fechaactualiza = $this->input->post('fechaactualiza');
+		$estado = $this->input->post('estado');
+		$tipocliente = $this->input->post('tipocliente');
+		
+		
+		$data = array(
+			'nombres' => strtoupper($nombres),
+	        'id_giro' => $giro,
+	        'fono' => $fono,	
+	        'rut' => $rut,			
+	        'direccion' => strtoupper($direccion),
+	        'id_ciudad' => $ciudad,
+	        'id_comuna' => $comuna,
+	        'id_vendedor' => $vendedor,
+	        'e_mail' => $mail,
+	        'descuento' => $descuento,		
+	        'fecha_incripcion' => $fechaincorporacion,
+            'fecha_ult_actualiz' => date('Y-m-d'),
+            'estado' => $estado,
+          	'id_pago' => $tipopago,
+          	'cupo_disponible' => $disponible,
+          	'imp_adicional' => $impuesto,
+          	'tipo' => 1
+              
+	    );
+
+	    $this->db->insert('clientes', $data);
+		$id = $this->db->insert_id(); 
+
+        $this->Bitacora->logger("I", 'clientes', $id);
+        $resp['success'] = true;
+        $resp['id'] = $id;
+
+        echo json_encode($resp);
+	}
+
+
+
 	public function autoriza(){
 
 		$resp = array();

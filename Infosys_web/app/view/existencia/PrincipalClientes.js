@@ -81,6 +81,11 @@ Ext.define('Infosys_web.view.existencia.PrincipalClientes' ,{
                 labelWidth: 120,
                 itemId: 'razonidd',
                 fieldLabel: 'Razon Social'
+            },{
+                xtype: 'button',
+                iconCls: 'icon-edit',
+                action: 'editarmovimiento',
+                text : 'Editar'
             },'->',{
                 width: 180,
                 xtype: 'textfield',
@@ -97,7 +102,7 @@ Ext.define('Infosys_web.view.existencia.PrincipalClientes' ,{
                 valueField : 'id',
                 displayField : 'nombre',
                 emptyText : "Seleccione",
-                store : 'clientes.Selector2'
+                store : 'clientes.Selector'
             },{
                 width: 200,
                 xtype: 'textfield',
