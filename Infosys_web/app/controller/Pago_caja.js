@@ -1313,6 +1313,20 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                 
         };
 
+        if (valida == "CREDITO 45 DIAS"){
+
+           var id_banco = "";
+           var numcheque = 0;
+           view.down("#bancoId").setValue(id_banco);
+           view.down("#numchequeId").setValue(numcheque);            
+           view.down('#numchequeId').setDisabled(true);
+           view.down('#valorvueltoId').setDisabled(true);
+           view.down('#bancoId').setDisabled(true);
+           view.down("#valorcancelaId").setValue(totdocu);
+           view.down("#valorcancelaId").focus();
+                
+        };
+
     },
 
 
