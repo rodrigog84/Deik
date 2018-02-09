@@ -644,7 +644,7 @@ class Recaudacion extends CI_Controller {
 				}
 
 				
-				if($formapago != 3 && $formapago != 5 ){ 
+				if($formapago != 3 && $formapago != 5 && $formapago != 11 ){ 
 					if(is_null($correlativo_cta_cte)){ // si son varias formas de pago, entonces sólo en la primera genera el movimiento
 						 $query = $this->db->query("SELECT correlativo FROM correlativos WHERE nombre = 'CANCELACIONES CTA CTE'");
 						 $row = $query->row();
