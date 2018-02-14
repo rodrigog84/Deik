@@ -2301,7 +2301,8 @@ Ext.define('Infosys_web.controller.Preventa', {
             viewIngresa.down('#rutId').setValue(row.data.rut);
             viewIngresa.down('#tipocondpagoId').setValue(row.data.id_pago);
             viewIngresa.down('#direccionId').setValue(row.data.direccion);
-            viewIngresa.down('#giroId').setValue(row.data.giro);
+            viewIngresa.down('#giroId').setValue(row.data.id_giro);
+            viewIngresa.down("#tipoVendedorId").setValue(row.data.id_vendedor);
             view.close();
             viewIngresa.down("#tipoVendedorId").focus();
             var bolEnable = true;           
@@ -2345,7 +2346,8 @@ Ext.define('Infosys_web.controller.Preventa', {
             viewIngresa.down('#rutId').setValue(row.data.rut);
             viewIngresa.down('#tipocondpagoId').setValue(row.data.id_pago);
             viewIngresa.down('#direccionId').setValue(row.data.direccion);
-            viewIngresa.down('#giroId').setValue(row.data.giro);
+            viewIngresa.down('#giroId').setValue(row.data.id_giro);
+            viewIngresa.down("#tipoVendedorId").setValue(row.data.id_vendedor);
             view.close();
             viewIngresa.down("#tipoVendedorId").focus();
             var bolEnable = true;

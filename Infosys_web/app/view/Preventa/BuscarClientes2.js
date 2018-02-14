@@ -51,6 +51,16 @@ Ext.define('Infosys_web.view.Preventa.BuscarClientes2' ,{
         dataIndex: 'giro',
         hidden: true
     },{
+        header: "Id_Giro",
+        flex: 1,
+        dataIndex: 'id_giro',
+        hidden: true
+    },{
+        header: "Id Vendedor",
+        flex: 1,
+        dataIndex: 'id_vendedor',
+        hidden: true
+    },{
         header: "Ciudad",
         flex: 1,
         dataIndex: 'nombre_ciudad',
