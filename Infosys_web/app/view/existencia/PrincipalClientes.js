@@ -35,6 +35,13 @@ Ext.define('Infosys_web.view.existencia.PrincipalClientes' ,{
         renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00.00")}
 
     },{
+        header: "Valor",
+        width: 100,
+        dataIndex: 'valor_producto',
+        align: 'right',
+        renderer: function(valor){return Ext.util.Format.number(parseInt(valor),"0,00")}
+
+    },{
         header: "Tipo",
         width: 100,
         dataIndex: 'nom_tipo_movimiento'        
@@ -102,7 +109,7 @@ Ext.define('Infosys_web.view.existencia.PrincipalClientes' ,{
                 valueField : 'id',
                 displayField : 'nombre',
                 emptyText : "Seleccione",
-                store : 'clientes.Selector'
+                store : 'clientes.Selector2'
             },{
                 width: 200,
                 xtype: 'textfield',

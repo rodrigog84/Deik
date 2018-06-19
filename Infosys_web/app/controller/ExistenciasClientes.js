@@ -96,7 +96,7 @@ Ext.define('Infosys_web.controller.ExistenciasClientes', {
         if (grid.getSelectionModel().hasSelection()) {
             var row = grid.getSelectionModel().getSelection()[0];
             viewIngresa.down('#razonidd').setValue(row.data.nombres);
-            viewIngresa.down('#rutId').setValue(row.data.rut);
+            viewIngresa.down('#rutId').setValue(row.data.rutaut);
             view.close();         
             
         }else{
