@@ -1682,10 +1682,8 @@ Ext.define('Infosys_web.controller.Pago_caja', {
             if (idcliente == 0){                
                 var idcliente = 30992;
             };
-            var tipo_docu = (row.get('id_tip_docu'));
             var id_vendedor = (row.get('id_vendedor'));
-            var id_pago = (row.get('id_pago'));
-            var nom_vendedor = (row.get('nom_vendedor'))
+            var nom_vendedor = (row.get('nom_vendedor'));
             var neto = (row.get('neto'));
             var desc = (row.get('desc'));
             var total = (row.get('total'));
@@ -1694,29 +1692,60 @@ Ext.define('Infosys_web.controller.Pago_caja', {
             var iva = (total-afecto);
             var fechafactura = (row.get('fecha_venta'))
             var view = Ext.create('Infosys_web.view.Pago_caja.Genera_pago').show();
-            Ext.Ajax.request({
-                    url: preurl + 'cond_pago/calculodias',
-                    params: {
-                        idpago: id_pago
-                    },
-                    success: function(response){
-                       var resp = Ext.JSON.decode(response.responseText);
-                       var dias = resp.dias;
-                       Ext.Ajax.request({
-                            url: preurl + 'facturas/calculofechas',
+             Ext.Ajax.request({
+                url: preurl + 'preventa/recatavalores',
+                params: {
+                    id: idticket
+                },
+                success: function(response){
+                    var resp = Ext.JSON.decode(response.responseText);
+                    if (resp.success == true) {
+                        var valores = resp.valores;                                    
+                        view.down("#netoaId").setValue(Ext.util.Format.number(valores.neto, '0,000'));
+                        view.down("#descuentoaId").setValue(Ext.util.Format.number(valores.desc, '0,000'));
+                        view.down("#netoId").setValue(valores.neto);
+                        view.down("#descuentoId").setValue(valores.desc);                        
+                        var afecto = (valores.neto - valores.desc);
+                        var iva = (valores.total - afecto);
+                        view.down("#ivaaId").setValue(Ext.util.Format.number(iva, '0,000'));
+                        view.down("#afectoaId").setValue(Ext.util.Format.number(afecto, '0,000'));
+                        view.down("#totalaId").setValue(Ext.util.Format.number(valores.total, '0,000'));
+                        view.down("#finaltotalUnformat").setValue(valores.total);                       
+                        view.down("#ivaId").setValue(iva);                       
+                        view.down("#afectoId").setValue(afecto);
+                        view.down("#totalId").setValue(valores.total);
+                        view.down("#valorpagoId").setValue(valores.total);
+                        view.down("#tipocondpagoId").setValue(valores.id_pago); 
+                        view.down("#tipoDocumentoId").setValue(valores.id_tip_docu);
+
+                        var idpago = (valores.id_pago);
+                        var idcliente = (valores.id_cliente);
+                        var tipo_docu = (valores.id_tip_docu);
+                        
+                        Ext.Ajax.request({
+                            url: preurl + 'cond_pago/calculodias',
                             params: {
-                                dias: dias,
-                                fechafactura : fechafactura
+                                idpago: idpago
                             },
                             success: function(response){
                                var resp = Ext.JSON.decode(response.responseText);
-                               var fecha_final = resp.fecha_final;
-                               view.down("#fechavencId").setValue(fecha_final);                                  
+                               var dias = resp.dias;
+                               Ext.Ajax.request({
+                                    url: preurl + 'facturas/calculofechas',
+                                    params: {
+                                        dias: dias,
+                                        fechafactura : fechafactura
+                                    },
+                                    success: function(response){
+                                       var resp = Ext.JSON.decode(response.responseText);
+                                       var fecha_final = resp.fecha_final;
+                                       view.down("#fechavencId").setValue(fecha_final);                                  
+                                    }
+                              });                                
                             }
-                      });                                
-                    }
-            });
-                     
+                         }); 
+
+                             
             Ext.Ajax.request({
             url: preurl + 'clientes/getallc?idcliente='+idcliente,
             params: {
@@ -1802,24 +1831,11 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                     }
                         view.down("#ticketId").setValue(ticket);
                         view.down("#idticketId").setValue(idticket);
-                        view.down("#idId").setValue(idticket);
-                        view.down("#netoId").setValue(neto);
-                        view.down("#descuentoId").setValue(desc);
-                        view.down("#tipoDocumentoId").setValue(tipo_docu);
-                        view.down("#docuementoId").setValue(preventa);                        
-                        view.down("#ivaId").setValue(iva);                       
-                        view.down("#afectoId").setValue(afecto);
-                        view.down("#totalId").setValue(total);
-                        view.down("#valorpagoId").setValue(total);
-                        view.down("#tipocondpagoId").setValue(id_pago);
+                        view.down("#idId").setValue(idticket);                       
+                        view.down("#docuementoId").setValue(preventa);                       
+                        
                         view.down("#recaudaId").setValue(recauda);
                         view.down("#comprobanteId").setValue(comprobante);
-                        view.down("#netoaId").setValue(Ext.util.Format.number(neto, '0,000'));
-                        view.down("#descuentoaId").setValue(Ext.util.Format.number(desc, '0,000'));
-                        view.down("#ivaaId").setValue(Ext.util.Format.number(iva, '0,000'));
-                        view.down("#afectoaId").setValue(Ext.util.Format.number(afecto, '0,000'));
-                        view.down("#totalaId").setValue(Ext.util.Format.number(total, '0,000'));
-                        view.down("#finaltotalUnformat").setValue(total);                        
                         view.down("#cajaId").setValue(idcaja);
                         view.down("#nomcajaId").setValue(nomcaja);
                         view.down("#cajeroId").setValue(idcajero);
@@ -1846,7 +1862,14 @@ Ext.define('Infosys_web.controller.Pago_caja', {
                 }
             }
 
-        });       
+        });                        
+                                      
+                        
+                    }
+
+                }            
+            });
+                     
 
            
                        

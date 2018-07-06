@@ -9,6 +9,29 @@ class Preventa extends CI_Controller {
 		$this->load->database();
 	}
 
+	public function recatavalores(){
+
+		$resp = array();
+	    $idticket = $this->input->post('id');
+
+
+		$query = $this->db->query('SELECT * FROM preventa WHERE id = "'.$idticket.'" AND estado = ""');
+
+	   	 if($query->num_rows()>0){
+
+	   	 	$resp['success'] = true;
+	   	 	foreach ($query->result() as $row)
+			{
+	   	 	  $resp['valores'] = $row;
+
+	   	    }
+
+	   	 }
+
+	   	  echo json_encode($resp);	
+		
+	}
+
 	public function elimina2(){
 
 	    $resp = array();
@@ -885,6 +908,7 @@ class Preventa extends CI_Controller {
 	        'id_vendedor' => $vendedor,
 	        'neto' => $neto,
 	        'id_tip_docu' => $idtipo,
+	        'id_pago' => $idpago,
 	        'desc' => $desc,
 	        'total' => $ftotal,
 	        'observaciones' => $observa,
@@ -1014,6 +1038,7 @@ class Preventa extends CI_Controller {
 	        'id_vendedor' => $vendedor,
 	        'neto' => $neto,
 	        'id_tip_docu' => $idtipo,
+	        'id_pago' => $idpago,
 	        'desc' => $desc,
 	        'total' => $ftotal,
 	        'id_observa' => $observa,
@@ -1224,9 +1249,6 @@ class Preventa extends CI_Controller {
 			limit '.$start.', '.$limit.''	
 			
 			);
-
-
-
 
 		}
 
