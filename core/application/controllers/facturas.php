@@ -107,9 +107,6 @@ class Facturas extends CI_Controller {
 
 	 	$resp['success'] = true;
         echo json_encode($resp);
-	 	
-	 	 
-		
 
 	}
 
@@ -1027,7 +1024,6 @@ public function estado_envio_libro($idlibro){
 		$empresa = $this->facturaelectronica->get_empresa();
    		echo json_encode($empresa);		
 	}
-
 
 	public function estado_tipo_documento($tipo_documento){
 		$this->db->select('f.id ')
@@ -2066,7 +2062,7 @@ public function cargacontribuyentes(){
         $nombres = $this->input->get('nombre');
         $tipo = $this->input->get('documento');
         if (!$tipo){
-	       $sql_tipo_documento = "";
+	       $sql_tipo_documento = "101";
 	    }else{
 	       $sql_tipo_documento = "acc.tipo_documento = " . $tipo . " and ";
 	    }
@@ -3310,7 +3306,7 @@ public function cargacontribuyentes(){
 		if($tipodocumento == 1){
 				$this->exportFacturaPDF($idfactura,$numero);
 
-		}else if($tipodocumento ==  101 || $tipodocumento == 103 || $tipodocumento == 105){ // FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONCA O GUIA DE DESPACHO
+		}else if($tipodocumento ==  101 || $tipodocumento == 103 || $tipodocumento == 105 ){ // FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONCA O GUIA DE DESPACHO
 				//$es_cedible = is_null($cedible) ? false : true;
 				$this->load->model('facturaelectronica');
 				$this->facturaelectronica->exportFePDF($idfactura,'id');
@@ -5031,6 +5027,7 @@ font-family: Arial, Helvetica, sans-serif;
             $tipo2 = 102;
             $tipo3 = 101;
             $tipo4 = 103;
+            $tipo5 = 104;
             $this->load->library("mpdf");
 
 			$this->mpdf->mPDF(
@@ -5057,13 +5054,16 @@ font-family: Arial, Helvetica, sans-serif;
                 $query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor  FROM factura_clientes acc
                 left join clientes c on (acc.id_cliente = c.id)
                 left join vendedores v on (acc.id_vendedor = v.id)
-                WHERE acc.tipo_documento in ( '.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.') and acc.fecha_factura between "'.$fecha3.'"  AND "'.$fecha4.'"
+                WHERE acc.tipo_documento in ( '.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.','.$tipo5.') and acc.fecha_factura between "'.$fecha3.'"  AND "'.$fecha4.'"
                 order by acc.tipo_documento and acc.fecha_factura' 
                 
                 );
             
 
               };
+
+        list($anioA, $mesA, $diaA) = explode("-",$fecha3);
+        list($anioB, $mesB, $diaB) = explode("-",$fecha4);
 
 
 		$header = '
@@ -5084,13 +5084,13 @@ font-family: Arial, Helvetica, sans-serif;
 		<body>
 		<table width="987px" height="602" border="0">
 		  <tr>
-		   <td width="197px"><img src="http://localhost/vibrados_web/Infosys_web/resources/images/logo_empresa.png" width="150" height="136" /></td>
+		   <td width="197px"><img src="http://localhost/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
-		    <p>VIBRADOS CHILE LTDA.</p>
-		    <p>RUT:77.748.100-2</p>
-		    <p>Cienfuegos # 1595 San Javier - Chile</p>
-		    <p>Fonos: (73)2 321100</p>
-		    <p>Correo Electronico : info@vibradoschile.cl</p>
+		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
+		    <p>RUT:76.019.353-4</p>
+		    <p>8 ORIENTE 1378 - Talca - Chile</p>
+		    <p>Fonos: (71)2 233369</p>
+		    <p>http://</p>
 		    </td>
 		    <td width="296px" style="font-size: 16px;text-align:left;vertical-align:text-top"	>
 		          <p>FECHA EMISION : '.date('d/m/Y').'</p>
@@ -5099,8 +5099,10 @@ font-family: Arial, Helvetica, sans-serif;
               
 		  $header2 = '<tr>
 			<td style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:center;" colspan="3"><h2>LIBRO DE VENTAS</h2></td>
+			</tr>
+			<tr>
+			<td style="border-bottom:0pt solid black;border-top:0pt solid black;text-align:center;" colspan="3"><h>DESDE : '.$diaA.'/'.$mesA.'/'.$anioA.' HASTA : '.$diaB.'/'.$mesB.'/'.$anioB.'</h></td>
 		  </tr>
-			<tr><td colspan="3">&nbsp;</td></tr>		  
 			';              
 
 
@@ -5118,16 +5120,23 @@ font-family: Arial, Helvetica, sans-serif;
 		        <td width="90px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Neto</td>
 		        <td width="90px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >IVA</td>
 		        <td width="90px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Total</td>
-		      </tr>';
+		      </tr>
+		      </table>';
 		      $sub_total = 0;
 		      $descuento = 0;
 		      $neto = 0;
 		      $iva = 0;
+		      $ivand = 0;
 		      $cantfact = 0;
 		      $cantnc =0;
+		      $cantnd =0;
 		      $totalfactura = 0;
+		      $totalafecto = 0;
+			  $totalivafin = 0;
+			  $totalfinala = 0;
               $i = 0;
               $body_detail = '';
+              
               $users = $query->result_array();
 		      foreach($users as $v){
 
@@ -5153,7 +5162,6 @@ font-family: Arial, Helvetica, sans-serif;
 				      $v['rut_cliente'] = ($ruta2."-".$ruta1);
 				      				     
 				    };
-
 				    if ($v['tipo_documento'] == 102){
 
 				    	$v['neto'] = ($v['neto']/-1);
@@ -5162,37 +5170,42 @@ font-family: Arial, Helvetica, sans-serif;
 				    	$tipo="N/C";
 
 				    };
-				     if ($v['tipo_documento'] == 1 or $v['tipo_documento'] == 101){
-				      $sub_total += $v['sub_total'];
-				      $descuento += $v['descuento'];
-				      $neto += $v['neto'];
-				      $iva += $v['iva'];
-				      $totalfactura += $v['totalfactura'];
-				      $cantfact++;
-				      $tipo="Fact";
-				      };
-
+					if ($v['tipo_documento'] == 1 or $v['tipo_documento'] == 101){
+					$sub_total += $v['sub_total'];
+					$descuento += $v['descuento'];
+					$netof += $v['neto'];
+					$ivaf += $v['iva'];
+					$totalfacturaf += $v['totalfactura'];
+					$cantfact++;
+					$tipo="Fact";
+					};
 				       
-			      if ($v['tipo_documento'] == 103){
-			      $netoex += $v['neto'];
-			      $ivaex += $v['iva'];
-			      $totalfacturaex += $v['totalfactura'];
-			      $cantex++;
-			      $tipo="F/Exe";
-			      };
-			      if ($v['tipo_documento'] == 104){
-			      $netond += $v['neto'];
-			      $ivand += $v['iva'];
-			      $totalfacturand += $v['totalfactura'];
-			      $cantnd++;
-			      $tipo="N/D";
-			      };
-			      if ($v['tipo_documento'] == 102){
-			      $netonc += $v['neto'];
-			      $ivanc += $v['iva'];
-			      $totalfacturanc += $v['totalfactura'];
-			      $cantnc++;
-			      };
+					if ($v['tipo_documento'] == 103){
+					$netoex += $v['neto'];
+					$ivaex += $v['iva'];
+					$totalfacturaex += $v['totalfactura'];
+					$cantex++;
+					$tipo="F/Exe";
+					};
+
+					if ($v['tipo_documento'] == 104){
+					$netond += $v['neto'];
+					$ivand += $v['iva'];
+					$totalfacturand += $v['totalfactura'];
+					$cantnd++;
+					$tipo="N/D";
+					};
+
+					if ($v['tipo_documento'] == 102){
+					$netonc += $v['neto'];
+					$ivanc += $v['iva'];
+					$totalfacturanc += $v['totalfactura'];
+					$cantnc++;
+					};
+
+					$totalafecto += $v['neto'];
+					$totalivafin += $v['iva'];
+					$totalfinala += $v['totalfactura'];
 				    	      	    
 
 					$body_detail .= '<tr><td colspan="10">&nbsp;</td></tr></table></td>
@@ -5213,11 +5226,6 @@ font-family: Arial, Helvetica, sans-serif;
 				    </tr>
 				    </table>
 				  </tr>';
-					
-			      
-                 
-
-
 		            $i++;
 		         }  
 
@@ -5230,9 +5238,9 @@ font-family: Arial, Helvetica, sans-serif;
 				        <td width="477px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:left;font-size: 14px;" ><b>Totales</b></td>
 				        <td width="70px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b></b></td>
 				        <td width="60px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b></b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($neto, 0, ',', '.').'</b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($iva, 0, ',', '.').'</b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalfactura, 0, ',', '.').'</b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalafecto, 0, ',', '.').'</b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalivafin, 0, ',', '.').'</b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalfinala, 0, ',', '.').'</b></td>
 				      </tr>
 				      	</table>
 				  	</td>
@@ -5243,12 +5251,12 @@ font-family: Arial, Helvetica, sans-serif;
 				  	<td colspan="3" >
 				    	<table width="987px" cellspacing="0" cellpadding="0" >
 				      <tr>
-				        <td width="477px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:left;font-size: 14px;" ><b>Totales</b></td>
-				        <td width="90px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>Facturas</b></td>
-				        <td width="60px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>'.number_format($cantfact, 0, ',', '.').'</b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($neto, 0, ',', '.').'</b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($iva, 0, ',', '.').'</b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalfactura, 0, ',', '.').'</b></td>
+				        <td width="477px"  style="border-bottom:0pt solid black;border-top:0pt solid black;text-align:left;font-size: 14px;" ><b></b></td>
+				        <td width="90px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>Facturas </b></td>
+				        <td width="60px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>'.number_format($cantfactex, 0, ',', '.').'</b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($netof, 0, ',', '.').'</b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($ivaf, 0, ',', '.').'</b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalfacturf, 0, ',', '.').'</b></td>
 				      </tr>
 				      	</table>
 				  	</td>
@@ -5297,6 +5305,14 @@ font-family: Arial, Helvetica, sans-serif;
 				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($netonc, 0, ',', '.').'</b></td>
 				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($ivanc, 0, ',', '.').'</b></td>
 				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalfacturanc, 0, ',', '.').'</b></td>
+				      </tr>
+				       <tr>
+				        <td width="477px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:left;font-size: 14px;" ><b>Totales</b></td>
+				        <td width="70px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b></b></td>
+				        <td width="60px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b></b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalafecto, 0, ',', '.').'</b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalivafin, 0, ',', '.').'</b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalfinala, 0, ',', '.').'</b></td>
 				      </tr>
 				      </tr>
 				      	</table>

@@ -1414,16 +1414,22 @@ public function reporte_stock($familia,$subfamilia,$agrupacion,$marca,$producto)
             $fecha4 = $anio ."-". $mes ."-". $dia;
             $tipo = 101;
             $tipo2 = 102;
+            $tipo3 = 104;
             $totalnc = 0;
             $totalafnc = 0;
             $totalnetonc = 0;
-            $totaliva = 0;
+            $totalnd = 0;
+            $totalafnd = 0;
+            $totalnetond = 0;
+            $totalivand = 0;
             $totalfa = 0;
             $totalaffa = 0;
             $totalnetofa = 0;
             $totalivafa = 0;
+            $totaliva = 0;
             $cantfac = 0;
             $cantnc = 0;
+            $cantnd = 0;
             $otros = 0;
 
             $data = array();
@@ -1436,7 +1442,7 @@ public function reporte_stock($familia,$subfamilia,$agrupacion,$marca,$producto)
                 $query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor  FROM factura_clientes acc
                 left join clientes c on (acc.id_cliente = c.id)
                 left join vendedores v on (acc.id_vendedor = v.id)
-                WHERE acc.tipo_documento in ( '.$tipo.','.$tipo2.') and acc.fecha_factura between "'.$fecha3.'"  AND "'.$fecha4.'"
+                WHERE acc.tipo_documento in ( '.$tipo.','.$tipo2.','.$tipo3.') and acc.fecha_factura between "'.$fecha3.'"  AND "'.$fecha4.'"
                 order by acc.fecha_factura, acc.tipo_documento, acc.num_factura' 
                 
                 );           
@@ -1449,7 +1455,7 @@ public function reporte_stock($familia,$subfamilia,$agrupacion,$marca,$producto)
             echo '<table>';
             echo "<td></td>";
             echo "<td>LIBRO DE VENTAS</td>";
-            echo "<td>FACTURAS</td>";
+            echo "<td>DOCUMENTOS ELECTRONICOS</td>";
             echo "<tr>";
                 echo "<td>NUMERO</td>";
                 echo "<td>TIPO</td>";
@@ -1480,15 +1486,25 @@ public function reporte_stock($familia,$subfamilia,$agrupacion,$marca,$producto)
                   $totalnetonc = $totalnetonc + $neto;
                   $totaliva = $totaliva + $iva;
                   $tip="N/C";
-                 }else{
-                  $tip="FACT";
-                  $totalfa = $totalfa + $total;
-                  $totalaffa = $totalaffa + $afecto;
-                  $totalnetofa = $totalnetofa + $neto;
-                  $totalivafa = $totalivafa + $iva;
-                  $cantfac = $cantfac +1;                   
                  }
-
+                  if ($v['tipo_documento']==104){
+                    $tip="N/DEB";
+                    $totalnd = $totalnd + $total;
+                    $totalafnd = $totalafnd + $afecto;
+                    $totalnetond = $totalnetond + $neto;
+                    $totalivand = $totalivand + $iva;
+                    $cantnd = $cantnd +1;                      
+                  };
+                  if ($v['tipo_documento']==101){
+                    $tip="FACT";
+                    $totalfa = $totalfa + $total;
+                    $totalaffa = $totalaffa + $afecto;
+                    $totalnetofa = $totalnetofa + $neto;
+                    $totalivafa = $totalivafa + $iva;
+                    $cantfac = $cantfac +1;                   
+                  };                  
+                                    
+                 
                 echo "<tr>";
                    echo "<td>".$v['num_factura']."</td>";
                    echo "<td>".$tip."</td>";
@@ -1522,7 +1538,7 @@ public function reporte_stock($familia,$subfamilia,$agrupacion,$marca,$producto)
                 echo "<td>-------------</td>";
                 echo "<td>-------------</td>";
             echo "<tr>";
-                   echo "<td>FACTURAS</td>";
+                   echo "<td>FACTURAS ELECTRONICA</td>";
                    echo "<td>".$cantfac."</td>";
                    echo "<td>".$otros."</td>";
                    echo "<td>".$totalaffa."</td>";
@@ -1532,7 +1548,7 @@ public function reporte_stock($familia,$subfamilia,$agrupacion,$marca,$producto)
                    echo "<td>".$totalfa."</td>";
             echo "</tr>";
             echo "<tr>";
-                   echo "<td>NOTAS CREDITO</td>";                
+                   echo "<td>NOTAS CREDITO ELECTRONICA</td>";                
                    echo "<td>".$cantnc."</td>";
                    echo "<td>".$otros."</td>";
                    echo "<td>".$totalafnc."</td>";
@@ -1541,9 +1557,19 @@ public function reporte_stock($familia,$subfamilia,$agrupacion,$marca,$producto)
                    echo "<td>".$otros."</td>";
                    echo "<td>".$totalnc."</td>";
             echo "</tr>";
-             $totalafecto = $totalaffa + $totalafnc;
-             $totalivafin = $totalivafa + $totaliva;
-             $totalfinala = $totalfa + $totalnc;
+            echo "<tr>";
+                   echo "<td>NOTAS DEBITO ELECTRONICA</td>";                
+                   echo "<td>".$cantnd."</td>";
+                   echo "<td>".$otros."</td>";
+                   echo "<td>".$totalafnd."</td>";
+                   echo "<td>".$otros."</td>";
+                   echo "<td>".$totalivand."</td>";
+                   echo "<td>".$otros."</td>";
+                   echo "<td>".$totalnd."</td>";
+            echo "</tr>";
+             $totalafecto = $totalaffa + $totalafnc + $totalafnd;
+             $totalivafin = $totalivafa + $totaliva + $totalivand;
+             $totalfinala = $totalfa + $totalnc + $totalnd;
              
             echo "<tr>";
                 echo "<td>-------------</td>";
