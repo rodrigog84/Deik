@@ -141,9 +141,16 @@ class Facturaglosa extends CI_Controller {
 
 		/*****************************************/
 
-		if($tipodocumento == 101 || $tipodocumento == 103){  // SI ES FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONICA
+		if($tipodocumento == 101 || $tipodocumento == 103 || $tipodocumento == 105){  // SI ES FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONICA
 
-			$tipo_caf = $tipodocumento == 101 ? 33 : 34;
+			if($tipodocumento == 101){
+				$tipo_caf = 33;
+			}else if($tipodocumento == 103){
+				$tipo_caf = 34;
+			}else if($tipodocumento == 105){
+				$tipo_caf = 52;
+			}
+
 
 			header('Content-type: text/plain; charset=ISO-8859-1');
 			$this->load->model('facturaelectronica');
@@ -499,12 +506,12 @@ class Facturaglosa extends CI_Controller {
 		$numero = $this->input->get('numfactura');
 
 		$cabecera = $this->db->get_where('factura_clientes', array('id' => $idfactura));	
-		$tipodocumento = 1;
+		//$tipodocumento = 1;
 		foreach($cabecera->result() as $v){  
 				$tipodocumento = $v->tipo_documento; 
 		}
 
-		if($tipodocumento ==  101 || $tipodocumento == 103){ // FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONCA
+		if($tipodocumento ==  101 || $tipodocumento == 103 || $tipodocumento == 105){ // FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONCA
 				//$es_cedible = is_null($cedible) ? false : true;
 				$this->load->model('facturaelectronica');
 				$this->facturaelectronica->exportFePDF($idfactura,'id');		
