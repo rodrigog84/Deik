@@ -149,8 +149,7 @@ class Facturaglosa extends CI_Controller {
 				$tipo_caf = 34;
 			}else if($tipodocumento == 105){
 				$tipo_caf = 52;
-			}
-
+			};
 
 			header('Content-type: text/plain; charset=ISO-8859-1');
 			$this->load->model('facturaelectronica');
@@ -469,36 +468,6 @@ class Facturaglosa extends CI_Controller {
         echo json_encode($resp);
 	}
 
-	public function exportPDF(){
-
-		$idfactura = $this->input->get('idfactura');
-		$numero = $this->input->get('numfactura');
-
-		$this->load->model('facturaelectronica');
-		$datos_factura = $this->facturaelectronica->get_factura($idfactura);
-
-		//$cabecera = $this->db->get_where('factura_clientes', array('id' => $idfactura));	
-		$tipodocumento = isset($datos_factura->tipo_documento) ? $datos_factura->tipo_documento : 1;
-		/*foreach($cabecera->result() as $v){  
-				$tipodocumento = $v->tipo_documento; 
-		}*/
-
-		if($tipodocumento == 1){
-				$this->exportfacturaglosaPDF($idfactura,$numero);
-
-		}else if($tipodocumento ==  101 || $tipodocumento == 103 || $tipodocumento == 105 ){ // FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONCA O GUIA DE DESPACHO
-				//$es_cedible = is_null($cedible) ? false : true;
-				$this->load->model('facturaelectronica');
-				$this->facturaelectronica->exportFePDF($idfactura,'id');
-
-		}else{
-
-				$this->exportBoletaPDF($idfactura,$numero);
-
-		}
-
-	}
-
 	
 	public function exportfacturaglosaPDF(){
 
@@ -506,7 +475,7 @@ class Facturaglosa extends CI_Controller {
 		$numero = $this->input->get('numfactura');
 
 		$cabecera = $this->db->get_where('factura_clientes', array('id' => $idfactura));	
-		//$tipodocumento = 1;
+		$tipodocumento = 1;
 		foreach($cabecera->result() as $v){  
 				$tipodocumento = $v->tipo_documento; 
 		}

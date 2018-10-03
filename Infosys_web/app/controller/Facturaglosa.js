@@ -666,7 +666,7 @@ Ext.define('Infosys_web.controller.Facturaglosa', {
                 var idfactura= resp.idfactura;
                  viewIngresa.close();
                  stFactura.load();
-                 window.open(preurl + 'facturaglosa/exportPDF/?idfactura='+idfactura);
+                 window.open(preurl + 'facturaglosa/exportfacturaglosaPDF/?idfactura='+idfactura);
 
             }
            

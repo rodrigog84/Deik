@@ -216,8 +216,12 @@ Ext.define('Infosys_web.controller.ExistenciasClientes', {
         if (rut){
         st.proxy.extraParams = {nombre : nombre,
                                 rut : rut,
-                                opcion : opcion}
-        st.load();
+                                opcion : opcion,
+                                clav : 0
+                                }
+        st.reload();
+
+       
         Ext.Ajax.request({
             url: preurl + 'clientes/validaRut?valida='+rut,
             params: {

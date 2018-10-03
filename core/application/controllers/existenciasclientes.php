@@ -108,10 +108,12 @@ public function save2(){
 		$resp = array();
         $start = $this->input->get('start');
         $limit = $this->input->get('limit');
+        $page = $this->input->get('page');
         $nombres = $this->input->get('nombre');
+        $clav = $this->input->get('clav');
         $tipo = $this->input->get('opcion');
         $rut = $this->input->get('rut');
-           
+            
 		if (!$nombres){
 
 			$query1 = $this->db->query('SELECT acc.*, ciu.nombre as nombre_ciudad, com.nombre as nombre_comuna, g.nombre as nom_giro, 
@@ -145,6 +147,10 @@ public function save2(){
 				}
 
 				$countAll = $total;
+
+				if ($total < $start){
+						$start = 0;
+					}
 
 				$query = $this->db->query('SELECT acc.*, c.nombre as nom_producto, cor.nombre as nom_tipo_movimiento, c.codigo as codigo, bod.nombre as nom_bodega FROM existencia_detalle acc
 				left join productos c on (acc.id_producto = c.id)
@@ -204,10 +210,14 @@ public function save2(){
 			    foreach ($query->result() as $row)
 				{
 					$total = $total +1;
+					
 				
 				}
 
 				$countAll = $total;
+				if ($total < $start){
+						$start = 0;
+					}
 
 				$query = $this->db->query('SELECT acc.*, cor.nombre as nom_tipo_movimiento, c.codigo as codigo, bod.nombre as nom_bodega, c.nombre as nom_producto FROM existencia_detalle acc
 				left join productos c on (acc.id_producto = c.id)
@@ -267,10 +277,14 @@ public function save2(){
 			    foreach ($query->result() as $row)
 				{
 					$total = $total +1;
+					
 				
 				}
 
 				$countAll = $total;
+				if ($total < $start){
+						$start = 0;
+					}
 
 				$query = $this->db->query('SELECT acc.*, c.nombre as nom_producto, cor.nombre as nom_tipo_movimiento, c.codigo as codigo,bod.nombre as nom_bodega FROM existencia_detalle acc
 				left join productos c on (acc.id_producto = c.id)
@@ -326,10 +340,15 @@ public function save2(){
 			    foreach ($query->result() as $row)
 				{
 					$total = $total +1;
+
 				
 				}
 
 				$countAll = $total;
+
+				if ($total < int($start)){
+						$start = 0;
+					};
 
 				$query = $this->db->query('SELECT acc.*, c.nombre as nom_producto, cor.nombre as nom_tipo_movimiento, c.codigo as codigo, bod.nombre as nom_bodega FROM existencia_detalle acc
 				left join productos c on (acc.id_producto = c.id)
@@ -355,6 +374,8 @@ public function save2(){
 	   			
 	   }
 	}
+
+	   $resp['start'] = $start;
 
 	   echo json_encode($resp);	
 

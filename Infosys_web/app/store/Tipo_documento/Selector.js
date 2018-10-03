@@ -10,4 +10,5 @@ Ext.define('Infosys_web.store.Tipo_documento.Selector', {
      	//{"id":"3", "nombre":"GUIA DESPACHO"},
         {"id":"105", "nombre":"GUIA DE DESPACHO ELECTRONICA"},  
     ]
+    
 });
