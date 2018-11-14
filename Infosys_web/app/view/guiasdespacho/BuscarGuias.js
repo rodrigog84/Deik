@@ -29,7 +29,7 @@ Ext.define('Infosys_web.view.guiasdespacho.BuscarGuias' ,{
 
             },
            columns: [{
-                header: "Id",
+                header: "Id_cliente",
                 flex: 1,
                 itemId: 'clienteId',
                 dataIndex: 'id',
