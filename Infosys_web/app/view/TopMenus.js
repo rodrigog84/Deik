@@ -242,6 +242,12 @@ Ext.define('Infosys_web.view.TopMenus' ,{
                 text: 'Movimiento Diario',
                 iconCls: '',
                 menu: [{
+                        text: 'Facturas Proveedores',
+                        iconCls: '',
+                        itemId: 'adq_md_facprovve',
+                        disabled: true,
+                        action: 'mfactprovee'
+                },{
                         text: 'Orden de Compra',
                         iconCls: '',
                         itemId: 'adq_md_oc',

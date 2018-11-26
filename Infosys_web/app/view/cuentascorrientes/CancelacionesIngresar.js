@@ -109,7 +109,7 @@ Ext.define('Infosys_web.view.cuentascorrientes.CancelacionesIngresar', {
                             name: 'tipoComprobante',
                             itemId: 'tipoComprobante',
                             value: "INGRESO",
-                            readOnly: true
+                            //readOnly: true
                         }
                         ]
                     },{
