@@ -328,7 +328,70 @@ Ext.define('Infosys_web.controller.Preventa', {
         var estado = view.down('#tipoEstadoId').getValue();
         var tipocliente = 1;
         var st = this.getClientesStore();
-        var viewIngresa = this.getPreventaingresar();                    
+        var viewIngresa = this.getPreventaingresar();  
+        var bolEnable = true;
+        var bolDisable = false;
+        //view.down('#grabarpreventa').setDisabled(bolEnable);   
+        
+        if(!nombre){
+             Ext.Msg.alert('Alerta', 'Debe Ingresar Razon Social');
+                 return;
+            
+        };
+
+        if(!fono){
+             Ext.Msg.alert('Alerta', 'Debe Ingresar Fono');
+                 return;
+            
+        };
+
+        if(!tipopago){
+             Ext.Msg.alert('Alerta', 'Debe Ingresar Tipo Pago');
+                 return;
+            
+        };
+
+        if(!direccion){
+             Ext.Msg.alert('Alerta', 'Debe Ingresar Direccion ');
+                 return;
+            
+        };
+
+        if(!estado){
+             Ext.Msg.alert('Alerta', 'Debe Ingresar Estado');
+                 return;
+            
+        };
+
+        if(!ciudad){
+             Ext.Msg.alert('Alerta', 'Debe Ingresar Ciudad ');
+                 return;
+            
+        };
+
+        if(!comuna){
+             Ext.Msg.alert('Alerta', 'Debe Ingresar Comuna ');
+                 return;
+            
+        };
+
+        if(!giro){
+             Ext.Msg.alert('Alerta', 'Debe Ingresar Giro ');
+                 return;
+            
+        };
+
+        if(!vendedor){
+             Ext.Msg.alert('Alerta', 'Debe Ingresar Vendedor ');
+                 return;
+            
+        };        
+            
+        
+         if (!rut){
+             Ext.Msg.alert('Alerta', 'Debe Ingresar Rut');
+                 return;
+        };          
                 
 
          Ext.Ajax.request({
@@ -964,11 +1027,7 @@ Ext.define('Infosys_web.controller.Preventa', {
         var idcliente = viewIngresa.down('#id_cliente').getValue();
         var sucursal = viewIngresa.down('#id_sucursalID').getValue();
         var ordencompra = viewIngresa.down('#ordencompraId').getValue();
-        var producto = viewIngresa.down('#tipoVendedorId');
-        if(!producto){
-            Ext.Msg.alert('Seleccione Vendedor');
-            return;   
-        }
+        var producto = viewIngresa.down('#tipoVendedorId');        
         var idpago = viewIngresa.down('#tipocondpagoId').getValue();
         var id = viewIngresa.down('#idId').getValue();
         var finalafectoId = viewIngresa.down('#finaltotalnetoId').getValue();
@@ -979,17 +1038,27 @@ Ext.define('Infosys_web.controller.Preventa', {
         var stItem = this.getPreventaeditarStore();
         var stPreventa = this.getPreventaStore();
         var observa = viewIngresa.down('#observacionesId').getValue();
+        var bolEnable = true;
+        var bolDisable = false;
+        viewIngresa.down('#grabapreventa2Id').setDisabled(bolEnable);
+
+        if(!producto){
+            viewIngresa.down('#grabapreventa2Id').setDisabled(bolDisable);
+            Ext.Msg.alert('Seleccione Vendedor');
+            return;   
+        };
      
         if(!finalafectoId){
+            viewIngresa.down('#grabapreventa2Id').setDisabled(bolDisable);
             Ext.Msg.alert('Ingrese Productos a la Venta');
             return;   
-        }
+        };
 
         if(!idpago){
+            viewIngresa.down('#grabapreventa2Id').setDisabled(bolDisable);
             Ext.Msg.alert('Ingrese Condicion Venta');
             return;   
-        }
-
+        };
         
         var dataItems = new Array();
         stItem.each(function(r){
@@ -2523,11 +2592,7 @@ Ext.define('Infosys_web.controller.Preventa', {
         var sucursal = viewIngresa.down('#id_sucursalID').getValue();
         var idpago = viewIngresa.down('#tipocondpagoId').getValue();
         var ordencompra = viewIngresa.down('#ordencompraId').getValue();
-        var vender = viewIngresa.down('#tipoVendedorId').getValue();                
-        if(!vender){
-            Ext.Msg.alert('Seleccione Vendedor');
-            return;   
-        }
+        var vender = viewIngresa.down('#tipoVendedorId').getValue();
         var idpago = viewIngresa.down('#tipocondpagoId').getValue();
         var producto = viewIngresa.down('#tipoVendedorId');
         var stCombo = producto.getStore();
@@ -2538,15 +2603,26 @@ Ext.define('Infosys_web.controller.Preventa', {
         var stItem = this.getPreventaItemsStore();
         var stPreventa = this.getPreventaStore();
         var observa = viewIngresa.down('#observaId').getValue();
+        var bolEnable = true;
+        var bolDisable = false;
+        viewIngresa.down('#grabapreventaId').setDisabled(bolEnable);
      
         if(!finalafectoId){
+            viewIngresa.down('#grabapreventaId').setDisabled(bolDisable);
             Ext.Msg.alert('Ingrese Productos a la Venta');
             return;   
         }
         if(!idpago){
+            viewIngresa.down('#grabapreventaId').setDisabled(bolDisable);
             Ext.Msg.alert('Ingrese Condicion Venta');
             return;   
-        }        
+        } 
+        
+        if(!vender){
+            viewIngresa.down('#grabapreventaId').setDisabled(bolDisable);
+            Ext.Msg.alert('Seleccione Vendedor');
+            return;   
+        }       
         var dataItems = new Array();
         stItem.each(function(r){
             dataItems.push(r.data)
@@ -2590,7 +2666,7 @@ Ext.define('Infosys_web.controller.Preventa', {
 
          //var view = this.getPreventaingresar();
          var nombre = "6";
-         var tipo = "2";
+         var tipo = "120";
 
          Ext.Ajax.request({
 
