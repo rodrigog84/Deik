@@ -50,10 +50,10 @@ class Reporte extends CI_Model
 				 from factura_clientes where month(fecha_factura) = " . $mes . " and year(fecha_factura) = " . $anno . " and tipo_documento in (1,19,101,103) ) as 'Facturacion_doctos',				 
 				(select 
 				COALESCE(SUM(neto),0)  as boletas
-				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,106) )  as 'Boletas', 
+				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,120) )  as 'Boletas', 
 				(select 
 				count(id)  as boletas
-				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,106) )  as 'Boletas_doctos', 
+				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,120) )  as 'Boletas_doctos', 
 				(select 
 				COALESCE(SUM(neto),0)  as boletas
 				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (16,104) )  as 'NDebito', 
@@ -76,10 +76,10 @@ class Reporte extends CI_Model
 				 from factura_clientes where month(fecha_factura) = " . $mes . " and year(fecha_factura) = " . $anno . " and tipo_documento in (1,101) ) as 'Facturacion_doctos',
 				(select 
 				COALESCE(SUM(neto),0)  as boletas
-				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,106)  and iva > 0 )  as 'Boletas', 
+				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,120)  and iva > 0 )  as 'Boletas', 
 				(select 
 				count(id)  as boletas
-				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,106)  and iva > 0 )  as 'Boletas_doctos', 
+				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,120)  and iva > 0 )  as 'Boletas_doctos', 
 				(select 
 				COALESCE(SUM(neto),0)  as ncredito
 				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (16,104)  and iva > 0 )  as 'NDebito',
@@ -102,10 +102,10 @@ class Reporte extends CI_Model
 				 from factura_clientes where month(fecha_factura) = " . $mes . " and year(fecha_factura) = " . $anno . " and tipo_documento in (19,103) ) as 'Facturacion_doctos',
 				(select 
 				COALESCE(SUM(neto),0)  as boletas
-				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,106)  and iva = 0 )  as 'Boletas', 				
+				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,120)  and iva = 0 )  as 'Boletas', 				
 				(select 
 				count(id)  as boletas
-				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,106)  and iva = 0 )  as 'Boletas_doctos', 		
+				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,120)  and iva = 0 )  as 'Boletas_doctos', 		
 				(select 
 				COALESCE(SUM(neto),0)  as ncredito
 				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (16,104)   and iva = 0)  as 'NDebito',
@@ -128,10 +128,10 @@ class Reporte extends CI_Model
 				 from factura_clientes where month(fecha_factura) = " . $mes . " and year(fecha_factura) = " . $anno . " and tipo_documento in  (1,19,101,103) ) as 'Facturacion_doctos',
 				(select 
 				COALESCE(SUM(iva),0)  as boletas
-				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,106) )  as 'Boletas', 				
+				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,120) )  as 'Boletas', 				
 				(select 
 				count(id)  as boletas
-				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,106) )  as 'Boletas_doctos', 	
+				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,120) )  as 'Boletas_doctos', 	
 				(select 
 				COALESCE(SUM(iva),0)  as ncredito
 				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (16,104))  as 'NDebito',
@@ -154,10 +154,10 @@ class Reporte extends CI_Model
 				 from factura_clientes where month(fecha_factura) = " . $mes . " and year(fecha_factura) = " . $anno . " and tipo_documento in  (1,19,101,103) ) as 'Facturacion_doctos',
 				(select 
 				COALESCE(SUM(totalfactura),0)  as boletas
-				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,106) )  as 'Boletas', 				
+				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,120) )  as 'Boletas', 				
 				(select 
 				count(id)  as boletas
-				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,106) )  as 'Boletas_doctos',
+				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (2,120) )  as 'Boletas_doctos',
 				(select 
 				COALESCE(SUM(totalfactura),0)  as ncredito
 				 from factura_clientes where month(fecha_factura) = " . $mes . "  and year(fecha_factura) = " . $anno . "  and tipo_documento in (16,104))  as 'NDebito',
