@@ -36,6 +36,21 @@ class Dte extends \sasco\LibreDTE\PDF
 
     private $giroCliente; //Giro de cliente completo
     private $giroEmisor; //Giro de emisor completo
+    private $direccionEmisor; //Direccion de emisor completo
+    private $comunaEmisor; //Comuna de emisor completo
+    private $fonoEmisor; //Fono de emisor completo
+    private $sucursalesEmisor; //Sucursal de emisor completo
+    
+
+    private $netoBoleta; //Fono de emisor completo
+    private $ivaBoleta; //Fono de emisor completo
+    private $totalBoleta; //Fono de emisor completo
+
+
+    private $textoGuia; //Fono de emisor completo
+
+    private $transporte;
+
     private $condpago;
     private $vendedor;
 
@@ -46,6 +61,8 @@ class Dte extends \sasco\LibreDTE\PDF
     private $sinAcuseRecibo = [39, 41, 56, 61, 111, 112]; ///< Boletas, notas de crédito y notas de débito no tienen acuse de recibo
     private $web_verificacion = 'www.sii.cl'; ///< Página web para verificar el documento
     private $ecl = 8; ///< error correction level para PHP >= 7.0.0
+    private $iva = 19; 
+
 
     private $tipos = [
         33 => 'FACTURA ELECTRÓNICA',
@@ -77,7 +94,7 @@ class Dte extends \sasco\LibreDTE\PDF
         'DescuentoMonto' => ['title'=>'Descuento', 'align'=>'right', 'width'=>22],
         'RecargoMonto' => ['title'=>'Recargo', 'align'=>'right', 'width'=>22],
         'MontoItem' => ['title'=>'TOTAL', 'align'=>'right', 'width'=>22],
-    ]; ///< Nombres de columnas detalle, alineación y ancho
+    ]; 
 
     private $traslados = [
         1 => 'Operación constituye venta',
@@ -127,6 +144,46 @@ class Dte extends \sasco\LibreDTE\PDF
         $this->giroEmisor = $giro;
     }    
 
+   public function setDireccion($direccion)
+    {
+        $this->direccionEmisor = $direccion;
+    }    
+
+
+ public function setComuna($comuna)
+    {
+        $this->comunaEmisor = $comuna;
+    }    
+
+
+ public function setFono($fono)
+    {
+        $this->fonoEmisor = $fono;
+    }
+
+    public function setSucursales($sucursales)
+    {
+        $this->sucursalesEmisor = $sucursales;
+    }  
+
+
+    public function setNeto($neto)
+    {
+        $this->netoBoleta = $neto;
+    }  
+
+
+    public function setIva($iva)
+    {
+        $this->ivaBoleta = $iva;
+    }       
+
+
+    public function setTotal($totalfactura)
+    {
+        $this->totalBoleta = $totalfactura;
+    }  
+
 
     public function setCondPago($condpago)
     {
@@ -137,6 +194,19 @@ class Dte extends \sasco\LibreDTE\PDF
     {
         $this->vendedor = $vendedor;
     } 
+
+
+    public function setTextoGuia($textoGuia)
+    {
+        $this->textoGuia = $textoGuia;
+    } 
+
+
+    public function setTransporte($transporte)
+    {
+        $this->transporte = $transporte;
+    } 
+
 
     /**
      * Método que asigna los datos de la resolución del SII que autoriza al
@@ -220,23 +290,31 @@ class Dte extends \sasco\LibreDTE\PDF
         $this->agregarCondicionVenta($dte['Encabezado']['IdDoc']);
         $this->agregarReceptor($dte['Encabezado']['Receptor']);
 
+         /*    $Transporte['RUTTrans'] ="111-1";
+            $Transporte['Patente']="GXJS-89";
+           // $Transporte['Chofer']="Rodrigo";
+            $Transporte['Chofer']['NombreChofer']="Rodrigo";*/
+
         $this->agregarTraslado(
             !empty($dte['Encabezado']['IdDoc']['IndTraslado']) ? $dte['Encabezado']['IdDoc']['IndTraslado'] : null,
-            !empty($dte['Encabezado']['Transporte']) ? $dte['Encabezado']['Transporte'] : null
+            //!empty($dte['Encabezado']['Transporte']) ? $dte['Encabezado']['Transporte'] : null
+            $this->transporte
         );
         $this->agregarCondPago();
         $this->agregarVendedor();
         
         //if (!empty($dte['Referencia']))
+       // print_r($dte['Referencia']); exit;
             $this->agregarReferencia($dte['Referencia']);
 
+        $h = $this->transporte['RUTTrans'] == null ? 29 : 33;
         //AGREGAR RECUADRO PARA DATOS DEL DESTINATARIO
         $y = 50;
         $y = $dte['Encabezado']['IdDoc']['TipoDTE'] == 34 || $dte['Encabezado']['IdDoc']['TipoDTE'] == 61  || $dte['Encabezado']['IdDoc']['TipoDTE'] == 52 ? $y + 5 : $y;
-        $this->Rect(10, $y, 190, 29, 'D', ['all' => ['width' => 0.1, 'color' => [0, 0, 0]]]);
+        $this->Rect(10, $y, 190, $h, 'D', ['all' => ['width' => 0.1, 'color' => [0, 0, 0]]]);
 
 
-        $this->agregarDetalle($dte['Detalle']);
+        $this->agregarDetalle($dte['Detalle'],$dte['Encabezado']['IdDoc']['TipoDTE']);
         if (!empty($dte['DscRcgGlobal']))
             $this->agregarDescuentosRecargos($dte['DscRcgGlobal']);
         $this->agregarTotales($dte['Encabezado']['Totales']);
@@ -356,6 +434,7 @@ class Dte extends \sasco\LibreDTE\PDF
         $this->MultiTexto(isset($emisor['GiroEmis']) ? "Giro: " . $emisor['GiroEmis'] : $emisor['GiroEmisor'], $x, $this->y, 'L', $w);
         $this->MultiTexto('Dirección : ' .$emisor['DirOrigen'].', '.$emisor['CmnaOrigen'], $x, $this->y, 'L', $w);
         $contacto = [];
+        
         if (!empty($emisor['Telefono'])) {
             if (!is_array($emisor['Telefono']))
                 $emisor['Telefono'] = [$emisor['Telefono']];
@@ -573,6 +652,8 @@ class Dte extends \sasco\LibreDTE\PDF
      */
     private function agregarTraslado($IndTraslado, array $Transporte = null, $x = 10, $offset = 22)
     {
+
+
         // agregar tipo de traslado
         if ($IndTraslado) {
             $this->setFont('', 'B', 8);
@@ -588,15 +669,19 @@ class Dte extends \sasco\LibreDTE\PDF
                 $transporte .= 'a '.$Transporte['DirDest'].', '.$Transporte['CmnaDest'].' ';
             }
             if (!empty($Transporte['RUTTrans']))
-                $transporte .= ' por '.$Transporte['RUTTrans'];
+                $transporte .= ' Rut: '.$Transporte['RUTTrans'];
             if (!empty($Transporte['Patente']))
                 $transporte .= ' en vehículo '.$Transporte['Patente'];
+            if (!empty($Transporte['Patente_Carro']))
+                $transporte .= ' con Carro '.$Transporte['Patente_Carro'];            
             if (is_array($Transporte['Chofer'])) {
                 if (!empty($Transporte['Chofer']['NombreChofer']))
                     $transporte .= ' con chofer '.$Transporte['Chofer']['NombreChofer'];
                 if (!empty($Transporte['Chofer']['RUTChofer']))
                     $transporte .= ' ('.$Transporte['Chofer']['RUTChofer'].')';
             }
+            if (!empty($Transporte['Destino']))
+                $transporte .= ' con Destino '.$Transporte['Destino'];
             if ($transporte) {
                 $this->setFont('', 'B', 8);
                 $this->Texto('Transporte', $x);
@@ -616,23 +701,21 @@ class Dte extends \sasco\LibreDTE\PDF
      */
     private function agregarReferencia($referencias, $x = 10, $offset = 22)
     {
-
+        $texto = '';
         $vacio = empty($referencias);
         if (!isset($referencias[0]))
             $referencias = [$referencias];
         foreach($referencias as $r) {
-            
-            $txt_nro_docto = $r['TpoDocRef'] == 801 ? ' N°  ORDEN DE COMPRA  ' : ' N°  ';
-
-            $texto = $vacio ? "" : $r['NroLinRef'].' - '.$this->getTipo($r['TpoDocRef']).$txt_nro_docto.$r['FolioRef'].' del '.$r['FchRef'];
+            $texto = $vacio ? "" : $texto.$r['NroLinRef'].' - '.$this->getTipo($r['TpoDocRef']).' N° '.$r['FolioRef'].' del '.$r['FchRef']."  ";
             if (isset($r['RazonRef']) and $r['RazonRef']!==false)
                 $texto = $texto.': '.$r['RazonRef'];
-            $this->setFont('', 'B', 8);
-            $this->Texto('Referenc.', $x);
-            $this->Texto(':', $x+$offset);
-            $this->setFont('', 'C', 8);
-            $this->MultiTexto($texto, $x+$offset+2);
+            
         }
+        $this->setFont('', 'B', 8);
+        $this->Texto('Referenc.', $x);
+        $this->Texto(':', $x+$offset);
+        $this->setFont('', 'C', 8);
+        $this->MultiTexto($texto, $x+$offset+2);
     }
 
     /**
@@ -643,7 +726,7 @@ class Dte extends \sasco\LibreDTE\PDF
      * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
      * @version 2015-12-25
      */
-    private function agregarDetalle($detalle, $x = 10)
+    private function agregarDetalle($detalle, $tipoDte , $x = 10)
     {
         if (!isset($detalle[0]))
             $detalle = [$detalle];
@@ -655,11 +738,29 @@ class Dte extends \sasco\LibreDTE\PDF
         }
         // normalizar cada detalle
         foreach ($detalle as &$item) {
+           // print_r($item);
             // quitar columnas
             foreach ($item as $col => $valor) {
+
+               // print_r($col); echo "<br>";
+                if($col == 'UnmdItem'){
+                    $item['UnmdItem'] = '<center>-</center>';
+                }
+
                 if ($col=='DscItem' and !empty($item['DscItem'])) {
                     $item['NmbItem'] .= '<br/><span style="font-size:0.7em">'.$item['DscItem'].'</span>';
                 }
+
+                if($col == 'PrcItem' && $tipoDte == 39 ){
+                    $item['PrcItem'] = floor($item['PrcItem']/(1+($this->iva/100)));
+                }
+
+                if($col == 'MontoItem' && $tipoDte == 39 ){
+                    $item['MontoItem'] = floor($item['MontoItem']/(1+($this->iva/100)));
+                }
+
+
+
                 if (!in_array($col, $titulos_keys))
                     unset($item[$col]);
             }
@@ -672,10 +773,24 @@ class Dte extends \sasco\LibreDTE\PDF
             if ($item['CdgItem'])
                 $item['CdgItem'] = $item['CdgItem']['VlrCodigo'];
             // dar formato a números
+
+
             foreach (['QtyItem', 'PrcItem', 'DescuentoMonto', 'RecargoMonto', 'MontoItem'] as $col) {
                 if ($item[$col])
                     $item[$col] = $this->num($item[$col]);
             }
+        }
+       // exit;
+        // solo si es factura de guia
+        if($this->textoGuia != ''){
+            $array_guia = $detalle[0];
+           // print_r($array_guia); 
+            foreach ($array_guia as $key_guia => $elem_guia) {
+                $array_guia[$key_guia] = $key_guia == 'NmbItem' ? $this->textoGuia : '';
+            }
+            //print_r($array_guia); exit;
+            array_push($detalle,$array_guia);
+           // print_r($detalle); exit;
         }
         // opciones
         $options = ['align'=>[]];
@@ -686,6 +801,8 @@ class Dte extends \sasco\LibreDTE\PDF
             $options['align'][$i] = $info['align'];
             $i++;
         }
+
+
         // agregar tabla de detalle
         $this->Ln();
         $this->SetX($x);
@@ -765,6 +882,16 @@ class Dte extends \sasco\LibreDTE\PDF
             'IVA' => false,
             'MntTotal' => false,
         ], $totales);
+
+        if(!$totales['IVA']){
+            $totales['IVA'] = $this->ivaBoleta;
+        }
+
+        if(!$totales['MntNeto']){
+            $totales['MntNeto'] = $this->netoBoleta;
+            $totales['MntTotal'] = $this->netoBoleta + $this->ivaBoleta;
+        }
+
         // glosas
         $glosas = [
             'MntNeto' => 'Neto $',
