@@ -61,6 +61,7 @@ class Facturaelectronica extends CI_Model
 	public function ruta_certificado(){
 		$base_path = __DIR__;
 		$base_path = str_replace("\\", "/", $base_path);
+		//$path = $base_path . "/../../facturacion_electronica/certificado/certificado.p12";		
 		$path = $base_path . "/../../facturacion_electronica/certificado/certificado.p12";		
 		return $path;
 	}
@@ -110,6 +111,24 @@ class Facturaelectronica extends CI_Model
 
 	 }
 
+	 public function consumo_folios($start = null,$limit = null){
+
+	  	$countAll = $this->db->count_all_results('consumo_folios');
+	 	$data = $this->db->select('id, fecha, cant_folios, folio_desde, folio_hasta, path_consumo_folios, archivo_consumo_folios, xml, trackid',false)
+		  ->from('consumo_folios')
+		  ->order_by('fecha','desc');
+
+
+		$data = is_null($start) || is_null($limit) ? $data : $data->limit($limit,$start);
+		$query = $this->db->get();
+
+//			print_r($query->result());
+		$result =  $query->result();
+		//$countAll = count($result);
+		return array('total' => $countAll, 'data' => $result);
+
+	 }
+
 	 public function log_libros($start = null,$limit = null,$estado = null){
 
 	 	$countAll = $this->db->count_all_results('log_libros');
@@ -126,7 +145,7 @@ class Facturaelectronica extends CI_Model
 	 }
 
 	public function get_empresa(){
-		$this->db->select('rut, dv, razon_social, giro, cod_actividad, dir_origen, comuna_origen, fec_resolucion, nro_resolucion, logo ')
+		$this->db->select('rut, dv, razon_social, giro, cod_actividad, dir_origen, comuna_origen, fec_resolucion, nro_resolucion, logo, fec_inicio_boleta ')
 		  ->from('empresa')
 		  ->limit(1);
 		$query = $this->db->get();
@@ -242,6 +261,52 @@ class Facturaelectronica extends CI_Model
 		return $query->result();
 	 }	 
 
+	 public function consumo_folios_no_enviada(){
+			$this->db->select('c.id, c.fecha, c.cant_folios, c.folio_desde, c.folio_hasta, c.path_consumo_folios, c.archivo_consumo_folios')
+			  ->from('consumo_folios c ')
+			  ->where('c.trackid','0');
+			$query = $this->db->get();
+			return $query->result();
+		 }
+
+
+		 public function get_consumo_folios($fecha){
+
+
+			$this->db->select('id, fecha, cant_folios, folio_desde, folio_hasta, xml, trackid',false)
+			  ->from('consumo_folios')
+			  ->where('fecha',$fecha)
+			  ->limit(1);
+			$query = $this->db->get();
+			return $query->row();
+		 }	 
+
+	public function get_consumo_folios_by_id($id){
+
+
+		$this->db->select('id, fecha, cant_folios, folio_desde, folio_hasta, path_consumo_folios, archivo_consumo_folios, xml, trackid',false)
+		  ->from('consumo_folios')
+		  ->where('id',$id)
+		  ->limit(1);
+		$query = $this->db->get();
+		return $query->row();
+	 }
+
+
+	 public function get_boletas_dia($fecha){
+			$this->db->select('c.idfactura')
+			  ->from('folios_caf c ')
+			  ->join('factura_clientes fc','c.idfactura = fc.id')
+			  ->join('caf f','c.idcaf = f.id')
+			  ->where('c.idfactura <> 0')
+			  ->where('f.tipo_caf',39)
+			  ->where('c.estado','O')
+			  ->where('fc.fecha_factura',$fecha);
+			$query = $this->db->get();
+			//echo $this->db->last_query(); exit;
+			return $query->result();
+		 }
+
 
 	public function get_factura_no_enviada(){
 		$this->db->select('c.idfactura')
@@ -268,7 +333,7 @@ class Facturaelectronica extends CI_Model
 
 	public function datos_dte($idfactura){
 
-		$this->db->select('f.id, f.folio, f.path_dte, f.archivo_dte,  f.archivo_dte_cliente, f.dte, f.dte_cliente, f.pdf, f.pdf_cedible, f.trackid, c.tipo_caf, tc.nombre as tipo_doc, cae.nombre as giro, cp.nombre as cond_pago, v.nombre as vendedor ')
+		$this->db->select('f.id, f.folio, f.path_dte, f.archivo_dte,  f.archivo_dte_cliente, f.dte, f.dte_cliente, f.pdf, f.pdf_cedible, f.trackid, c.tipo_caf, tc.nombre as tipo_doc, cae.nombre as giro, cp.nombre as cond_pago, v.nombre as vendedor, fc.neto, fc.iva, fc.totalfactura ')
 		  ->from('folios_caf f')
 		  ->join('caf c','f.idcaf = c.id')
 		  ->join('tipo_caf tc','c.tipo_caf = tc.id')
@@ -385,6 +450,11 @@ public function datos_dte_by_trackid($trackid){
 			    $pdf->setCondPago($factura->cond_pago); 
 			    $pdf->setVendedor($factura->vendedor); 			    			    
 			    $pdf->setGiroEmisor($empresa->giro); 
+
+
+			    $pdf->setNeto($factura->neto);
+				$pdf->setIva($factura->iva);		
+				$pdf->setTotal($factura->totalfactura);
 
 			    
 			    $pdf->setResolucion(['FchResol'=>$Caratula['FchResol'], 'NroResol'=>$Caratula['NroResol']]);
@@ -996,6 +1066,8 @@ public function datos_dte_by_trackid($trackid){
 		    'NroResol' => $empresa->nro_resolucion
 		];
 
+
+
 		$Firma = new sasco\LibreDTE\FirmaElectronica($config['firma']); //lectura de certificado digital		
 		$caf = $this->facturaelectronica->get_content_caf_folio($numfactura,$tipo_caf);
 		$Folios = new sasco\LibreDTE\Sii\Folios($caf->caf_content);
@@ -1021,7 +1093,7 @@ public function datos_dte_by_trackid($trackid){
 			
 			$track_id = 0;
 		    $xml_dte = $EnvioDTE->generar();
-
+		    //var_dump($Firma->verifyXML($xml_dte, 'SetDTE')); exit;
 		    $dte = $this->crea_archivo_dte($xml_dte,$idfactura,$tipo_caf,$tipo);
 
 		    $campos['dte'] = $tipo == 'cliente' ? 'dte_cliente' : 'dte';
@@ -1078,7 +1150,7 @@ public function datos_dte_by_trackid($trackid){
 	public function get_contribuyentes(){
 
 		
-		$this->db->trans_start();
+		//$this->db->trans_start();
 		header('Content-type: text/plain; charset=ISO-8859-1');
 
 		$config = $this->genera_config();
@@ -1094,7 +1166,7 @@ public function datos_dte_by_trackid($trackid){
 		$tabla_contribuyentes = $this->busca_parametro_fe('tabla_contribuyentes');
 		$tabla_inserta = $tabla_contribuyentes == 'contribuyentes_autorizados_1' ? 'contribuyentes_autorizados_2' : 'contribuyentes_autorizados_1';
 
-
+		//var_dump($datos); exit;
 		foreach ($datos as $dato) {
 
 			$array_rut = explode("-",$dato[0]);
@@ -1122,11 +1194,19 @@ public function datos_dte_by_trackid($trackid){
 		$this->db->insert('log_cargas_bases_contribuyentes',$array_insert); 
 
 
-		$this->set_parametro_fe('tabla_contribuyentes',$tabla_inserta);
+		$this->db->select('count(*) as cantidad')
+			  ->from($tabla_inserta);
+		$query = $this->db->get();
+		if(isset($query->row()->cantidad)){
+			if($query->row()->cantidad > 0){
+				$this->set_parametro_fe('tabla_contribuyentes',$tabla_inserta);
+				$this->db->query('truncate '. $tabla_contribuyentes);				
+			}
 
-		$this->db->query('truncate '. $tabla_contribuyentes);
+		}
 
-		$this->db->trans_complete(); 		
+
+		//$this->db->trans_complete(); 		
 
 	}	
 	 

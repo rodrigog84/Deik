@@ -242,12 +242,6 @@ Ext.define('Infosys_web.view.TopMenus' ,{
                 text: 'Movimiento Diario',
                 iconCls: '',
                 menu: [{
-                        text: 'Facturas Proveedores',
-                        iconCls: '',
-                        itemId: 'adq_md_facprovve',
-                        disabled: true,
-                        action: 'mfactprovee'
-                },{
                         text: 'Orden de Compra',
                         iconCls: '',
                         itemId: 'adq_md_oc',
@@ -612,6 +606,12 @@ Ext.define('Infosys_web.view.TopMenus' ,{
                         itemId: 'vyf_carga_contribuyentes',
                         disabled: '',   
                         action: 'mcargacontribuyentes'
+                },{
+                        text: 'Consumo de Folios Diario',
+                        iconCls: '',
+                        itemId: 'vyf_consumo_folios',
+                        disabled: '',   
+                        action: 'mconsumofolios'
                 },{
                         text: 'Registro Emails',
                         iconCls: '',

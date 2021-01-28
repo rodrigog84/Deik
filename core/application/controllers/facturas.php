@@ -107,6 +107,9 @@ class Facturas extends CI_Controller {
 
 	 	$resp['success'] = true;
         echo json_encode($resp);
+	 	
+	 	 
+		
 
 	}
 
@@ -131,14 +134,12 @@ class Facturas extends CI_Controller {
 	 		$row = $query->first_row();
 	 	    $forma = ($row->forma);
 	 	    if ($forma==1 or $forma==2){
-	 	    	$query = $this->db->query('SELECT acc.*, p.nombre as nombre, p.codigo 
-	 	        as codigo, acc.precio as p_venta, acc.cantidad as stock 
+	 	    	$query = $this->db->query('SELECT acc.*, p.nombre as nombre, p.codigo as codigo, acc.precio as p_venta, acc.cantidad as stock 
 	   		  	FROM detalle_factura_cliente acc    
 	   		  	left join productos p on (acc.id_producto = p.id)
 				WHERE acc.id_despacho = "'.$nombre.'"');
 			}else{
-	 	    	$query = $this->db->query('SELECT acc.*, p.nombre as nombre, p.codigo 
-	 	        as codigo, acc.precio as p_venta, acc.cantidad as stock 
+	 	    	$query = $this->db->query('SELECT acc.*, p.nombre as nombre, p.codigo as codigo, acc.precio as p_venta, acc.cantidad as stock 
 	   		  	FROM detalle_factura_cliente acc    
 	   		  	left join productos p on (acc.id_producto = p.id)
 				WHERE acc.id_factura = "'.$nombre.'"'
@@ -238,6 +239,22 @@ class Facturas extends CI_Controller {
 
         echo json_encode($resp);
 	}
+
+
+	public function consumofoliosgetAll(){
+        $start = $this->input->get('start');
+        $limit = $this->input->get('limit');
+
+        $this->load->model('facturaelectronica');
+        $datos_consumo_folios = $this->facturaelectronica->consumo_folios($start,$limit);
+
+        $resp['success'] = true;
+        $resp['total'] = $datos_consumo_folios['total'];
+        $resp['data'] = $datos_consumo_folios['data'];
+
+        echo json_encode($resp);
+    }
+
 
 
 	public function librosgetAll(){
@@ -846,6 +863,52 @@ class Facturas extends CI_Controller {
 	}	
 
 
+ public function estado_envio_consumo_folios($idconsumo){
+    $this->load->model('facturaelectronica');
+    $datos_dte = $this->facturaelectronica->get_consumo_folios_by_id($idconsumo);
+    $config = $this->facturaelectronica->genera_config();
+    include $this->facturaelectronica->ruta_libredte();
+    $empresa = $this->facturaelectronica->get_empresa();
+
+    $result = array();
+    $result['error'] = false;
+    $result['codigo'] = "";
+    $result['glosa'] = "";
+
+    $token = \sasco\LibreDTE\Sii\Autenticacion::getToken($config['firma']);
+    if (!$token) {
+        foreach (\sasco\LibreDTE\Log::readAll() as $error){
+          $result['error'] = true;
+
+        }
+        $result['message'] = "Error de conexión con SII";      
+        echo json_encode($result);
+        exit;
+    }
+
+    // consultar estado enviado
+    $rut = $empresa->rut;
+    $dv = $empresa->dv;
+    $trackID = $datos_dte->trackid; // se obtiene al enviar un dte  $track_id = $EnvioDTE->enviar();
+    $estado = \sasco\LibreDTE\Sii::request('QueryEstUp', 'getEstUp', [$rut, $dv, $trackID, $token]);
+    // si el estado se pudo recuperar se muestra estado y glosa
+    if ($estado!==false) {
+        $result['error'] = false;
+        $result['codigo'] = (string)$estado->xpath('/SII:RESPUESTA/SII:RESP_HDR/ESTADO')[0];      
+        $result['glosa'] = (string)$estado->xpath('/SII:RESPUESTA/SII:RESP_HDR/ESTADO')[0] != -11 ? (string)$estado->xpath('/SII:RESPUESTA/SII:RESP_HDR/GLOSA')[0] : "Trackid Err&oacute;neo";      
+        echo json_encode($result);
+        exit;
+    }
+
+    // mostrar error si hubo
+    foreach (\sasco\LibreDTE\Log::readAll() as $error){
+        $result['error'] = true;
+        $result['message'] = "Error de conexión con SII";
+    }
+    echo json_encode($result);
+    exit;
+  } 
+
 	public function estado_dte($idfactura){
 		$this->load->model('facturaelectronica');
 		$datos_dte = $this->facturaelectronica->datos_dte($idfactura);
@@ -923,13 +986,98 @@ class Facturas extends CI_Controller {
 	}	
 
 
+ 	public function estado_dte_consumo_folios($idconsumo){
+        $this->load->model('facturaelectronica');
+        $datos_dte = $this->facturaelectronica->get_consumo_folios_by_id($idconsumo);
+        $config = $this->facturaelectronica->genera_config();
+        include $this->facturaelectronica->ruta_libredte();
+
+        $Firma = new \sasco\LibreDTE\FirmaElectronica($config['firma']); //lectura de certificado digital
+        $rut = $Firma->getId(); 
+        $rut_consultante = explode("-",$rut);
+
+        $empresa = $this->facturaelectronica->get_empresa();
+        $datos_empresa_factura = $this->facturaelectronica->get_empresa_factura($idfactura);
+
+        $result = array();
+        $result['error'] = false;
+        $result['glosa_estado'] = "";
+        $result['glosa_err'] = "";
+
+        $token = \sasco\LibreDTE\Sii\Autenticacion::getToken($config['firma']);
+        if (!$token) {
+            foreach (\sasco\LibreDTE\Log::readAll() as $error){
+                $result['error'] = true;
+
+            }
+            $result['message'] = "Error de conexión con SII";          
+            echo json_encode($result);
+            exit;
+        }
+
+      /*  $EnvioDte = new \sasco\LibreDTE\Sii\EnvioDte();
+        $EnvioDte->loadXML($datos_dte->dte);
+        $Documentos = $EnvioDte->getDocumentos();
+        //print_r($Documentos); exit;
+        foreach ($Documentos as $DTE) {
+        
+            if ($DTE->getDatos()){
+                $fecemision = $DTE->getFechaEmision();
+                $monto_dte = $DTE->getMontoTotal();
+            }
+            break; // siempre será sólo 1 documento
+        } */      
+
+        // consultar estado dte
+        $xml = \sasco\LibreDTE\Sii::request('QueryEstDte', 'getEstDte', [
+            'RutConsultante'    => $rut_consultante[0],
+            'DvConsultante'     => $rut_consultante[1],
+            'RutCompania'       => $empresa->rut,
+            'DvCompania'        => $empresa->dv,
+           // 'RutReceptor'       => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1),
+           // 'DvReceptor'        => substr($datos_empresa_factura->rut_cliente,-1),
+            //'TipoDte'           => $datos_dte->tipo_caf,
+            //'FolioDte'          => $datos_dte->folio,
+            //'FechaEmisionDte'   => substr($fecemision,8,2).substr($fecemision,5,2).substr($fecemision,0,4),
+            //'MontoDte'          => $monto_dte,
+            'token'             => $token,
+        ]);
+
+        // si el estado se pudo recuperar se muestra
+        if ($xml!==false) {
+            $array_result = (array)$xml->xpath('/SII:RESPUESTA/SII:RESP_HDR')[0];
+            $result['error'] = false;
+            $result['glosa_estado'] = $array_result['GLOSA_ESTADO'];
+            $result['glosa_err'] = $array_result['GLOSA_ERR'];
+            echo json_encode($result);
+            exit;           
+        }
+
+        // mostrar error si hubo
+        foreach (\sasco\LibreDTE\Log::readAll() as $error){
+            $result['error'] = true;
+            $result['message'] = "Error de conexión con SII";
+        }
+        echo json_encode($result);
+        exit;
+    }
+
 	public function datos_dte_json($idfactura){
 		$this->load->model('facturaelectronica');
 		$datos = $this->facturaelectronica->datos_dte($idfactura);
 		$empresa_factura = $this->facturaelectronica->get_empresa_factura($idfactura);
 		$datos->e_mail = $empresa_factura->e_mail;
 		echo json_encode($datos);
-	}		
+	}	
+
+
+	public function datos_dte_json_consumo($idconsumo){
+        $this->load->model('facturaelectronica');
+        $datos = $this->facturaelectronica->get_consumo_folios_by_id($idconsumo);
+        //$empresa_factura = $this->facturaelectronica->get_empresa_factura($idfactura);
+        //$datos->e_mail = $empresa_factura->e_mail;
+        echo json_encode($datos);
+    }	
 
 	public function datos_libro_json($idlibro){
 		$this->load->model('facturaelectronica');
@@ -1025,6 +1173,7 @@ public function estado_envio_libro($idlibro){
    		echo json_encode($empresa);		
 	}
 
+
 	public function estado_tipo_documento($tipo_documento){
 		$this->db->select('f.id ')
 						  ->from('folios_caf f')
@@ -1092,6 +1241,31 @@ public function estado_envio_libro($idlibro){
 		header('Content-Length: ' . filesize($path_archivo.$libro->archivo));
 		readfile($path_archivo.$libro->archivo);			
 	 }
+
+	 public function ver_consumo_folios($idconsumofolios){
+
+        $this->load->model('facturaelectronica');
+        $dte = $this->facturaelectronica->get_consumo_folios_by_id($idconsumofolios);
+       // print_r($dte); exit;
+       
+       /* if(empty($dte)){
+            $dte = $this->facturaelectronica->crea_dte($idfactura);
+        }else{
+
+            if($dte->{$ruta} == ''){
+                $dte = $this->facturaelectronica->crea_dte($idfactura,$tipo);
+            }
+        }*/       
+
+        $nombre_archivo = $dte->archivo_consumo_folios;
+        $path_archivo = "./facturacion_electronica/Consumo_Folios/".$dte->path_consumo_folios;
+        $data_archivo = basename($path_archivo.$nombre_archivo);
+
+        header('Content-Type: text/plain');
+        header('Content-Disposition: attachment; filename=' . $data_archivo);
+        header('Content-Length: ' . filesize($path_archivo.$nombre_archivo));
+        readfile($path_archivo.$nombre_archivo);                
+     }
 
 
 	public function ver_dte_proveedor($tipodte,$iddte){
@@ -1725,10 +1899,9 @@ public function cargacontribuyentes(){
 	 }
 
 
-
-	public function cargacaf(){
-		$tipo_caf = $this->input->post('tipoCaf');
-        $config['upload_path'] = "./facturacion_electronica/caf/"	;
+public function cargacaf(){
+        $tipo_caf = $this->input->post('tipoCaf');
+        $config['upload_path'] = "./facturacion_electronica/caf/"   ;
         $config['file_name'] = $tipo_caf."_".date("Ymdhis");
         $config['allowed_types'] = "*";
         $config['max_size'] = "10240";
@@ -1747,109 +1920,129 @@ public function cargacontribuyentes(){
             $error = true;
             $message = "Error en subir archivo.  Intente nuevamente";
         }else{
-        	$data_file_upload = $this->upload->data();
-        	$carga = true;
-			try {
-	        	$xml_content = file_get_contents($config['upload_path'].$config['file_name'].$data_file_upload['file_ext']);
-	        	$xml = new SimpleXMLElement($xml_content);
-			} catch (Exception $e) {
-				$error = true;
-				$message = "Error al cargar XML.  Verifique formato y cargue nuevamente";
-			}
+            $data_file_upload = $this->upload->data();
+            $carga = true;
+            try {
+                $xml_content = file_get_contents($config['upload_path'].$config['file_name'].$data_file_upload['file_ext']);
+                $xml = new SimpleXMLElement($xml_content);
+            } catch (Exception $e) {
+                $error = true;
+                $message = "Error al cargar XML.  Verifique formato y cargue nuevamente";
+            }
 
 
-			if(!$error){ //Ya cargó.  Leemos si el archivo es del tipo que elegimos anteriormente
-				
-				$tipo_caf_subido = $xml->CAF->DA->TD; 
-				if($tipo_caf_subido != $tipo_caf){
-					$error = true;
-					$message = "CAF cargado no corresponde al seleccionado previamente.  Verifique archivo y cargue nuevamente";
-				}
-			}
-
-
-
-			// VALIDAR EL RUT DE EMPRESA DEL CAF
-			if(!$error){
-
-				$this->db->select('valor ')
-				  ->from('param_fe')
-				  ->where('nombre','rut_empresa');
-				$query = $this->db->get();
-				$parametro = $query->row();	
-
-				$rut_parametro = $parametro->valor;
-
-				$rut_caf = $xml->CAF->DA->RE; 
-				if($rut_parametro != $rut_caf){
-					$error = true;
-					$message = "CAF cargado no corresponde a empresa registrada.  Verifique archivo y cargue nuevamente";
-				}						
-			}
-
-
-			if(!$error){ //Ya cargó y el archivo es correcto
-				$folio_desde = $xml->CAF->DA->RNG->D; 
-				$folio_hasta = $xml->CAF->DA->RNG->H; 
-
-				//VALIDAMOS SI LOS FOLIOS YA ESTÁN CARGADOS.  SI YA ESTÁN CARGADOS, DAREMOS ERROR INDICANDO QUE CAF YA EXISTE
-				$this->db->select('f.id ')
-								  ->from('folios_caf f')
-								  ->join('caf c','f.idcaf = c.id')
-								  ->where('c.tipo_caf',$tipo_caf)
-								  ->where('f.folio between ' . $folio_desde . ' and ' . $folio_hasta);
-
-				$query = $this->db->get();
-				$folios_existentes = $query->result();				
-
-				if(count($folios_existentes) > 0){
-					$error = true;
-					$message = "CAF cargado contiene folios ya existentes.  Verifique archivo y cargue nuevamente";
-				}else{
-
-					// SE CREA LOG DE CARGA DE FOLIOS
-					$data_array = array(
-						'tipo_caf' => $tipo_caf,
-						'fd' => $folio_desde,
-						'fh' => $folio_hasta,					
-						'archivo' => $config['file_name'].".xml",
-						'caf_content' => $xml_content,
-						);
-					$this->db->insert('caf',$data_array); 
-					$idcaf = $this->db->insert_id();
-
-					// SE CREA DETALLE DE FOLIOS
-
-					for($folio_carga = (int)$folio_desde; $folio_carga <= (int)$folio_hasta; $folio_carga++){
-						$data_folio = array(
-							'folio' => $folio_carga,
-							'idcaf' => $idcaf,
-							'created_at' => date("Y-m-d H:i:s")
-							);
-						$this->db->insert('folios_caf',$data_folio);
-					}
-				}
+            if(!$error){ //Ya cargó.  Leemos si el archivo es del tipo que elegimos anteriormente
+                
+                $tipo_caf_subido = $xml->CAF->DA->TD; 
+                if($tipo_caf_subido != $tipo_caf){
+                    $error = true;
+                    $message = "CAF cargado no corresponde al seleccionado previamente.  Verifique archivo y cargue nuevamente";
+                }
+            }
 
 
 
+            // VALIDAR EL RUT DE EMPRESA DEL CAF
+            if(!$error){
+
+                $this->db->select('valor ')
+                  ->from('param_fe')
+                  ->where('nombre','rut_empresa');
+                $query = $this->db->get();
+                $parametro = $query->row(); 
+
+                $rut_parametro = $parametro->valor;
+
+                $rut_caf = $xml->CAF->DA->RE; 
+                if($rut_parametro != $rut_caf){
+                    $error = true;
+                    $message = "CAF cargado no corresponde a empresa registrada.  Verifique archivo y cargue nuevamente";
+                }                       
+            }
 
 
-			}
+            if(!$error){ //Ya cargó y el archivo es correcto
+                $folio_desde = $xml->CAF->DA->RNG->D; 
+                $folio_hasta = $xml->CAF->DA->RNG->H; 
+                $folio_fecha = (string)$xml->CAF->DA->FA;
+                //print_r($folio_fecha);
+
+                $meses = 6;
+                
+                $fecha= strtotime("+ $meses month", strtotime ($folio_fecha));
+                
+                $fecha = date('Y-m-d',$fecha);
+                //$folio_fecha = date('Y-m-d',$folio_fecha);
+
+                
 
 
+
+                //VALIDAMOS SI LOS FOLIOS YA ESTÁN CARGADOS.  SI YA ESTÁN CARGADOS, DAREMOS ERROR INDICANDO QUE CAF YA EXISTE
+                $this->db->select('f.id ')
+                                  ->from('folios_caf f')
+                                  ->join('caf c','f.idcaf = c.id')
+                                  ->where('c.tipo_caf',$tipo_caf)
+                                  ->where('f.folio between ' . $folio_desde . ' and ' . $folio_hasta);
+
+                $query = $this->db->get();
+                $folios_existentes = $query->result();              
+
+                if(count($folios_existentes) > 0){
+                    $error = true;
+                    $message = "CAF cargado contiene folios ya existentes.  Verifique archivo y cargue nuevamente";
+                }else{
+
+                    // SE CREA LOG DE CARGA DE FOLIOS
+                    $data_array = array(
+                        'tipo_caf' => $tipo_caf,
+                        'fd' => $folio_desde,
+                        'fh' => $folio_hasta,  
+                        'archivo' => $config['file_name'].".xml",
+                        'caf_content' => $xml_content,
+                        'created_at' => date("Y-m-d H:i:s")
+                        );
+                    $this->db->insert('caf',$data_array); 
+                    $idcaf = $this->db->insert_id();
+                   
+                    //print_r($data_array);
+
+                    // SE CREA DETALLE DE FOLIOS
+
+                    for($folio_carga = (int)$folio_desde; $folio_carga <= (int)$folio_hasta; $folio_carga++){
+                        $data_folio = array(
+                            'folio' => $folio_carga,
+                            'idcaf' => $idcaf,
+                            'estado' => "P",
+                            'dte' => " ",
+                            'dte_cliente' => " ",
+                            'path_dte' => " ",
+                            'archivo_dte' => " ",
+                            'archivo_dte_cliente' => " ",
+                            'pdf' => " ",
+                            'pdf_cedible' => " ",
+                            'trackid' => " ",
+                            'idfactura' => 0,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s"), 
+                            );
+                        $this->db->insert('folios_caf',$data_folio);
+                    }
+                }
+            }
+
+
+        };
+
+        if($error && $carga){
+            unlink($config['upload_path'].$config['file_name'].$data_file_upload['file_ext']);
         }
 
 
-
-		if($error && $carga){
-			unlink($config['upload_path'].$config['file_name'].$data_file_upload['file_ext']);
-		}
-
-
-   		$resp['success'] = true;
-   		$resp['message'] = $error ? $message : "Carga realizada correctamente";
-   		echo json_encode($resp);
-	 }
+        $resp['success'] = true;
+        $resp['message'] = $error ? $message : "Carga realizada correctamente";
+        echo json_encode($resp);
+     }
 
 
 
@@ -1866,7 +2059,9 @@ public function cargacontribuyentes(){
 			$tipo_caf = 56;
 		}else if($tipo_doc == 105){
 			$tipo_caf = 52;
-		}
+		}else if($tipo_doc == 120){
+                  $tipo_caf = 39;
+        }
 
 		$nuevo_folio = 0;
 		//buscar primero si existe algún folio ocupado hace más de 4 horas.
@@ -2062,7 +2257,7 @@ public function cargacontribuyentes(){
         $nombres = $this->input->get('nombre');
         $tipo = $this->input->get('documento');
         if (!$tipo){
-	       $sql_tipo_documento = "101";
+	       $sql_tipo_documento = "";
 	    }else{
 	       $sql_tipo_documento = "acc.tipo_documento = " . $tipo . " and ";
 	    }
@@ -2730,10 +2925,10 @@ public function cargacontribuyentes(){
              
         $tipo = "1";
         $tipo2 = "101";
-        $tipo3 = "2";// FACTURA ELECTRONICA
+        $tipo3 = "102";// FACTURA ELECTRONICA
 
 
-		$countAll = $this->db->count_all_results("factura_clientes");
+		$countAll = 0;
 		$data = array();
 
 		if($opcion=="Nombre"){
@@ -2753,8 +2948,7 @@ public function cargacontribuyentes(){
 			$countAll = $total;
 
 
-		$data = array();
-	    }else if($opcion=="Numero"){
+		}else if($opcion=="Numero"){
 	
 		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
@@ -2854,6 +3048,14 @@ public function cargacontribuyentes(){
 		$ftotal = $this->input->post('totalfacturas');
 		$tipodocumento = $this->input->post('tipodocumento');
 		$idbodega = 1;
+
+		if(!$ordencompra){
+			$ordencompra=0;
+		}
+
+		if(!$sucursal){
+			$sucursal=0;
+		}
 		
 		$data3 = array(
 	         'correlativo' => $numfactura
@@ -2872,16 +3074,31 @@ public function cargacontribuyentes(){
 	        'sub_total' => $neto,
 	        'descuento' => ($neto - $fafecto),
 	        'neto' => $neto,
+	        'exento' => 0,
 	        'iva' => $fiva,
 	        'totalfactura' => $ftotal,
 	        'fecha_factura' => $fechafactura,
 	        'fecha_venc' => $fechavenc,
-	        'orden_compra' => $ordencompra
+	        'orden_compra' => $ordencompra,
+	        'id_factura' => 0,
+	        'observacion' => " ",
+	        'id_observa' => 0,
+	        'id_despacho' => 0,
+	        'estado' => " ",
+	        'forma' => 0,	   
 	          
 		);
 
 		$this->db->insert('factura_clientes', $factura_cliente); 
 		$idfactura = $this->db->insert_id();
+
+		$numdocu=0;
+		$estado="  ";
+		$id_documento=0;
+		$observaciones=" ";
+		$id_descuento = 0;
+		$desc = 0;
+		$id_observa=0;
 
 		$preventa = array(
 	        'num_ticket' => $idticket,
@@ -2894,7 +3111,12 @@ public function cargacontribuyentes(){
 	        'id_pago' => $formadepago,
 	        'desc' => ($neto - $fafecto),
 	        'total' => $ftotal,
-	        'id_documento' => $numfactura
+	        'id_documento' => $numfactura, 
+	        'id_observa' => $id_observa, 
+	        'orden_compra' => $ordencompra,
+	        'num_docu' => $numdocu,
+	        'estado' => $estado,
+	        'observaciones' => $observaciones
 		);
 
 		$this->db->insert('preventa', $preventa); 
@@ -2924,7 +3146,8 @@ public function cargacontribuyentes(){
 		        'descuento' => round($v->dcto,0),
 		        'iva' => $v->iva,
 		        'totalproducto' => $neto_producto + $v->iva,
-		        'fecha' => $fechafactura
+		        'fecha' => $fechafactura,
+		        'id_despacho' => 0
 			);
 
 		$neto_total += $neto_producto;
@@ -2941,9 +3164,11 @@ public function cargacontribuyentes(){
 		        'cantidad' => $v->cantidad,
 		        'neto' => $v->total,
 		        'iva' => $v->iva,
+		        'desc' => 0,
 		        'total' => $v->total,
 		        'fecha' => $fechafactura,
-		        'secuencia' => $secuencia
+		        'secuencia' => $secuencia,
+		        'id_descuento' => 0
 			);
         
         $this->db->insert('preventa_detalle', $preventa_detalle);
@@ -3004,9 +3229,11 @@ public function cargacontribuyentes(){
 		        'id_tipo_movimiento' => $tipodocumento,
 		        'valor_producto' =>  $v->precio,
 		        'cantidad_salida' => $v->cantidad,
+		        'cantidad_entrada' => 0,
 		        'id_bodega' => $idbodega,
 		        'fecha_movimiento' => $fechafactura,
-		        'id_cliente' => $idcliente
+		        'id_cliente' => $idcliente,
+		        'p_promedio' => 0,
 		);
 
 		$this->db->insert('existencia_detalle', $datos2);
@@ -3095,7 +3322,7 @@ public function cargacontribuyentes(){
 
 		/*****************************************/
 
-		if($tipodocumento == 101 || $tipodocumento == 103 || $tipodocumento == 105){  // SI ES FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONICA
+		if($tipodocumento == 101 || $tipodocumento == 103 || $tipodocumento == 105 || $tipodocumento == 120){  // SI ES FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONICA
 
 
 			if($tipodocumento == 101){
@@ -3104,7 +3331,9 @@ public function cargacontribuyentes(){
 				$tipo_caf = 34;
 			}else if($tipodocumento == 105){
 				$tipo_caf = 52;
-			}
+			}else if($tipodocumento == 120){
+                $tipo_caf = 39;
+            }
 
 
 			//$tipo_caf = $tipodocumento == 101 ? 33 : 34;
@@ -3165,42 +3394,75 @@ public function cargacontribuyentes(){
 
 			$dir_cliente = is_null($datos_empresa_factura->dir_sucursal) ? permite_alfanumerico($datos_empresa_factura->direccion) : permite_alfanumerico($datos_empresa_factura->dir_sucursal);
 
+			if($tipo_caf == 39){
 
+					$factura = [
+						    'Encabezado' => [
+						        'IdDoc' => [
+						            'TipoDTE' => $tipo_caf,
+						            'Folio' => $numfactura,
+						            'FchEmis' => substr($fechafactura,0,10)
+						        ],
+						        'Emisor' => [
+						            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
+						            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+						            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
+						            'Acteco' => $empresa->cod_actividad,
+						            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
+						            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
+						        ],
+						        'Receptor' => [
+						            'RUTRecep' =>  $rutCliente,
+						            'RznSocRecep' => substr(permite_alfanumerico($datos_empresa_factura->nombre_cliente),0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+						            'GiroRecep' => substr(permite_alfanumerico($datos_empresa_factura->giro),0,35),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+						            'DirRecep' => substr($dir_cliente,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+						            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
+						        ],					            		        
+						    ],
+							'Detalle' => $lista_detalle,
+							'Referencia' => $referencia
+						];				
+
+			}else{
+
+				$factura = [
+				    'Encabezado' => [
+				        'IdDoc' => [
+				            'TipoDTE' => $tipo_caf,
+				            'Folio' => $numfactura,
+				            'FchEmis' => substr($fechafactura,0,10)
+				        ],
+				        'Emisor' => [
+				            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
+				            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+				            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
+				            'Acteco' => $empresa->cod_actividad,
+				            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
+				            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
+				        ],
+				        'Receptor' => [
+				            'RUTRecep' =>  $rutCliente,
+				            'RznSocRecep' => substr(permite_alfanumerico($datos_empresa_factura->nombre_cliente),0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+				            'GiroRecep' => substr(permite_alfanumerico($datos_empresa_factura->giro),0,35),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+				            'DirRecep' => substr($dir_cliente,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+				            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
+				        ],
+			            'Totales' => [
+			                // estos valores serán calculados automáticamente
+			                'MntNeto' => isset($datos_factura->neto) ? $datos_factura->neto : 0,
+			                'TasaIVA' => \sasco\LibreDTE\Sii::getIVA(),
+			                'IVA' => isset($datos_factura->iva) ? $datos_factura->iva : 0,
+			                'MntTotal' => isset($datos_factura->totalfactura) ? $datos_factura->totalfactura : 0,
+			            ],				        
+				    ],
+					'Detalle' => $lista_detalle,
+					'Referencia' => $referencia
+				];
+
+
+			}
 			// datos
-			$factura = [
-			    'Encabezado' => [
-			        'IdDoc' => [
-			            'TipoDTE' => $tipo_caf,
-			            'Folio' => $numfactura,
-			            'FchEmis' => substr($fechafactura,0,10)
-			        ],
-			        'Emisor' => [
-			            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
-			            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
-			            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
-			            'Acteco' => $empresa->cod_actividad,
-			            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
-			            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
-			        ],
-			        'Receptor' => [
-			            'RUTRecep' =>  $rutCliente,
-			            'RznSocRecep' => substr(permite_alfanumerico($datos_empresa_factura->nombre_cliente),0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
-			            'GiroRecep' => substr(permite_alfanumerico($datos_empresa_factura->giro),0,35),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
-			            'DirRecep' => substr($dir_cliente,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
-			            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
-			        ],
-		            'Totales' => [
-		                // estos valores serán calculados automáticamente
-		                'MntNeto' => isset($datos_factura->neto) ? $datos_factura->neto : 0,
-		                'TasaIVA' => \sasco\LibreDTE\Sii::getIVA(),
-		                'IVA' => isset($datos_factura->iva) ? $datos_factura->iva : 0,
-		                'MntTotal' => isset($datos_factura->totalfactura) ? $datos_factura->totalfactura : 0,
-		            ],				        
-			    ],
-				'Detalle' => $lista_detalle,
-				'Referencia' => $referencia
-			];
-
+			
 			//var_dump($factura); exit;
 
 			//FchResol y NroResol deben cambiar con los datos reales de producción
@@ -3226,6 +3488,9 @@ public function cargacontribuyentes(){
 			$Folios = new sasco\LibreDTE\Sii\Folios($caf->caf_content);
 
 			$DTE = new \sasco\LibreDTE\Sii\Dte($factura);
+
+			//var_dump($DTE); exit;
+
 
 			$DTE->timbrar($Folios);
 			$DTE->firmar($Firma);		
@@ -3306,7 +3571,7 @@ public function cargacontribuyentes(){
 		if($tipodocumento == 1){
 				$this->exportFacturaPDF($idfactura,$numero);
 
-		}else if($tipodocumento ==  101 || $tipodocumento == 103 || $tipodocumento == 105 ){ // FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONCA O GUIA DE DESPACHO
+		}else if($tipodocumento ==  101 || $tipodocumento == 103 || $tipodocumento == 105 || $tipodocumento == 120){ // FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONCA O GUIA DE DESPACHO
 				//$es_cedible = is_null($cedible) ? false : true;
 				$this->load->model('facturaelectronica');
 				$this->facturaelectronica->exportFePDF($idfactura,'id');
@@ -5027,7 +5292,6 @@ font-family: Arial, Helvetica, sans-serif;
             $tipo2 = 102;
             $tipo3 = 101;
             $tipo4 = 103;
-            $tipo5 = 104;
             $this->load->library("mpdf");
 
 			$this->mpdf->mPDF(
@@ -5054,16 +5318,13 @@ font-family: Arial, Helvetica, sans-serif;
                 $query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor  FROM factura_clientes acc
                 left join clientes c on (acc.id_cliente = c.id)
                 left join vendedores v on (acc.id_vendedor = v.id)
-                WHERE acc.tipo_documento in ( '.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.','.$tipo5.') and acc.fecha_factura between "'.$fecha3.'"  AND "'.$fecha4.'"
+                WHERE acc.tipo_documento in ( '.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.') and acc.fecha_factura between "'.$fecha3.'"  AND "'.$fecha4.'"
                 order by acc.tipo_documento and acc.fecha_factura' 
                 
                 );
             
 
               };
-
-        list($anioA, $mesA, $diaA) = explode("-",$fecha3);
-        list($anioB, $mesB, $diaB) = explode("-",$fecha4);
 
 
 		$header = '
@@ -5084,13 +5345,13 @@ font-family: Arial, Helvetica, sans-serif;
 		<body>
 		<table width="987px" height="602" border="0">
 		  <tr>
-		   <td width="197px"><img src="http://localhost/Deik/Infosys_web/resources/images/logo.jpg" width="150" height="136" /></td>
+		   <td width="197px"><img src="http://localhost/vibrados_web/Infosys_web/resources/images/logo_empresa.png" width="150" height="136" /></td>
 		    <td width="493px" style="font-size: 14px;text-align:center;vertical-align:text-top"	>
-		    <p>SOCIEDAD COMERCIAL DEIK Y CIA. LIMITADA</p>
-		    <p>RUT:76.019.353-4</p>
-		    <p>8 ORIENTE 1378 - Talca - Chile</p>
-		    <p>Fonos: (71)2 233369</p>
-		    <p>http://</p>
+		    <p>VIBRADOS CHILE LTDA.</p>
+		    <p>RUT:77.748.100-2</p>
+		    <p>Cienfuegos # 1595 San Javier - Chile</p>
+		    <p>Fonos: (73)2 321100</p>
+		    <p>Correo Electronico : info@vibradoschile.cl</p>
 		    </td>
 		    <td width="296px" style="font-size: 16px;text-align:left;vertical-align:text-top"	>
 		          <p>FECHA EMISION : '.date('d/m/Y').'</p>
@@ -5099,10 +5360,8 @@ font-family: Arial, Helvetica, sans-serif;
               
 		  $header2 = '<tr>
 			<td style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:center;" colspan="3"><h2>LIBRO DE VENTAS</h2></td>
-			</tr>
-			<tr>
-			<td style="border-bottom:0pt solid black;border-top:0pt solid black;text-align:center;" colspan="3"><h>DESDE : '.$diaA.'/'.$mesA.'/'.$anioA.' HASTA : '.$diaB.'/'.$mesB.'/'.$anioB.'</h></td>
 		  </tr>
+			<tr><td colspan="3">&nbsp;</td></tr>		  
 			';              
 
 
@@ -5120,23 +5379,16 @@ font-family: Arial, Helvetica, sans-serif;
 		        <td width="90px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Neto</td>
 		        <td width="90px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >IVA</td>
 		        <td width="90px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;" >Total</td>
-		      </tr>
-		      </table>';
+		      </tr>';
 		      $sub_total = 0;
 		      $descuento = 0;
 		      $neto = 0;
 		      $iva = 0;
-		      $ivand = 0;
 		      $cantfact = 0;
 		      $cantnc =0;
-		      $cantnd =0;
 		      $totalfactura = 0;
-		      $totalafecto = 0;
-			  $totalivafin = 0;
-			  $totalfinala = 0;
               $i = 0;
               $body_detail = '';
-              
               $users = $query->result_array();
 		      foreach($users as $v){
 
@@ -5162,6 +5414,7 @@ font-family: Arial, Helvetica, sans-serif;
 				      $v['rut_cliente'] = ($ruta2."-".$ruta1);
 				      				     
 				    };
+
 				    if ($v['tipo_documento'] == 102){
 
 				    	$v['neto'] = ($v['neto']/-1);
@@ -5170,42 +5423,37 @@ font-family: Arial, Helvetica, sans-serif;
 				    	$tipo="N/C";
 
 				    };
-					if ($v['tipo_documento'] == 1 or $v['tipo_documento'] == 101){
-					$sub_total += $v['sub_total'];
-					$descuento += $v['descuento'];
-					$netof += $v['neto'];
-					$ivaf += $v['iva'];
-					$totalfacturaf += $v['totalfactura'];
-					$cantfact++;
-					$tipo="Fact";
-					};
+				     if ($v['tipo_documento'] == 1 or $v['tipo_documento'] == 101){
+				      $sub_total += $v['sub_total'];
+				      $descuento += $v['descuento'];
+				      $neto += $v['neto'];
+				      $iva += $v['iva'];
+				      $totalfactura += $v['totalfactura'];
+				      $cantfact++;
+				      $tipo="Fact";
+				      };
+
 				       
-					if ($v['tipo_documento'] == 103){
-					$netoex += $v['neto'];
-					$ivaex += $v['iva'];
-					$totalfacturaex += $v['totalfactura'];
-					$cantex++;
-					$tipo="F/Exe";
-					};
-
-					if ($v['tipo_documento'] == 104){
-					$netond += $v['neto'];
-					$ivand += $v['iva'];
-					$totalfacturand += $v['totalfactura'];
-					$cantnd++;
-					$tipo="N/D";
-					};
-
-					if ($v['tipo_documento'] == 102){
-					$netonc += $v['neto'];
-					$ivanc += $v['iva'];
-					$totalfacturanc += $v['totalfactura'];
-					$cantnc++;
-					};
-
-					$totalafecto += $v['neto'];
-					$totalivafin += $v['iva'];
-					$totalfinala += $v['totalfactura'];
+			      if ($v['tipo_documento'] == 103){
+			      $netoex += $v['neto'];
+			      $ivaex += $v['iva'];
+			      $totalfacturaex += $v['totalfactura'];
+			      $cantex++;
+			      $tipo="F/Exe";
+			      };
+			      if ($v['tipo_documento'] == 104){
+			      $netond += $v['neto'];
+			      $ivand += $v['iva'];
+			      $totalfacturand += $v['totalfactura'];
+			      $cantnd++;
+			      $tipo="N/D";
+			      };
+			      if ($v['tipo_documento'] == 102){
+			      $netonc += $v['neto'];
+			      $ivanc += $v['iva'];
+			      $totalfacturanc += $v['totalfactura'];
+			      $cantnc++;
+			      };
 				    	      	    
 
 					$body_detail .= '<tr><td colspan="10">&nbsp;</td></tr></table></td>
@@ -5226,6 +5474,11 @@ font-family: Arial, Helvetica, sans-serif;
 				    </tr>
 				    </table>
 				  </tr>';
+					
+			      
+                 
+
+
 		            $i++;
 		         }  
 
@@ -5238,9 +5491,9 @@ font-family: Arial, Helvetica, sans-serif;
 				        <td width="477px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:left;font-size: 14px;" ><b>Totales</b></td>
 				        <td width="70px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b></b></td>
 				        <td width="60px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b></b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalafecto, 0, ',', '.').'</b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalivafin, 0, ',', '.').'</b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalfinala, 0, ',', '.').'</b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($neto, 0, ',', '.').'</b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($iva, 0, ',', '.').'</b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalfactura, 0, ',', '.').'</b></td>
 				      </tr>
 				      	</table>
 				  	</td>
@@ -5251,12 +5504,12 @@ font-family: Arial, Helvetica, sans-serif;
 				  	<td colspan="3" >
 				    	<table width="987px" cellspacing="0" cellpadding="0" >
 				      <tr>
-				        <td width="477px"  style="border-bottom:0pt solid black;border-top:0pt solid black;text-align:left;font-size: 14px;" ><b></b></td>
-				        <td width="90px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>Facturas </b></td>
-				        <td width="60px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>'.number_format($cantfactex, 0, ',', '.').'</b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($netof, 0, ',', '.').'</b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($ivaf, 0, ',', '.').'</b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalfacturf, 0, ',', '.').'</b></td>
+				        <td width="477px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:left;font-size: 14px;" ><b>Totales</b></td>
+				        <td width="90px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>Facturas</b></td>
+				        <td width="60px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>'.number_format($cantfact, 0, ',', '.').'</b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($neto, 0, ',', '.').'</b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($iva, 0, ',', '.').'</b></td>
+				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalfactura, 0, ',', '.').'</b></td>
 				      </tr>
 				      	</table>
 				  	</td>
@@ -5305,14 +5558,6 @@ font-family: Arial, Helvetica, sans-serif;
 				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($netonc, 0, ',', '.').'</b></td>
 				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($ivanc, 0, ',', '.').'</b></td>
 				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalfacturanc, 0, ',', '.').'</b></td>
-				      </tr>
-				       <tr>
-				        <td width="477px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:left;font-size: 14px;" ><b>Totales</b></td>
-				        <td width="70px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b></b></td>
-				        <td width="60px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b></b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalafecto, 0, ',', '.').'</b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalivafin, 0, ',', '.').'</b></td>
-				        <td width="120px"  style="border-bottom:1pt solid black;border-top:1pt solid black;text-align:right;font-size: 14px;" ><b>$ '.number_format($totalfinala, 0, ',', '.').'</b></td>
 				      </tr>
 				      </tr>
 				      	</table>
