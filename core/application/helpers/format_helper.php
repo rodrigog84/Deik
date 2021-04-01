@@ -412,12 +412,37 @@ if (!function_exists('caftotd'))
         $tipodocumento = 104;
       }else if($caf == 52){
         $tipodocumento = 105;
+      }else if($caf == 39){
+        $tipodocumento = 120;
       }
     return $tipodocumento;
   }
 
 }
 
+
+if (!function_exists('tdtocaf'))
+{
+
+  function tdtocaf($td)
+  {
+      if($td == 101){
+        $tipodocumento = 33;
+      }else if($td == 102){
+        $tipodocumento = 61;
+      }else if($td == 103){
+        $tipodocumento = 34;
+      }else if($td == 104){
+        $tipodocumento = 56;
+      }else if($td == 105){
+        $tipodocumento = 52;
+      }else if($td == 120){
+        $tipodocumento = 39;
+      }
+    return $tipodocumento;
+  }
+
+}
            
 
 if (!function_exists('permite_alfanumerico'))

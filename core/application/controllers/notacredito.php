@@ -64,6 +64,13 @@ class Notacredito extends CI_Controller {
 	        'id_factura' => $numfactura_asoc,
 	        'fecha_venc' => $fechavenc,
 	        'forma' => 1,
+	        'observacion' => " ",
+	        'id_observa' => 0,
+	        'id_despacho' => 0,
+	        'estado' => " ",
+	        'exento' => 0,
+	              
+	          
 	          
 		);
 
@@ -81,7 +88,16 @@ class Notacredito extends CI_Controller {
 		        'glosa' => strtoupper($v->glosa),
 		        'neto' => $v->neto,
 		        'iva' => $v->iva,
-		        'total' => $v->total
+		        'total' => $v->total,
+		        'id_producto' => 0,
+		        'id_guia' => 0,
+		        'num_guia' => 0,
+		        'cantidad' => 0,
+		        'kilos' => 0,
+		        'precio' => 0,
+		        'neto' => 0,
+		        'iva' => 0,
+		        'total' => 0,
 			);
 
 		$this->db->insert('detalle_factura_glosa', $factura_clientes_item);
@@ -340,6 +356,10 @@ class Notacredito extends CI_Controller {
 		$ftotal = $this->input->post('totalfacturas');
 		$tipodocumento = $this->input->post('tipodocumento');
 
+		if(!$sucursal){
+			$sucursal=0;
+		};
+
 		$data3 = array(
 	         'correlativo' => $numdocuemnto
 	    );
@@ -353,6 +373,7 @@ class Notacredito extends CI_Controller {
 	        'num_factura' => $numdocuemnto,
 	        'id_vendedor' => $vendedor,
 	        'id_sucursal' => $sucursal,
+	        'id_cond_venta' => 1,
 	        'sub_total' => $neto,
 	        'descuento' => ($neto - $fafecto),
 	        'neto' => $neto,
@@ -360,7 +381,15 @@ class Notacredito extends CI_Controller {
 	        'totalfactura' => $ftotal,
 	        'fecha_factura' => $fechafactura,
 	        'id_factura' => $numfactura,
-	        'fecha_venc' => $fechavenc
+	        'fecha_venc' => $fechavenc,
+	        'observacion' => " ",
+	        'id_observa' => 0,
+	        'id_despacho' => 0,
+	        'estado' => " ",
+	        'exento' => 0,
+	        'forma' => 0,
+	        'orden_compra' => 0,
+	              
 	          
 		);
 		$this->db->insert('factura_clientes', $factura_cliente); 
@@ -379,7 +408,8 @@ class Notacredito extends CI_Controller {
 		        'descuento' => $v->dcto,
 		        'iva' => $v->iva,
 		        'totalproducto' => $v->totaliva,
-		        'fecha' => $fechafactura
+		        'fecha' => $fechafactura,
+		        'id_despacho' => 0
 			);
 
 		$neto_total += $neto_producto;
@@ -452,7 +482,11 @@ class Notacredito extends CI_Controller {
 		        'id_tipo_movimiento' => $tipodocumento,
 		        'valor_producto' =>  $v->precio,
 		        'cantidad_entrada' => $v->cantidad,
-		        'fecha_movimiento' => $fechafactura
+		        'cantidad_salida' => 0,
+		        'fecha_movimiento' => $fechafactura,
+		        'id_bodega' => 1,
+		        'id_cliente' => $idcliente,
+		        'p_promedio' => 0,
 			);
 
 			$this->db->insert('existencia_detalle', $datos2);
@@ -468,7 +502,7 @@ class Notacredito extends CI_Controller {
 		}
 
 		$iva_total = $neto_total*(0.19);
-		$total_factura = $neto_total - ($neto - $fafecto) + $iva_total;
+		$total_factura = $neto_total + $iva_total;
 
 		$data_factura = array(
 						'neto' => $neto_total,
@@ -533,7 +567,10 @@ class Notacredito extends CI_Controller {
 			include $this->facturaelectronica->ruta_libredte();
 
 			$tipo_nota_credito = $this->input->post('tipo_nota_credito');
-			$glosa = $tipo_nota_credito == 1 ? 'Anula factura '. $numfactura_asoc : 'Correccion factura '. $numfactura_asoc;
+
+			$tipo_doc_glosa = $tipodocumento_asoc == 120 ? 'boleta' : 'factura';
+
+			$glosa = $tipo_nota_credito == 1 ? 'Anula ' . $tipo_doc_glosa .' '. $numfactura_asoc : 'Correccion '. $tipo_doc_glosa . ' ' . $numfactura_asoc;
 
 			$empresa = $this->facturaelectronica->get_empresa();
 			$datos_empresa_factura = $this->facturaelectronica->get_empresa_factura($idfactura);
@@ -565,7 +602,8 @@ class Notacredito extends CI_Controller {
 			}
 
 
-			$TpoDocRef = $numfactura >= 100000 ? 30 : 33;
+			//$TpoDocRef = $numfactura >= 100000 ? 30 : 33;
+			$TpoDocRef = tdtocaf($tipodocumento_asoc);
 
 			$dir_cliente = is_null($datos_empresa_factura->dir_sucursal) ? permite_alfanumerico($datos_empresa_factura->direccion) : permite_alfanumerico($datos_empresa_factura->dir_sucursal);
 

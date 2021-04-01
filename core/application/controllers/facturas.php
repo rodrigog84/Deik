@@ -2600,6 +2600,7 @@ public function cargacaf(){
         $tipo4 = "2";
         $tipo2 = "101";
         $tipo3 = "103";        
+        $tipo5 = "120";    
 
 
 		$countAll = $this->db->count_all_results("detalle_factura_cliente");
@@ -2610,7 +2611,7 @@ public function cargacaf(){
 			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.id = '.$nombre.' AND acc.tipo_documento in ("'.$tipo.'","'.$tipo2.'","'.$tipo3.'","'.$tipo4.'")');
+			WHERE acc.id = '.$nombre.' AND acc.tipo_documento in ("'.$tipo.'","'.$tipo2.'","'.$tipo3.'","'.$tipo4.'","'.$tipo5.'")');
 
 			if($query->num_rows()>0){
 
@@ -2926,6 +2927,7 @@ public function cargacaf(){
         $tipo = "1";
         $tipo2 = "101";
         $tipo3 = "102";// FACTURA ELECTRONICA
+        $tipo4 = "120";// BOLETA ELECTRONICA
 
 
 		$countAll = 0;
@@ -2935,7 +2937,7 @@ public function cargacaf(){
 		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.id_factura = '.$nombre.' acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.')');
+			WHERE acc.id_factura = '.$nombre.' acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.')');
 		
 		  $total = 0;
 
@@ -2953,7 +2955,7 @@ public function cargacaf(){
 		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.num_factura = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.')' 	);
+			WHERE acc.num_factura = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.')' 	);
 
 		
 		  $total = 0;
@@ -2972,7 +2974,7 @@ public function cargacaf(){
 		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.id_cliente = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.')');
+			WHERE acc.id_cliente = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.')');
 
 		
 		  $total = 0;
