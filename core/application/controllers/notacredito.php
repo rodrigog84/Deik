@@ -537,7 +537,7 @@ class Notacredito extends CI_Controller {
 			$query = $this->db->query("UPDATE detalle_cuenta_corriente SET saldo = saldo - " . $ftotal . " where idctacte = " .  $row->idcuentacorriente . " and numdocumento = " . $numfactura_asoc);
 			//$idcuentacorriente =  $row->idcuentacorriente;
 			 $query_factura = $this->db->query("SELECT tipo_documento  FROM factura_clientes 
-			 							WHERE num_factura = " . $numfactura_asoc . " and id_cliente = " . $idcliente . " limit 1");
+			 							WHERE num_factura = " . $numfactura_asoc . " and id_cliente = " . $idcliente . " and tipo_documento > 100 limit 1");
 			 $tipodocumento_asoc = $query_factura->row()->tipo_documento;
 
 			$cartola_cuenta_corriente = array(
