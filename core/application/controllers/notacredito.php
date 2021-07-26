@@ -181,7 +181,6 @@ class Notacredito extends CI_Controller {
             $detalle_factura = $this->facturaelectronica->get_detalle_factura_glosa($idfactura);
             $datos_factura = $this->facturaelectronica->get_factura($idfactura);
 
-
             $lista_detalle = array();
             $i = 0;
             foreach ($detalle_factura as $detalle) {
@@ -190,46 +189,51 @@ class Notacredito extends CI_Controller {
 				//$glosa = $tiponc == 3 ? $glosa . " . " . $detalle->glosa : $glosa;
 				if($tiponc!=3){
 					$lista_detalle[$i]['QtyItem'] = 1;
-	                $lista_detalle[$i]['PrcItem'] = floor($detalle->neto);
+					if($detalle->neto == 0){
+						$lista_detalle[$i]['MontoItem'] = 0;
+					}else{
+						$lista_detalle[$i]['PrcItem'] = floor($detalle->neto);
+					}
+	                
             	}
                 $i++;
             }
 
 
             $TpoDocRef = $numfactura_asoc >= 100000 ? 30 : 33;
-
+            $rutCliente = substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1);
 			$dir_cliente = is_null($datos_empresa_factura->dir_sucursal) ? permite_alfanumerico($datos_empresa_factura->direccion) : permite_alfanumerico($datos_empresa_factura->dir_sucursal);
 
-            // datos
-            $nota_credito = [
+			$nombre_comuna = permite_alfanumerico($datos_empresa_factura->nombre_comuna);
+
+			 $nota_credito = [
                 'Encabezado' => [
                     'IdDoc' => [
                         'TipoDTE' => 61,
                         'Folio' => $numdocuemnto,
-                        'FchEmis' => substr($fechafactura,0,10)
                     ],
                     'Emisor' => [
                         'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
-                        'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
-                        'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
+                        'RznSoc' => substr(permite_alfanumerico($empresa->razon_social),0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES,
+                        'GiroEmis' => substr(permite_alfanumerico($empresa->giro),0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
                         'Acteco' => $empresa->cod_actividad,
-                        'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
-                        'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
+                        'DirOrigen' =>  substr(permite_alfanumerico($empresa->dir_origen),0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
+                        'CmnaOrigen' => substr(permite_alfanumerico($empresa->comuna_origen),0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES                        
                     ],
                     'Receptor' => [
-                        'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
-                        'RznSocRecep' => substr(permite_alfanumerico($datos_empresa_factura->nombre_cliente),0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
-                        'GiroRecep' => substr(permite_alfanumerico($datos_empresa_factura->giro),0,40), //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+                        'RUTRecep' => $rutCliente,
+                        'RznSocRecep' =>  substr(permite_alfanumerico($datos_empresa_factura->nombre_cliente),0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+                        'GiroRecep' => substr(permite_alfanumerico($datos_empresa_factura->giro),0,40),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
                         'DirRecep' => substr($dir_cliente,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
-                        'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
+                        'CmnaRecep' => substr($nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES                        
                     ],
-					'Totales' => [
-		                // estos valores serán calculados automáticamente
-		                'MntNeto' => isset($datos_factura->neto) ? $datos_factura->neto : 0,
-		                'TasaIVA' => $tiponc == 3 ? 0 : \sasco\LibreDTE\Sii::getIVA(),
-		                'IVA' => isset($datos_factura->iva) ? $datos_factura->iva : 0,
-		                'MntTotal' => isset($datos_factura->totalfactura) ? $datos_factura->totalfactura : 0,
-		            ],                
+                    'Totales' => [
+                        // estos valores serán calculados automáticamente
+                        'MntNeto' => isset($datos_factura->neto) ? $datos_factura->neto : 0,
+                        'TasaIVA' => \sasco\LibreDTE\Sii::getIVA(),
+                        'IVA' => isset($datos_factura->iva) ? $datos_factura->iva : 0,
+                        'MntTotal' => isset($datos_factura->totalfactura) ? $datos_factura->totalfactura : 0,                        
+                    ],                
                 ],
                 'Detalle' => $lista_detalle,
                 'Referencia' => [
@@ -237,7 +241,7 @@ class Notacredito extends CI_Controller {
                     'FolioRef' => $numfactura_asoc,
                     'CodRef' => $tipo_nota_credito,
                     'RazonRef' => $glosa,
-                ]               
+                ]              
             ];          
 
 
@@ -274,7 +278,16 @@ class Notacredito extends CI_Controller {
             $EnvioDTE->agregar($DTE);
             $EnvioDTE->setFirma($Firma);
             $EnvioDTE->setCaratula($caratula);
-            $EnvioDTE->generar();
+            $xml_dte = $EnvioDTE->generar();
+           /*   echo $xml_dte;
+                 var_dump($EnvioDTE->schemaValidate()); 
+
+  foreach (sasco\LibreDTE\Log::readAll() as $error)
+          echo $error,"\n";                  
+                  
+
+                  exit;*/
+
             if ($EnvioDTE->schemaValidate()) { // REVISAR PORQUÉ SE CAE CON ESTA VALIDACION
                 
                 $track_id = 0;
