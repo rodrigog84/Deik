@@ -1914,12 +1914,15 @@ public function cargacaf(){
 
         $error = false;
         $carga = false;
+
         if (!$this->upload->do_upload("caf")) {
             print_r($this->upload->data()); 
             print_r($this->upload->display_errors());
             $error = true;
             $message = "Error en subir archivo.  Intente nuevamente";
         }else{
+
+
             $data_file_upload = $this->upload->data();
             $carga = true;
             try {
@@ -1934,6 +1937,7 @@ public function cargacaf(){
             if(!$error){ //Ya cargó.  Leemos si el archivo es del tipo que elegimos anteriormente
                 
                 $tipo_caf_subido = $xml->CAF->DA->TD; 
+
                 if($tipo_caf_subido != $tipo_caf){
                     $error = true;
                     $message = "CAF cargado no corresponde al seleccionado previamente.  Verifique archivo y cargue nuevamente";
@@ -1966,7 +1970,7 @@ public function cargacaf(){
                 $folio_hasta = $xml->CAF->DA->RNG->H; 
                 $folio_fecha = (string)$xml->CAF->DA->FA;
                 //print_r($folio_fecha);
-
+                //echo $folio_desde." -- ".$folio_hasta."  -  ".$folio_fecha; exit;
                 $meses = 6;
                 
                 $fecha= strtotime("+ $meses month", strtotime ($folio_fecha));
@@ -1987,7 +1991,7 @@ public function cargacaf(){
 
                 $query = $this->db->get();
                 $folios_existentes = $query->result();              
-
+                //print_r($folios_existentes); exit;
                 if(count($folios_existentes) > 0){
                     $error = true;
                     $message = "CAF cargado contiene folios ya existentes.  Verifique archivo y cargue nuevamente";
@@ -2005,6 +2009,7 @@ public function cargacaf(){
                     $this->db->insert('caf',$data_array); 
                     $idcaf = $this->db->insert_id();
                    
+
                     //print_r($data_array);
 
                     // SE CREA DETALLE DE FOLIOS
@@ -2027,6 +2032,7 @@ public function cargacaf(){
                             'updated_at' => date("Y-m-d H:i:s"), 
                             );
                         $this->db->insert('folios_caf',$data_folio);
+                       // echo $this->db->last_query(); exit;
                     }
                 }
             }
@@ -2611,7 +2617,7 @@ public function cargacaf(){
 			$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.id = '.$nombre.' AND acc.tipo_documento in ("'.$tipo.'","'.$tipo2.'","'.$tipo3.'","'.$tipo4.'","'.$tipo5.'")');
+			WHERE acc.id = '.$nombre.' AND acc.tipo_documento in ("'.$tipo.'","'.$tipo2.'","'.$tipo3.'","'.$tipo4.'","'.$tipo5.'") AND fecha_factura >= "2021-01-01"');
 
 			if($query->num_rows()>0){
 
@@ -2937,7 +2943,7 @@ public function cargacaf(){
 		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.id_factura = '.$nombre.' acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.')');
+			WHERE acc.id_factura = '.$nombre.' acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.') AND fecha_factura >= "2021-01-01" ');
 		
 		  $total = 0;
 
@@ -2955,7 +2961,7 @@ public function cargacaf(){
 		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.num_factura = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.')' 	);
+			WHERE acc.num_factura = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.') AND fecha_factura >= "2021-01-01"');
 
 		
 		  $total = 0;
@@ -2974,7 +2980,7 @@ public function cargacaf(){
 		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.id_cliente = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.')');
+			WHERE acc.id_cliente = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.') AND fecha_factura >= "2021-01-01"');
 
 		
 		  $total = 0;
@@ -3419,7 +3425,12 @@ public function cargacaf(){
 						            'GiroRecep' => substr(permite_alfanumerico($datos_empresa_factura->giro),0,35),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
 						            'DirRecep' => substr($dir_cliente,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
 						            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
-						        ],					            		        
+						        ],	
+						        'Totales' => [
+					                // estos valores serán calculados automáticamente
+					                'MntNeto' => isset($datos_factura->neto) ? $datos_factura->neto : 0,
+					                'IVA' => isset($datos_factura->iva) ? $datos_factura->iva : 0,
+			            		],					            		        
 						    ],
 							'Detalle' => $lista_detalle,
 							'Referencia' => $referencia

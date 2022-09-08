@@ -284,6 +284,10 @@ class Facturasvizualiza extends CI_Controller {
 		$fpago = $this->input->post('fpago');
 		$idbodega = 1;
 
+		if(!$ordencompra){
+			$ordencompra=0;
+		}
+
         if ($tipodocumento == 2){
 
         	if ($fpago != 7 && $fpago != 4) {
@@ -312,11 +316,18 @@ class Facturasvizualiza extends CI_Controller {
 	        'sub_total' => $neto,
 	        'descuento' => ($neto - $fafecto),
 	        'neto' => $neto,
+	        'exento' => 0,
 	        'iva' => $fiva,
 	        'totalfactura' => $ftotal,
 	        'fecha_factura' => $fechafactura,
 	        'fecha_venc' => $fechavenc,
-	        'orden_compra' => $ordencompra
+	        'orden_compra' => $ordencompra,
+	        'id_factura' => 0,
+	        'observacion' => " ",
+	        'id_observa' => 0,
+	        'id_despacho' => 0,
+	        'estado' => " ",
+	        'forma' => 0,	       
 	          
 		);
 
@@ -346,7 +357,8 @@ class Facturasvizualiza extends CI_Controller {
 	        'descuento' => round($v->desc,0),
 	        'iva' => round($v->iva,0),
 	        'totalproducto' => $v->total,
-	        'fecha' => $fechafactura
+	        'fecha' => $fechafactura,
+	        'id_despacho' => 0
 		);
 
 		$neto_total += $neto_producto;
@@ -408,9 +420,11 @@ class Facturasvizualiza extends CI_Controller {
 		        'id_tipo_movimiento' => $tipodocumento,
 		        'valor_producto' =>  $v->valor_unit,
 		        'cantidad_salida' => $v->cantidad,
+		        'cantidad_entrada' => 0,
 		        'id_bodega' => $idbodega,
 		        'fecha_movimiento' => $fechafactura,
-		        'id_cliente' => $idcliente
+		        'id_cliente' => $idcliente,
+		        'p_promedio' => 0,
 		);
 
 		$this->db->insert('existencia_detalle', $datos2);
@@ -443,9 +457,8 @@ class Facturasvizualiza extends CI_Controller {
 		 $idcuentacontable = $row->idcuentacontable;	
 
 
-			// VERIFICAR SI CLIENTE YA TIENE CUENTA CORRIENTE
-		 $query = $this->db->query("SELECT co.idcliente, co.id as idcuentacorriente  FROM cuenta_corriente co
-		 							WHERE co.idcuentacontable = '$idcuentacontable' and co.idcliente = '" . $idcliente . "'");
+		 // VERIFICAR SI CLIENTE YA TIENE CUENTA CORRIENTE
+		 $query = $this->db->query("SELECT co.idcliente, co.id as idcuentacorriente  FROM cuenta_corriente co WHERE co.idcuentacontable = '$idcuentacontable' and co.idcliente = '" . $idcliente . "'");
     	 $row = $query->result();
 	
 		if ($query->num_rows()==0){	
@@ -498,7 +511,7 @@ class Facturasvizualiza extends CI_Controller {
 		};
 
 
-		if($tipodocumento == 101 || $tipodocumento == 103 || $tipodocumento == 105){  // SI ES FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONICA
+		if($tipodocumento == 101 || $tipodocumento == 103 || $tipodocumento == 105 || $tipodocumento == 120){  // SI ES FACTURA ELECTRONICA O FACTURA EXENTA ELECTRONICA
 
 
 			if($tipodocumento == 101){
@@ -507,7 +520,9 @@ class Facturasvizualiza extends CI_Controller {
 				$tipo_caf = 34;
 			}else if($tipodocumento == 105){
 				$tipo_caf = 52;
-			}
+			}else if($tipodocumento == 120){
+                $tipo_caf = 39;
+            } 
 
 
 			//$tipo_caf = $tipodocumento == 101 ? 33 : 34;
@@ -569,40 +584,78 @@ class Facturasvizualiza extends CI_Controller {
 			}
 
 
-			// datos
-			$factura = [
-			    'Encabezado' => [
-			        'IdDoc' => [
-			            'TipoDTE' => $tipo_caf,
-			            'Folio' => $numfactura,
-			            'FchEmis' => substr($fechafactura,0,10)
-			        ],
-			        'Emisor' => [
-			            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
-			            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
-			            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
-			            'Acteco' => $empresa->cod_actividad,
-			            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
-			            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
-			        ],
-			        'Receptor' => [
-			            'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
-			            'RznSocRecep' => substr($datos_empresa_factura->nombre_cliente,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
-			            'GiroRecep' => substr($datos_empresa_factura->giro,0,40),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
-			            'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
-			            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
-			        ],
-		            'Totales' => [
-		                // estos valores serán calculados automáticamente
-		                'MntNeto' => isset($datos_factura->neto) ? $datos_factura->neto : 0,
-		                'TasaIVA' => \sasco\LibreDTE\Sii::getIVA(),
-		                'IVA' => isset($datos_factura->iva) ? $datos_factura->iva : 0,
-		                'MntTotal' => isset($datos_factura->totalfactura) ? $datos_factura->totalfactura : 0,
-		            ],				        
-			    ],
-				'Detalle' => $lista_detalle,
-				'Referencia' => $referencia
-			];
+			if($tipo_caf == 39){
+
+					$factura = [
+						    'Encabezado' => [
+						        'IdDoc' => [
+						            'TipoDTE' => $tipo_caf,
+						            'Folio' => $numfactura,
+						            'FchEmis' => substr($fechafactura,0,10)
+						        ],
+						        'Emisor' => [
+						            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
+						            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+						            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
+						            'Acteco' => $empresa->cod_actividad,
+						            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
+						            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
+						        ],
+						        'Receptor' => [
+						            'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
+						            'RznSocRecep' => substr($datos_empresa_factura->nombre_cliente,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+						            'GiroRecep' => substr($datos_empresa_factura->giro,0,40),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+						            'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+						            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
+						        ],
+					            'Totales' => [
+					                // estos valores serán calculados automáticamente
+					                'MntNeto' => isset($datos_factura->neto) ? $datos_factura->neto : 0,
+					                'IVA' => isset($datos_factura->iva) ? $datos_factura->iva : 0,
+					            ],							        		        
+						    ],
+							'Detalle' => $lista_detalle,
+						];				
+
+			}else{
+// datos
+					$factura = [
+					    'Encabezado' => [
+					        'IdDoc' => [
+					            'TipoDTE' => $tipo_caf,
+					            'Folio' => $numfactura,
+					            'FchEmis' => substr($fechafactura,0,10)
+					        ],
+					        'Emisor' => [
+					            'RUTEmisor' => $empresa->rut.'-'.$empresa->dv,
+					            'RznSoc' => substr($empresa->razon_social,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+					            'GiroEmis' => substr($empresa->giro,0,80), //LARGO DE GIRO DEL EMISOR NO PUEDE SER SUPERIOR A 80 CARACTERES
+					            'Acteco' => $empresa->cod_actividad,
+					            'DirOrigen' => substr($empresa->dir_origen,0,70), //LARGO DE DIRECCION DE ORIGEN NO PUEDE SER SUPERIOR A 70 CARACTERES
+					            'CmnaOrigen' => substr($empresa->comuna_origen,0,20), //LARGO DE COMUNA DE ORIGEN NO PUEDE SER SUPERIOR A 20 CARACTERES
+					        ],
+					        'Receptor' => [
+					            'RUTRecep' => substr($datos_empresa_factura->rut_cliente,0,strlen($datos_empresa_factura->rut_cliente) - 1)."-".substr($datos_empresa_factura->rut_cliente,-1),
+					            'RznSocRecep' => substr($datos_empresa_factura->nombre_cliente,0,100), //LARGO DE RAZON SOCIAL NO PUEDE SER SUPERIOR A 100 CARACTERES
+					            'GiroRecep' => substr($datos_empresa_factura->giro,0,40),  //LARGO DEL GIRO NO PUEDE SER SUPERIOR A 40 CARACTERES
+					            'DirRecep' => substr($datos_empresa_factura->direccion,0,70), //LARGO DE DIRECCION NO PUEDE SER SUPERIOR A 70 CARACTERES
+					            'CmnaRecep' => substr($datos_empresa_factura->nombre_comuna,0,20), //LARGO DE COMUNA NO PUEDE SER SUPERIOR A 20 CARACTERES
+					        ],
+				            'Totales' => [
+				                // estos valores serán calculados automáticamente
+				                'MntNeto' => isset($datos_factura->neto) ? $datos_factura->neto : 0,
+				                'TasaIVA' => \sasco\LibreDTE\Sii::getIVA(),
+				                'IVA' => isset($datos_factura->iva) ? $datos_factura->iva : 0,
+				                'MntTotal' => isset($datos_factura->totalfactura) ? $datos_factura->totalfactura : 0,
+				            ],				        
+					    ],
+						'Detalle' => $lista_detalle,
+						'Referencia' => $referencia
+					];
+
+			}
+
+			
 
 			//FchResol y NroResol deben cambiar con los datos reales de producción
 			$caratula = [

@@ -784,7 +784,9 @@ class Dte
                 ],
                 'Receptor' => false,
                 'Totales' => [
+                    'MntNeto' => false,
                     'MntExe' => false,
+                    'IVA' => false,
                     'MntTotal' => 0,
                 ]
             ],
@@ -795,7 +797,6 @@ class Dte
         $this->normalizar_aplicar_descuentos_recargos($datos);
         $this->normalizar_agregar_IVA_MntTotal($datos);
     }
-
     /**
      * Método que normaliza los datos de una boleta exenta electrónica
      * @param datos Arreglo con los datos del documento que se desean normalizar
