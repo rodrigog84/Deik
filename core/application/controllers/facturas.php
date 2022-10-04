@@ -2943,7 +2943,7 @@ public function cargacaf(){
 		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.id_factura = '.$nombre.' acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.') AND fecha_factura >= "2021-01-01" ');
+			WHERE acc.id_factura = '.$nombre.' acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.') AND fecha_factura >= DATE_ADD(CURDATE(),INTERVAL -10 MONTH) ');
 		
 		  $total = 0;
 
@@ -2961,7 +2961,7 @@ public function cargacaf(){
 		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.num_factura = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.') AND fecha_factura >= "2021-01-01"');
+			WHERE acc.num_factura = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.') AND fecha_factura >= DATE_ADD(CURDATE(),INTERVAL -10 MONTH)');
 
 		
 		  $total = 0;
@@ -2980,7 +2980,7 @@ public function cargacaf(){
 		$query = $this->db->query('SELECT acc.*, c.nombres as nombre_cliente, c.rut as rut_cliente, v.nombre as nom_vendedor	FROM factura_clientes acc
 			left join clientes c on (acc.id_cliente = c.id)
 			left join vendedores v on (acc.id_vendedor = v.id)
-			WHERE acc.id_cliente = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.') AND fecha_factura >= "2021-01-01"');
+			WHERE acc.id_cliente = '.$nombre.' AND acc.tipo_documento in ('.$tipo.','.$tipo2.','.$tipo3.','.$tipo4.') AND fecha_factura >= DATE_ADD(CURDATE(),INTERVAL -10 MONTH)');
 
 		
 		  $total = 0;
@@ -3515,7 +3515,17 @@ public function cargacaf(){
 			$EnvioDTE->agregar($DTE);
 			$EnvioDTE->setFirma($Firma);
 			$EnvioDTE->setCaratula($caratula);
-			$EnvioDTE->generar();
+			$xml_dte = $EnvioDTE->generar();
+
+                /*  echo $xml_dte;
+                 var_dump($EnvioDTE->schemaValidate()); 
+
+  foreach (sasco\LibreDTE\Log::readAll() as $error)
+          echo $error,"\n";                  
+                  
+
+                  exit;*/
+
 
 			if ($EnvioDTE->schemaValidate()) { // REVISAR PORQUÉ SE CAE CON ESTA VALIDACION
 				
